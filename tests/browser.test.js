@@ -261,3 +261,13 @@ test('existing pricing retains bundle quantities and unresolved bear-pouch descr
     assert.ok(d.querySelector('#work-kuma-pouch h3').textContent.includes('おしゃぶり'));assert.ok(d.querySelector('#work-kuma-pouch .memo').textContent.includes('おしゃぶりと哺乳瓶'));assert.ok(d.querySelector('#work-kuma-pouch .price-line').textContent.includes('未登録'));
   }finally{dom.window.close();}
 });
+
+test('Christmas venue detail is explicitly unconfirmed this year while December 19 10:00–17:00 is retained',()=>{
+  const dom=new JSDOM(html);try{
+    const d=dom.window.document,card=[...d.querySelectorAll('.event-card')].find(e=>e.querySelector('h3').textContent.includes('クリスマス')),detail=d.querySelector('#view-event-xmas');
+    assert.ok(card.querySelector('.meta').textContent.includes('2026年12月19日（土）10:00〜17:00'));
+    assert.ok(card.querySelector('.source-note').textContent.includes('詳細地点は昨年情報'));assert.ok(card.querySelector('.source-note').textContent.includes('今年も同じ地点かは未確認'));
+    assert.ok(detail.querySelector('.facts').textContent.includes('2026年12月19日（土）10:00〜17:00'));
+    assert.ok(detail.querySelector('.facts').textContent.includes('豊島五丁目団地は本人指定'));assert.ok(detail.querySelector('.facts').textContent.includes('今年も同じ詳細地点かは未確認'));assert.ok(!detail.textContent.includes('11:00'));
+  }finally{dom.window.close();}
+});
