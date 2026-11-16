@@ -21,7 +21,7 @@
 <section class="workspace" aria-labelledby="section-title">
 <div class="section-head"><div><span class="eyebrow" id="section-kicker">イベントを終えたら</span><h2 id="section-title">振り返り・売上</h2><p id="section-description">気づいたことと金額を残す。空欄は未入力、0円は売上なしとして区別。</p></div><span class="private-label">二人のみ</span></div>
 <div class="two-column">
-<form id="record-form" class="form-card" autocomplete="off"><h3 id="form-title">記録を追加</h3><fieldset id="record-fields" disabled>
+<form id="record-form" class="form-card" autocomplete="off" aria-labelledby="form-title"><h3 id="form-title">記録を追加</h3><fieldset id="record-fields" aria-describedby="private-notice" disabled>
 <label>項目名<input name="title" id="record-title" required maxlength="160" autocomplete="off" placeholder="イベント名・作品名・やること" list="product-names"></label><datalist id="product-names"></datalist>
 <div data-for="review"><label>日付<input name="date" type="date"></label><div class="field-pair"><label>売上（円）<input name="salesYen" type="number" min="0" max="100000000" step="1" inputmode="numeric" placeholder="未入力"></label><label>費用（円）<input name="costsYen" type="number" min="0" max="100000000" step="1" inputmode="numeric" placeholder="未入力"></label></div><p class="hint">未入力の金額を0円として集計しない。振り返りの編集は書いた本人のみ。</p></div>
 <div data-for="task" hidden><label>期限<input name="dueDate" type="date"></label></div>

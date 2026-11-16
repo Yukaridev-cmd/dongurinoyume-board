@@ -59,6 +59,7 @@ function setKind(next) {
   var select=document.getElementById('record-state');select.replaceChildren();
   (states[kind]||[]).forEach(function(value){var o=el('option',value);o.value=value;select.appendChild(o);});
   document.getElementById('request-hint').hidden=kind!=='request';
+  document.getElementById('notes-label').firstChild.textContent={review:'振り返り・次にやること',task:'やりたいことの詳細',inventory:'数えた条件・照合メモ',photo:'写真と中身の確認メモ',request:'変更内容・確認する根拠'}[kind];
   document.getElementById('open-only').checked=false;
   render();
 }
@@ -85,7 +86,7 @@ function render() {
   if(!ready){list.appendChild(el('p','LINE認証後に記録を表示','empty'));return;}
   var query=document.getElementById('record-search').value.trim().toLocaleLowerCase();
   var rows=records.filter(function(r){return r.kind===kind&&(!document.getElementById('open-only').checked||!done(r))&&(!query||(r.data.title+' '+r.data.notes+' '+r.author).toLocaleLowerCase().includes(query));}).sort(function(a,b){return b.updatedAt.localeCompare(a.updatedAt)||a.id.localeCompare(b.id);});
-  if(!rows.length){list.appendChild(el('p','この種類の記録はまだなし。左の欄から追加','empty'));return;}
+  if(!rows.length){list.appendChild(el('p','この種類の記録はまだなし。入力欄から追加','empty'));return;}
   rows.forEach(function(record){
     var card=el('article',undefined,'record-card'),meta=el('div',undefined,'record-meta');
     meta.append(el('span',record.author),el('time',new Date(record.updatedAt).toLocaleString('ja-JP')));
@@ -111,7 +112,7 @@ function render() {
     }
     if(record.kind!=='request') {
       var request=el('button','この記録から更新依頼');request.type='button';request.addEventListener('click',function(){
-        setKind('request');if(kind!=='request')return;form.elements.title.value=record.data.title+'の更新';form.elements.notes.value='対象：'+labels[record.kind]+'「'+record.data.title+'」\n変更したいこと：\n確認した根拠：';form.setAttribute('data-private-dirty','');form.scrollIntoView({block:'start',behavior:'smooth'});
+        setKind('request');if(kind!=='request')return;form.elements.title.value=record.data.title+'の更新';form.elements.notes.value='対象：'+labels[record.kind]+'「'+record.data.title+'」\n変更したいこと：\n確認した根拠：';markDirty();form.scrollIntoView({block:'start',behavior:'smooth'});form.elements.title.focus();
       });actions.appendChild(request);
     }
     card.appendChild(actions);list.appendChild(card);
@@ -142,7 +143,7 @@ form.addEventListener('submit',async function(event){
   }catch(error){if(epoch===generation)feedback.textContent=error.message;}
   finally{if(epoch===generation)fields.disabled=!ready;}
 });
-document.querySelectorAll('[data-kind]').forEach(function(button){button.addEventListener('click',function(){setKind(button.dataset.kind);});});
+document.querySelectorAll('[data-kind]').forEach(function(button){button.addEventListener('click',function(){if(kind!==button.dataset.kind)setKind(button.dataset.kind);});});
 document.getElementById('record-cancel').addEventListener('click',function(){drafts.delete(currentViewer);reset();feedback.textContent='';});
 document.getElementById('record-search').addEventListener('input',render);
 document.getElementById('open-only').addEventListener('change',render);

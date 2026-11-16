@@ -51,3 +51,11 @@ test('catalog contains 27 unique works and existing photos, without inventory or
   assert.equal(catalog.length,27);assert.equal(new Set(catalog.map(x=>x.id)).size,27);assert.ok(catalog.some(x=>x.id==='work-heart-bear'&&x.photos.length===0));assert.ok(catalog.find(x=>x.id==='work-happy-pack').photoType.includes('ポップ'));
   for(const row of catalog){assert.equal('stock' in row,false);assert.equal('salesYen' in row,false);for(const photo of row.photos)assert.ok(existsSync(new URL('../'+photo.src,import.meta.url)));}
 });
+
+test('pressing the active record kind preserves a draft and generated requests expose a working cancel action',async()=>{
+  const b=fixture();try{
+    b.auth(true);await tick();b.form.elements.title.value='draft';b.form.dispatchEvent(new b.w.Event('input'));let prompts=0;b.w.confirm=()=>{prompts++;return true;};b.w.document.querySelector('[data-kind=review]').click();assert.equal(b.form.elements.title.value,'draft');assert.equal(prompts,0);
+    b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();[...b.w.document.querySelectorAll('.record-card button')].find(e=>e.textContent==='この記録から更新依頼').click();assert.equal(b.w.document.getElementById('record-cancel').hidden,false);assert.equal(b.w.document.activeElement,b.form.elements.title);assert.ok(b.w.document.getElementById('notes-label').textContent.includes('変更内容'));
+    b.w.document.getElementById('record-cancel').click();assert.equal(b.form.elements.title.value,'');assert.equal(b.form.hasAttribute('data-private-dirty'),false);assert.equal(b.errors.length,0);
+  }finally{b.dom.window.close();}
+});

@@ -14,6 +14,7 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
   const dom = new JSDOM(html, { url: 'https://yukaridev-cmd.github.io/dongurinoyume-board/', runScripts: 'outside-only', pretendToBeVisual: true, virtualConsole });
   const w = dom.window;
   w.HTMLElement.prototype.scrollIntoView = function () {};
+  w.scrollTo = function () {};
   w.confirm = () => true;
   w.DONGURI_COMMENTS_CONFIG = configured ? { liffId: 'test-liff', apiBase: 'https://comments.example' } : {};
   w.liff = { init: async () => {}, isInClient: () => inLine, isLoggedIn: () => loggedIn, getIDToken: () => 'signed.id.token' };
@@ -228,5 +229,25 @@ test('periodic network error keeps visible comment drafts and page-cache return 
     b.w.dispatchEvent(new b.w.PageTransitionEvent('pagehide',{persisted:true}));assert.equal(ta.value,'');
     b.failure=0;b.w.dispatchEvent(new b.w.PageTransitionEvent('pageshow',{persisted:true}));await tick();assert.equal(ta.value,'temporary draft');assert.equal(b.requests.some(r=>r.options.method==='POST'),false);
     const unload=new b.w.Event('beforeunload',{cancelable:true});b.w.dispatchEvent(unload);assert.equal(unload.defaultPrevented,true);
+  }finally{b.dom.window.close();}
+});
+
+test('keyboard tabs select visible panels and quick panel Escape restores trigger focus without losing input',async()=>{
+  const b=browser();try{
+    await tick();const d=b.w.document,tabs=[...d.querySelectorAll('[data-view-btn]')];tabs[0].focus();tabs[0].dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));
+    assert.equal(d.activeElement,tabs[1]);assert.equal(tabs[1].getAttribute('aria-selected'),'true');assert.equal(d.querySelectorAll('[role=tab][tabindex="0"]').length,1);assert.equal(d.querySelector('#view-events').classList.contains('active'),true);assert.equal(tabs[1].getAttribute('aria-controls'),'view-events');
+    tabs[1].dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'End',bubbles:true,cancelable:true}));assert.equal(d.activeElement,tabs.at(-1));assert.equal(d.querySelector('#view-share').classList.contains('active'),true);
+    d.querySelector('#quick-memo-btn').click();d.querySelector('#quick-text').value='unsent keyboard draft';d.querySelector('#quick-text').dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
+    assert.equal(d.querySelector('#quick-panel').hidden,true);assert.equal(d.activeElement,d.querySelector('#quick-memo-btn'));assert.equal(d.querySelector('#quick-text').value,'unsent keyboard draft');assert.equal(d.querySelector('#quick-memo-btn').getAttribute('aria-expanded'),'false');
+    assert.ok([...d.querySelectorAll('[data-memo-zone] textarea,[data-inline-memo],#quick-text')].every(e=>e.getAttribute('aria-label')));assert.equal(b.errors.length,0);
+  }finally{b.dom.window.close();}
+});
+
+test('work filters retain source catalog categories and navigation exposes the destination heading',async()=>{
+  const b=browser({configured:false});try{
+    const d=b.w.document;d.querySelector('[data-goto=works]').click();assert.equal(d.activeElement,d.querySelector('#view-works h2'));
+    for(const btn of d.querySelectorAll('[data-filter]')){btn.click();const f=btn.dataset.filter;for(const card of d.querySelectorAll('.work[data-cat]')){
+      const expected=f==='all'||(f==='unknown'?/未確認|未登録/.test(card.querySelector('.price-line')?.textContent||''):card.dataset.cat===f);assert.equal(card.hidden,!expected);
+    }}assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });

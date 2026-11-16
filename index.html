@@ -517,6 +517,7 @@ footer{margin-top:32px}
 @media print{.summary-zone .pop-actions{display:none!important}}
 
 </style>
+<link rel="stylesheet" href="accessibility.css" />
 </head>
 <body style="background:#fdf6e0;color-scheme:light only">
 <div class="wrap">
@@ -1822,6 +1823,20 @@ document.body.removeChild(ta);
 var viewIds = ['home','events','event-xmas','event-tabashita','event-wombat','event-kiraria-1107','event-kiraria-0829','event-kiraria-0516','event-kiraria-0228','event-toyoshima','event-heart','works','booth','pops','share'];
 var parentTab = { 'event-xmas': 'events', 'event-tabashita': 'events', 'event-wombat': 'events', 'event-kiraria-1107': 'events', 'event-kiraria-0829': 'events', 'event-kiraria-0516': 'events', 'event-kiraria-0228': 'events', 'event-toyoshima': 'events', 'event-heart': 'events'};
 var settingHash = false;
+var menuButtons=Array.from(document.querySelectorAll('[data-view-btn]'));
+menuButtons.forEach(function(b){
+  b.id='tab-'+b.getAttribute('data-view-btn');
+  b.setAttribute('tabindex',b.getAttribute('aria-selected')==='true'?'0':'-1');
+  b.setAttribute('aria-controls','view-'+b.getAttribute('data-view-btn'));
+  b.addEventListener('keydown',function(event){
+    var index=menuButtons.indexOf(b),next;
+    if(event.key==='ArrowRight')next=(index+1)%menuButtons.length;
+    else if(event.key==='ArrowLeft')next=(index+menuButtons.length-1)%menuButtons.length;
+    else if(event.key==='Home')next=0;else if(event.key==='End')next=menuButtons.length-1;else return;
+    event.preventDefault();menuButtons[next].click();menuButtons[next].focus();
+  });
+});
+viewIds.forEach(function(id){var panel=document.getElementById('view-'+id);if(panel){panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby','tab-'+(parentTab[id]||id));}});
 function showView(id, anchor) {
 if (viewIds.indexOf(id) === -1) id = 'home';
 viewIds.forEach(function (v) {
@@ -1831,6 +1846,8 @@ if (el) el.classList.toggle('active', v === id);
 var tab = parentTab[id] || id;
 document.querySelectorAll('[data-view-btn]').forEach(function (b) {
 b.setAttribute('aria-selected', b.getAttribute('data-view-btn') === tab? 'true': 'false');
+b.setAttribute('tabindex',b.getAttribute('data-view-btn')===tab?'0':'-1');
+b.setAttribute('aria-controls','view-'+(b.getAttribute('data-view-btn')===tab?id:b.getAttribute('data-view-btn')));
 });
 var target = anchor? document.getElementById(anchor): null;
 if (target) { target.scrollIntoView({ block: 'start' }); }
@@ -1857,7 +1874,7 @@ document.querySelectorAll('[data-view-btn]').forEach(function (b) {
 b.addEventListener('click', function () { showView(b.getAttribute('data-view-btn'));});
 });
 document.querySelectorAll('[data-goto]').forEach(function (b) {
-b.addEventListener('click', function () { showView(b.getAttribute('data-goto'), b.getAttribute('data-goto-anchor'));});
+b.addEventListener('click', function () { showView(b.getAttribute('data-goto'), b.getAttribute('data-goto-anchor'));var heading=document.querySelector('.view.active h2');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}});
 });
 applyHash();
 /* ---- next event countdown ---- */
@@ -1926,7 +1943,7 @@ draft.edits.forEach(function(edit){
 var card=Array.from(document.querySelectorAll('[data-comment-card]')).find(function(node){return node.getAttribute('data-comment-card')===edit.id;});
 var button=card&&card.querySelector('[data-comment-edit]');
 if(button){button.click();var ta=card.querySelector('[data-comment-editor]');ta.value=edit.text;ta.setAttribute('data-comment-version',String(edit.version));}
-else {var quick=document.getElementById('quick-text');if(quick){quick.value+=(quick.value?'\n\n':'')+edit.text;var panel=document.getElementById('quick-panel');if(panel)panel.hidden=false;showToast('元コメントが見つからず。未保存の編集をクイック欄へ復元');}}
+else {var quick=document.getElementById('quick-text');if(quick){quick.value+=(quick.value?'\n\n':'')+edit.text;var panel=document.getElementById('quick-panel');if(panel)panel.hidden=false;var trigger=document.getElementById('quick-memo-btn');if(trigger)trigger.setAttribute('aria-expanded','true');showToast('元コメントが見つからず。未保存の編集をクイック欄へ復元');}}
 });
 boardDrafts.delete(currentViewer);
 }
@@ -2152,6 +2169,7 @@ var al = zone.getAttribute('aria-label') || '';
 return 'ページ：' + al.replace(/の(メモ|コメント)$/, '');
 }
 function setupZone(zone) {
+var input=zone.querySelector('.free-write');if(input)input.setAttribute('aria-label',zone.getAttribute('aria-label')||'このページのコメント');
 var head = zone.querySelector('.memo-head h3');
 if (head) head.textContent = 'コメント';
 zone.querySelectorAll('[data-memo-copy]').forEach(function (b) { b.remove();});
@@ -2182,6 +2200,7 @@ var ta = document.createElement('textarea');
 ta.rows = 2;
 ta.placeholder = placeholder;
 ta.setAttribute('data-inline-memo', '');
+ta.setAttribute('aria-label',target+'のコメント');
 wrap.appendChild(ta);
 var row = document.createElement('div');
 row.className = 'cmt-row';
@@ -2249,7 +2268,8 @@ showToast('指摘事項のファイルを保存済み');
 var qBtn = document.getElementById('quick-memo-btn');
 var qPanel = document.getElementById('quick-panel');
 var qText = document.getElementById('quick-text');
-function closeQuick() { if (qPanel) qPanel.hidden = true; if (qBtn) qBtn.setAttribute('aria-expanded', 'false');}
+if(qText)qText.setAttribute('aria-label','表示中のページへのコメント');
+function closeQuick() { if (qPanel) qPanel.hidden = true; if (qBtn){qBtn.setAttribute('aria-expanded', 'false');qBtn.focus();}}
 if (qBtn && qPanel) {
 qBtn.addEventListener('click', function () {
 var open = qPanel.hidden;
@@ -2259,6 +2279,8 @@ if (open && qText) qText.focus();
 });
 }
 if (qPanel) {
+qPanel.setAttribute('role','region');qPanel.setAttribute('aria-label','コメントの入力');
+qPanel.addEventListener('keydown',function(event){if(event.key==='Escape'){event.preventDefault();closeQuick();}});
 var qTools = qPanel.querySelector('.memo-tools');
 if (qTools &&!qTools.querySelector('.author-sel')) qTools.insertBefore(makeAuthorSelect(), qTools.firstChild);
 }
