@@ -3,13 +3,13 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{1
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
 }
-function configuration(env) {
+function configuration(env, memberCount) {
   try {
     const members = JSON.parse(env.LINE_MEMBERS);
     const ids = Object.keys(members);
-    if (ids.length !== 2 || !ids.every(id => /^U[0-9a-f]{32}$/.test(id)) ||
+    if (![1, 2].includes(memberCount) || ids.length !== memberCount || !ids.every(id => /^U[0-9a-f]{32}$/.test(id)) ||
         !ids.every(id => typeof members[id] === 'string' && members[id].trim() && members[id].length <= 40) ||
-        new Set(Object.values(members)).size !== 2 || !/^\d+$/.test(env.LINE_CHANNEL_ID) ||
+        new Set(Object.values(members)).size !== memberCount || !/^\d+$/.test(env.LINE_CHANNEL_ID) ||
         new URL(env.ALLOWED_ORIGIN).origin !== env.ALLOWED_ORIGIN ||
         !env.ALLOWED_ORIGIN.startsWith('https://') || !env.DB) throw Error();
     return members;
@@ -68,7 +68,9 @@ function present(row, user, members) {
     stamp: row.created_at, version: row.version, canEdit: row.owner === user.id };
 }
 const routeRecords = recordsApi({ HttpError, UUID, readBody, field });
-export function createHandler(fetcher = fetch) {
+// The production entry below always requires two members. Only the separate,
+// attested owner-test entry opts into a one-member policy at build time.
+export function createHandler(fetcher = fetch, { memberCount = 2 } = {}) {
   return async function handle(request, env) {
     const origin = request.headers.get('Origin');
     const headers = { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store, private',
@@ -77,7 +79,7 @@ export function createHandler(fetcher = fetch) {
     const json = (body, status = 200) => new Response(JSON.stringify(body), { status, headers });
     try {
       if (origin !== env.ALLOWED_ORIGIN) throw new HttpError(403, '共有ページから開く');
-      const members = configuration(env);
+      const members = configuration(env, memberCount);
       if (request.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: { ...headers,
           'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',

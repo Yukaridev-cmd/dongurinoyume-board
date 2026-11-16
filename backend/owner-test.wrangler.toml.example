@@ -1,0 +1,18 @@
+name = "dongurinoyume-owner-test"
+main = "../.wrangler/owner-test-entry.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+preview_urls = false
+send_metrics = false
+[observability]
+enabled = false
+[vars]
+OWNER_TEST_ONLY = "true"
+OWNER_TEST_ORIGIN = "REPLACE_WITH_OWNER_TEST_HTTPS_ORIGIN"
+LINE_CHANNEL_ID = "REPLACE_WITH_CONFIRMED_LINE_CHANNEL_ID"
+TEST_LIFF_ID = "REPLACE_WITH_SEPARATE_TEST_LIFF_ID"
+[[d1_databases]]
+binding = "TEST_DB"
+database_name = "dongurinoyume-owner-test"
+database_id = "REPLACE_WITH_NEW_TEST_DATABASE_ID"
+# TEST_OWNER_LINE_ID: secret; never use the production DB or LINE_MEMBERS here.
