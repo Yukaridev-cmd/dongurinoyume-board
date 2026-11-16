@@ -251,3 +251,13 @@ test('work filters retain source catalog categories and navigation exposes the d
     }}assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });
+
+test('existing pricing retains bundle quantities and unresolved bear-pouch descriptions remain intact',()=>{
+  const dom=new JSDOM(html);try{
+    const d=dom.window.document;
+    assert.equal(d.querySelector('#work-hairpin .price-line').textContent,'2個 600円');
+    assert.equal(d.querySelector('#work-magnet .price-line').textContent,'1コ 100円 3コ 250円／5コ 400円');
+    assert.equal(d.querySelector('#work-sushi .price-line').textContent,'一貫 300円 四貫お買得パック 1,000円');
+    assert.ok(d.querySelector('#work-kuma-pouch h3').textContent.includes('おしゃぶり'));assert.ok(d.querySelector('#work-kuma-pouch .memo').textContent.includes('おしゃぶりと哺乳瓶'));assert.ok(d.querySelector('#work-kuma-pouch .price-line').textContent.includes('未登録'));
+  }finally{dom.window.close();}
+});
