@@ -18,11 +18,14 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
   w.DONGURI_COMMENTS_CONFIG = configured ? { liffId: 'test-liff', apiBase: 'https://comments.example' } : {};
   w.liff = { init: async () => {}, isInClient: () => inLine, isLoggedIn: () => loggedIn, getIDToken: () => 'signed.id.token' };
   w.AbortSignal = AbortSignal;
-  let failure = 0, deferPost = null;
+  let failure = 0, deferPost = null, viewer = 'a'.repeat(64), hidden = false;
+  Object.defineProperty(w.document,'hidden',{get:()=>hidden});
+  const intervals=[];w.setInterval=fn=>intervals.push(fn);
   w.fetch = async (url, options) => {
     requests.push({ url, options });
+    if (failure === -1) throw Error('offline');
     if (failure) return Response.json({ error: '保存失敗' }, { status: failure });
-    if (url.endsWith('/session')) return Response.json({ author: '本人' });
+    if (url.endsWith('/session')) return Response.json({ author: '本人', viewer });
     if (options.method === 'POST') {
       if (url.endsWith('/records')) return Response.json({ record: { ...JSON.parse(options.body), version: 1 } }, { status: 201 });
       if (deferPost) await deferPost;
@@ -42,7 +45,8 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
   for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
   w.eval(client);
   return { dom, w, requests, errors, records,
-    set failure(v) { failure = v; }, set deferPost(v) { deferPost = v; },
+    set failure(v) { failure = v; }, set deferPost(v) { deferPost = v; }, set viewer(v){viewer=v;}, intervals,
+    visibility(v){hidden=v;w.document.dispatchEvent(new w.Event('visibilitychange'));},
     zone() { const zone = w.document.querySelector('[data-memo-zone]'); return { zone, ta: zone.querySelector('textarea'), add: zone.querySelector('[data-memo-add]') }; }
   };
 }
@@ -159,10 +163,10 @@ test('a late save response after authentication loss cannot redisplay private co
     await tick(); const { ta, add, zone } = b.zone();
     let complete; b.deferPost = new Promise(resolve => { complete = resolve; });
     ta.value = '保存中の本文'; add.click();
-    b.failure = 401; await b.w.DonguriComments.connect();
+    b.failure = 401; await b.w.DonguriComments.connect({revalidate:true});
     complete(); await tick();
     assert.equal(zone.querySelectorAll('.memo-card').length, 0);
-    assert.equal(ta.value, '保存中の本文');
+    assert.equal(ta.value, '');
     assert.equal(add.disabled, true);
   } finally { b.dom.window.close(); }
 });
@@ -194,4 +198,35 @@ test('existing images, prices, event headings, page navigation, cream background
     assert.equal(d.querySelector('#view-works').classList.contains('active'), true);
     assert.ok(d.querySelectorAll('.work .inline-memo').length > 0);
   } finally { b.dom.window.close(); }
+});
+
+test('all new comment paths protect unsent text on background or denial and restore only for the verified owner',async()=>{
+  const b=browser();try{
+    await tick();const d=b.w.document,zone=b.zone().ta,inline=d.querySelector('[data-inline-memo]'),quick=d.querySelector('#quick-text');
+    zone.value='private zone';inline.value='private inline';quick.value='private quick';
+    b.visibility(true);for(const ta of [zone,inline,quick]){assert.equal(ta.value,'');assert.equal(ta.disabled,true);}
+    assert.equal(b.requests.some(r=>r.options.method==='POST'),false);
+    b.viewer='b'.repeat(64);b.visibility(false);await tick();for(const ta of [zone,inline,quick])assert.equal(ta.value,'');
+    quick.value='member B';b.visibility(true);b.viewer='a'.repeat(64);b.visibility(false);await tick();assert.equal(zone.value,'private zone');assert.equal(inline.value,'private inline');assert.equal(quick.value,'private quick');
+    b.failure=403;await b.intervals[0]();for(const ta of [zone,inline,quick])assert.equal(ta.value,'');
+    b.failure=0;await b.w.DonguriComments.connect();await tick();assert.equal(quick.value,'private quick');assert.equal(b.w.localStorage.length,0);assert.equal(b.w.sessionStorage.length,0);assert.equal(b.errors.length,0);
+  }finally{b.dom.window.close();}
+});
+
+test('unsaved comment edit survives background with original version while hidden DOM contains no text',async()=>{
+  const b=browser();try{
+    await tick();const {ta,add,zone}=b.zone();ta.value='saved comment';add.click();await tick();zone.querySelector('[data-comment-edit]').click();zone.querySelector('[data-comment-editor]').value='private edit';
+    b.visibility(true);assert.equal(zone.querySelector('[data-comment-editor]'),null);assert.ok(!zone.textContent.includes('private edit'));assert.ok(!zone.textContent.includes('saved comment'));
+    b.records[0].version=3;b.visibility(false);await tick();const editor=zone.querySelector('[data-comment-editor]');assert.equal(editor.value,'private edit');assert.equal(editor.getAttribute('data-comment-version'),'1');
+    const save=[...zone.querySelectorAll('button')].find(btn=>btn.textContent==='変更を保存');save.click();await tick();assert.equal(JSON.parse(b.requests.find(r=>r.options.method==='PATCH').options.body).version,1);assert.equal(b.errors.length,0);
+  }finally{b.dom.window.close();}
+});
+
+test('periodic network error keeps visible comment drafts and page-cache return restores protected input',async()=>{
+  const b=browser();try{
+    await tick();const {ta}=b.zone();ta.value='temporary draft';b.failure=-1;await b.intervals[0]();assert.equal(ta.value,'temporary draft');assert.equal(ta.disabled,false);
+    b.w.dispatchEvent(new b.w.PageTransitionEvent('pagehide',{persisted:true}));assert.equal(ta.value,'');
+    b.failure=0;b.w.dispatchEvent(new b.w.PageTransitionEvent('pageshow',{persisted:true}));await tick();assert.equal(ta.value,'temporary draft');assert.equal(b.requests.some(r=>r.options.method==='POST'),false);
+    const unload=new b.w.Event('beforeunload',{cancelable:true});b.w.dispatchEvent(unload);assert.equal(unload.defaultPrevented,true);
+  }finally{b.dom.window.close();}
 });

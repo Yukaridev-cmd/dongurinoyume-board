@@ -1,6 +1,8 @@
 (function () {
 'use strict';
 var records = [], ready = false, kind = 'review', editing = null, generation = 0, catalog = [];
+var currentViewer = '', drafts = new Map();
+var draftFields = ['title','date','salesYen','costsYen','dueDate','stock','asset','status','notes'];
 var form = document.getElementById('record-form'), fields = document.getElementById('record-fields');
 var feedback = document.getElementById('record-feedback'), list = document.getElementById('record-list');
 var labels = { review:'振り返り・売上',task:'やりたいこと',inventory:'棚卸メモ',photo:'写真の確認',request:'更新の依頼' };
@@ -16,6 +18,35 @@ function el(tag,text,className) { var n=document.createElement(tag); if(text!==u
 function number(v) { return v === '' ? null : Number(v); }
 function money(v) { return v === null || v === undefined ? '未入力' : v.toLocaleString('ja-JP')+'円'; }
 function reset() { form.reset(); form.removeAttribute('data-private-dirty'); editing=null; delete form._recordId;document.getElementById('form-title').textContent='記録を追加';document.getElementById('record-cancel').hidden=true; document.getElementById('photo-preview').hidden=true; }
+function hasInput() {
+  return form.hasAttribute('data-private-dirty') || editing || form._recordId ||
+    draftFields.some(function(key){return key !== 'status' && form.elements[key].value !== '';});
+}
+function protectDraft() {
+  var dirty=Boolean(hasInput()),query=document.getElementById('record-search').value;
+  if(currentViewer && (dirty || query)) {
+    var values={};draftFields.forEach(function(key){values[key]=form.elements[key].value;});
+    drafts.set(currentViewer,{kind:kind,values:values,id:form._recordId,editing:editing?{id:editing.id,version:editing.version}:null,dirty:dirty,query:query,openOnly:document.getElementById('open-only').checked});
+  }
+  ready=false;generation++;records=[];reset();fields.disabled=true;
+  document.getElementById('record-search').value='';document.getElementById('open-only').checked=false;
+  document.getElementById('copy-requests').disabled=true;document.getElementById('export-records').disabled=true;
+  feedback.textContent=drafts.size?'未保存入力をこのページ内で一時保護。同じLINEアカウントを確認後に復元':'';
+  document.getElementById('export-feedback').textContent='';render();
+}
+function restoreDraft() {
+  var draft=drafts.get(currentViewer);if(!draft)return false;
+  setKind(draft.kind);
+  draftFields.forEach(function(key){form.elements[key].value=draft.values[key];});
+  editing=draft.editing;if(draft.id)form._recordId=draft.id;
+  if(draft.dirty)form.setAttribute('data-private-dirty','');
+  document.getElementById('record-search').value=draft.query;document.getElementById('open-only').checked=draft.openOnly;
+  document.getElementById('form-title').textContent=editing?'記録を編集':'記録を追加';
+  document.getElementById('record-cancel').hidden=!draft.dirty;
+  previewPhoto();drafts.delete(currentViewer);
+  feedback.textContent='未保存入力を復元。保存中に離れた場合は保存結果を確認してから再試行';
+  return true;
+}
 function setKind(next) {
   if(form.hasAttribute('data-private-dirty') && !window.confirm('入力を取消して切り替える'))return;
   kind=next;reset(); feedback.textContent='';
@@ -92,11 +123,13 @@ async function load() {
   try{
     do{var data=await window.DonguriComments.save('/records'+(cursor?'?cursor='+encodeURIComponent(cursor):''),'GET');rows=rows.concat(data.records);cursor=data.next;}while(cursor);
     if(epoch!==generation||!ready)return;
-    records=rows;render();feedback.textContent='';
-  }catch(error){feedback.textContent=error.message;}
+    records=rows;render();if(!hasInput())feedback.textContent='';
+  }catch(error){if(epoch===generation)feedback.textContent=error.message;}
   finally{if(epoch===generation)fields.disabled=!ready;}
 }
-form.addEventListener('input',function(){form.setAttribute('data-private-dirty','');});
+function markDirty(){form.setAttribute('data-private-dirty','');document.getElementById('record-cancel').hidden=false;}
+form.addEventListener('input',markDirty);
+form.addEventListener('change',markDirty);
 form.addEventListener('submit',async function(event){
   event.preventDefault();if(!ready||fields.disabled)return;
   var epoch=generation,body={data:dataFromForm()};var wasEditing=editing;
@@ -105,18 +138,29 @@ form.addEventListener('submit',async function(event){
   try{
     var result=await window.DonguriComments.save(wasEditing?'/records/'+wasEditing.id:'/records',wasEditing?'PATCH':'POST',body);
     if(epoch!==generation||!ready)return;
-    records=records.filter(function(r){return r.id!==result.record.id;});records.push(result.record);reset();render();feedback.textContent='記録保存済み';
-  }catch(error){feedback.textContent=error.message;}
+    records=records.filter(function(r){return r.id!==result.record.id;});records.push(result.record);drafts.delete(currentViewer);reset();render();feedback.textContent='記録保存済み';
+  }catch(error){if(epoch===generation)feedback.textContent=error.message;}
   finally{if(epoch===generation)fields.disabled=!ready;}
 });
 document.querySelectorAll('[data-kind]').forEach(function(button){button.addEventListener('click',function(){setKind(button.dataset.kind);});});
-document.getElementById('record-cancel').addEventListener('click',function(){reset();feedback.textContent='';});
+document.getElementById('record-cancel').addEventListener('click',function(){drafts.delete(currentViewer);reset();feedback.textContent='';});
 document.getElementById('record-search').addEventListener('input',render);
 document.getElementById('open-only').addEventListener('change',render);
 function previewPhoto(){var path=form.elements.asset.value,img=document.getElementById('photo-preview');img.hidden=!path;if(path)img.src=path;}
 document.getElementById('photo-asset').addEventListener('change',previewPhoto);
-window.addEventListener('comments-auth',function(event){ready=event.detail.ready;fields.disabled=!ready;document.getElementById('copy-requests').disabled=!ready;document.getElementById('export-records').disabled=!ready;if(ready)load();render();});
-window.addEventListener('comments-clear',function(){ready=false;generation++;records=[];reset();feedback.textContent='';document.getElementById('export-feedback').textContent='';render();});
+window.addEventListener('comments-auth',function(event){
+  var next=event.detail.viewer;
+  if(event.detail.ready && !/^[0-9a-f]{64}$/.test(next||'')){protectDraft();feedback.textContent='共有処理の本人確認が必要。未保存入力は保護';return;}
+  if(!event.detail.ready && ready)protectDraft();
+  if(event.detail.ready && currentViewer && next!==currentViewer)protectDraft();
+  ready=event.detail.ready;
+  if(ready){currentViewer=next;restoreDraft();}
+  fields.disabled=!ready;document.getElementById('copy-requests').disabled=!ready;document.getElementById('export-records').disabled=!ready;
+  if(ready)load();render();
+});
+window.addEventListener('comments-clear',protectDraft);
+window.addEventListener('comments-suspend',protectDraft);
+window.addEventListener('beforeunload',function(event){if(hasInput()||Array.from(drafts.values()).some(function(draft){return draft.dirty;})){event.preventDefault();event.returnValue='';}});
 document.getElementById('copy-requests').addEventListener('click',async function(){
   var output=document.getElementById('export-feedback');
   var rows=records.filter(function(r){return r.kind==='request'&&r.data.status==='未対応';});

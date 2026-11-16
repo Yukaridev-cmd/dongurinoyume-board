@@ -22,7 +22,7 @@ function fixture(){
     if(method==='DELETE'){rows.splice(rows.indexOf(record),1);return{deleted:true};}
   }};
   w.eval(source);
-  return{dom,w,errors,calls,rows,copied,set fail(v){fail=v;},set delay(v){delay=v;},auth(ready){w.dispatchEvent(new w.CustomEvent('comments-auth',{detail:{ready,author:ready?'本人':''}}));},clear(){w.dispatchEvent(new w.CustomEvent('comments-clear'));},form:w.document.getElementById('record-form')};
+  return{dom,w,errors,calls,rows,copied,set fail(v){fail=v;},set delay(v){delay=v;},auth(ready,viewer='a'.repeat(64)){w.dispatchEvent(new w.CustomEvent('comments-auth',{detail:{ready,author:ready?'本人':'',viewer:ready?viewer:''}}));},clear(){w.dispatchEvent(new w.CustomEvent('comments-clear'));},form:w.document.getElementById('record-form')};
 }
 test('private forms stay locked without LINE identity and contain no seeded financial records',async()=>{
   const b=fixture();try{await tick();assert.equal(b.w.document.getElementById('record-fields').disabled,true);assert.equal(b.calls.length,0);assert.equal(b.form.elements.salesYen.value,'');assert.equal(b.errors.length,0);assert.ok(!b.w.document.body.textContent.includes('1234円'));}finally{b.dom.window.close();}

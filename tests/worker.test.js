@@ -48,6 +48,14 @@ test('configuration fails closed unless exactly two distinct users are explicitl
   }
   assert.equal(f.calls, 0);
 });
+
+test('session draft identity is server verified, stable across label changes, distinct for members and contains no LINE subject',async()=>{
+  const f=fixture();const a=await(await f.request('/session')).json();assert.match(a.viewer,/^[a-f0-9]{64}$/);assert.ok(!JSON.stringify(a).includes(first));
+  f.env.LINE_MEMBERS=JSON.stringify({[first]:'changed label',[second]:'other label'});
+  assert.equal((await(await f.request('/session')).json()).viewer,a.viewer);
+  f.subject=second;const b=await(await f.request('/session')).json();assert.notEqual(b.viewer,a.viewer);assert.ok(!JSON.stringify(b).includes(second));
+  f.subject=outsider;assert.equal((await f.request('/session')).status,403);
+});
 test('missing token, tampered, expired, wrong-channel and outsider tokens cannot read or write', async () => {
   const f = fixture();
   assert.equal((await f.request('/comments', 'GET', undefined, { Authorization: '' })).status, 401);

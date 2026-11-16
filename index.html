@@ -1779,6 +1779,7 @@ footer{margin-top:32px}
 
 <section class="memo-zone" aria-label="コメント共有の接続" style="margin:12px">
 <p id="comments-status" role="status">コメント共有の設定を確認中</p>
+<p class="hint">未保存の入力はページ内で一時保護し、同じLINEアカウントの確認後に復元。再読込・タブ終了・OSによるページ破棄の前に保存する。</p>
 <button type="button" class="btn small" id="comments-login">共有コメントを再読込</button>
 </section>
 <script src="comments-config.js"></script>
@@ -1907,6 +1908,28 @@ showToast('ポップの文面をコピー済み');
 var comments = [];
 var currentAuthor = '';
 var commentsReady = false;
+var currentViewer = '', boardDrafts = new Map();
+function commentInputs() { return Array.from(document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text')); }
+function protectCommentDrafts() {
+var inputs=commentInputs().filter(function(ta){return ta.value!=='';}).map(function(ta){return {element:ta,text:ta.value,id:ta._commentId};});
+var edits=Array.from(document.querySelectorAll('[data-comment-editor]')).map(function(ta){return {id:ta.getAttribute('data-comment-id'),version:Number(ta.getAttribute('data-comment-version')),text:ta.value};});
+if(currentViewer&&(inputs.length||edits.length))boardDrafts.set(currentViewer,{inputs:inputs,edits:edits});
+commentInputs().forEach(function(ta){ta.value='';delete ta._commentId;});
+comments=[];
+document.querySelectorAll('[data-comment-editor]').forEach(function(ta){ta.removeAttribute('data-comment-editor');});
+renderComments();
+}
+function restoreCommentDrafts() {
+var draft=boardDrafts.get(currentViewer);if(!draft)return;
+draft.inputs.forEach(function(input){if(input.element.isConnected){input.element.value=input.text;if(input.id)input.element._commentId=input.id;}});
+draft.edits.forEach(function(edit){
+var card=Array.from(document.querySelectorAll('[data-comment-card]')).find(function(node){return node.getAttribute('data-comment-card')===edit.id;});
+var button=card&&card.querySelector('[data-comment-edit]');
+if(button){button.click();var ta=card.querySelector('[data-comment-editor]');ta.value=edit.text;ta.setAttribute('data-comment-version',String(edit.version));}
+else {var quick=document.getElementById('quick-text');if(quick){quick.value+=(quick.value?'\n\n':'')+edit.text;var panel=document.getElementById('quick-panel');if(panel)panel.hidden=false;showToast('元コメントが見つからず。未保存の編集をクイック欄へ復元');}}
+});
+boardDrafts.delete(currentViewer);
+}
 function makeAuthorSelect() {
 var sel = document.createElement('select');
 sel.className = 'author-sel';
@@ -1924,7 +1947,7 @@ sel.options[0].value = currentAuthor;
 sel.options[0].textContent = currentAuthor || 'LINE認証を確認';
 });
 document.querySelectorAll('[data-memo-add], .inline-memo .btn, #quick-add').forEach(function (btn) { btn.disabled = !commentsReady; });
-document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text').forEach(function (ta) { ta.disabled = !commentsReady; ta.maxLength = 4000; });
+document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text').forEach(function (ta) { ta.disabled = !commentsReady; ta.maxLength = 4000; ta.setAttribute('autocomplete','off'); });
 }
 function renderComments() {
 document.querySelectorAll('[data-memo-zone]').forEach(function (zone) {
@@ -1941,13 +1964,14 @@ comments.filter(function (c) { return c.target === list.getAttribute('data-comme
 rebuildSummary();
 }
 window.addEventListener('comments-auth', function (event) {
-commentsReady = event.detail.ready; currentAuthor = event.detail.author; setCommentAccess(); rebuildSummary();
+if((!event.detail.ready&&commentsReady)||(event.detail.ready&&commentsReady&&currentViewer&&currentViewer!==event.detail.viewer))protectCommentDrafts();
+commentsReady = event.detail.ready; currentAuthor = event.detail.author;
+if(commentsReady)currentViewer=event.detail.viewer;
+setCommentAccess();if(commentsReady)restoreCommentDrafts();rebuildSummary();
 });
-window.addEventListener('comments-clear', function () {
-comments = [];
-document.querySelectorAll('[data-comment-editor]').forEach(function (ta) { ta.removeAttribute('data-comment-editor'); });
-renderComments();
-});
+window.addEventListener('comments-clear',protectCommentDrafts);
+window.addEventListener('comments-suspend',protectCommentDrafts);
+window.addEventListener('beforeunload',function(event){if(boardDrafts.size||document.querySelector('[data-comment-editor]')||commentInputs().some(function(ta){return ta.value!=='';})){event.preventDefault();event.returnValue='';}});
 window.addEventListener('comments-loaded', function (event) { comments = event.detail; renderComments(); });
 async function submitComment(target, ta, button) {
 if (!commentsReady || button.disabled) return false;
@@ -1974,6 +1998,7 @@ return d.getFullYear() + '/' + p(d.getMonth() + 1) + '/' + p(d.getDate()) + ' ' 
 function commentCard(c) {
 var card = document.createElement('article');
 card.className = 'memo-card';
+card.setAttribute('data-comment-card',c.id);
 var meta = document.createElement('div');
 meta.className = 'memo-meta';
 var who = document.createElement('span');
@@ -1996,6 +2021,7 @@ showToast('更新依頼に保存済み。「二人の記録」で確認');
 card.appendChild(request);
 if (c.canEdit) {
 var edit = document.createElement('button'); edit.type = 'button'; edit.className = 'memo-del'; edit.textContent = '編集';
+edit.setAttribute('data-comment-edit','');
 var del = document.createElement('button'); del.type = 'button'; del.className = 'memo-del'; del.textContent = '消す';
 meta.append(edit, del);
 del.addEventListener('click', async function () {
@@ -2012,6 +2038,8 @@ edit.addEventListener('click', function () {
 edit.disabled = true; del.disabled = true;
 var ta = document.createElement('textarea'); ta.value = c.text; ta.rows = 3; ta.maxLength = 4000;
 ta.setAttribute('aria-label', 'コメントを編集'); ta.setAttribute('data-comment-editor', '');
+ta.setAttribute('autocomplete','off');
+ta.setAttribute('data-comment-id',c.id);ta.setAttribute('data-comment-version',String(c.version));
 var save = document.createElement('button'); save.type = 'button'; save.className = 'btn small'; save.textContent = '変更を保存';
 var cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'btn small'; cancel.textContent = '取消';
 body.replaceChildren(ta, save, cancel); ta.focus();
@@ -2019,7 +2047,7 @@ cancel.addEventListener('click', function () { body.textContent = c.text; render
 save.addEventListener('click', async function () {
 save.disabled = true; cancel.disabled = true; ta.disabled = true;
 try {
-var result = await window.DonguriComments.save('/comments/' + c.id, 'PATCH', { version: c.version, text: ta.value });
+var result = await window.DonguriComments.save('/comments/' + c.id, 'PATCH', { version: Number(ta.getAttribute('data-comment-version')), text: ta.value });
 comments = comments.map(function (x) { return x.id === c.id ? result.comment : x; });
 ta.removeAttribute('data-comment-editor');
 renderComments(); showToast('変更保存済み');

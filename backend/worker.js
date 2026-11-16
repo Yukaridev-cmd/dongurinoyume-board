@@ -89,7 +89,11 @@ export function createHandler(fetcher = fetch) {
       if (url.pathname !== '/session' && url.pathname !== '/comments' && !match && !isRecord) throw new HttpError(404, '対象なし');
       const user = await authenticate(request, env, members, fetcher);
       if (isRecord) return await routeRecords(request, url, env, user, members, json);
-      if (url.pathname === '/session' && request.method === 'GET') return json({ author: user.name });
+      if (url.pathname === '/session' && request.method === 'GET') {
+        const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(env.LINE_CHANNEL_ID + ':' + user.id));
+        const viewer = Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+        return json({ author: user.name, viewer });
+      }
       if (url.pathname === '/comments' && request.method === 'GET') {
         const cursor = url.searchParams.get('cursor') || '';
         if (cursor && !UUID.test(cursor)) throw new HttpError(400, '取得位置を確認');
