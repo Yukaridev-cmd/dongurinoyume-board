@@ -1,3 +1,4 @@
+import { recordsApi } from './records.js';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -53,7 +54,7 @@ async function readBody(request) {
   const bytes = new Uint8Array(size); let offset = 0;
   for (const part of parts) { bytes.set(part, offset); offset += part.byteLength; }
   try {
-    const body = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
+    const body = JSON.parse(new TextDecoder('utf-8', { fatal: true, ignoreBOM: false }).decode(bytes));
     if (!body || Array.isArray(body) || typeof body !== 'object') throw Error();
     return body;
   } catch { throw new HttpError(400, '入力を確認'); }
@@ -66,6 +67,7 @@ function present(row, user, members) {
   return { id: row.id, target: row.target, text: row.text, author: members[row.owner] || '共有メンバー',
     stamp: row.created_at, version: row.version, canEdit: row.owner === user.id };
 }
+const routeRecords = recordsApi({ HttpError, UUID, readBody, field });
 export function createHandler(fetcher = fetch) {
   return async function handle(request, env) {
     const origin = request.headers.get('Origin');
@@ -83,8 +85,10 @@ export function createHandler(fetcher = fetch) {
       }
       const url = new URL(request.url);
       const match = url.pathname.match(/^\/comments\/([0-9a-f-]+)$/i);
-      if (url.pathname !== '/session' && url.pathname !== '/comments' && !match) throw new HttpError(404, '対象なし');
+      const isRecord = url.pathname === '/records' || /^\/records\/[0-9a-f-]+$/i.test(url.pathname);
+      if (url.pathname !== '/session' && url.pathname !== '/comments' && !match && !isRecord) throw new HttpError(404, '対象なし');
       const user = await authenticate(request, env, members, fetcher);
+      if (isRecord) return await routeRecords(request, url, env, user, members, json);
       if (url.pathname === '/session' && request.method === 'GET') return json({ author: user.name });
       if (url.pathname === '/comments' && request.method === 'GET') {
         const cursor = url.searchParams.get('cursor') || '';

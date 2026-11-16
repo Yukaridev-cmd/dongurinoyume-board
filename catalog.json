@@ -1,0 +1,289 @@
+[
+  {
+    "id": "work-haniwa",
+    "title": "はにわキーホルダー",
+    "photos": [
+      {
+        "src": "assets/kiraria-haniwa.jpg",
+        "label": "はにわのポップと、ボードに並ぶはにわキーホルダー4点"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-strap",
+    "title": "あみぐるみストラップ",
+    "photos": [
+      {
+        "src": "assets/kiraria-strap.jpg",
+        "label": "あみぐるみストラップ300円のポップと、ボードに並ぶストラップ8点"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-bunny",
+    "title": "若草色のうさぎ",
+    "photos": [
+      {
+        "src": "assets/kiraria-bunny.jpg",
+        "label": "金のリボンを付けた、若草色のうさぎのあみぐるみの単体写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-pouch",
+    "title": "くまモチーフの巾着ポーチ",
+    "photos": [
+      {
+        "src": "assets/kiraria-pouches.jpg",
+        "label": "くまモチーフの巾着ポーチ9点を並べた写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-womburger",
+    "title": "ウォンバーガー",
+    "photos": [
+      {
+        "src": "assets/wombat-burger-keys.jpg",
+        "label": "ウォンバーガーのキーホルダー5点を手に持った写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-wombat-kinchaku",
+    "title": "ウォンバットモチーフの巾着ポーチ",
+    "photos": [
+      {
+        "src": "assets/wombat-pouch-blue.jpg",
+        "label": "フェルトのウォンバット柄が付いた、青い編み巾着ポーチ"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-wombat-badge",
+    "title": "缶バッジ（ウォンバット）",
+    "photos": [
+      {
+        "src": "assets/wombat-badges-indoor.jpg",
+        "label": "ウォンバットの缶バッジがボードに並ぶ写真。全点300円"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-wombat-gamaguchi",
+    "title": "がまぐち（ウォンバット柄）",
+    "photos": [
+      {
+        "src": "assets/wombat-booth-indoor.jpg",
+        "label": "ウォンバット柄のがまぐちとバッグを並べた室内ブースの写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-gamaguchi-cloth",
+    "title": "がま口（布製）",
+    "photos": [
+      {
+        "src": "assets/product-gamaguchi-cloth.jpg",
+        "label": "布製のがま口を白いカゴに並べた写真。「がま口 1コ700円」の看板つき"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-wombat-flatpouch",
+    "title": "フラットポーチ（ウォンバット柄）",
+    "photos": [
+      {
+        "src": "assets/wombat-pouches-display.jpg",
+        "label": "ウォンバット柄のフラットポーチを並べた写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-wombat-amipouch",
+    "title": "編みポーチ（ウォンバット付き）",
+    "photos": [
+      {
+        "src": "assets/wombat-burger-display.jpg",
+        "label": "ウォンバーガーの陳列の横に並ぶ、ウォンバット付きの編みポーチ"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-wombat-small",
+    "title": "ウォンバットのあみぐるみ（小）",
+    "photos": [
+      {
+        "src": "assets/wombat-burger-small.jpg",
+        "label": "ウォンバーガーの陳列の下に立つ、小さいウォンバットのあみぐるみ"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-vege",
+    "title": "ベジたべるぅキーホルダー",
+    "photos": [
+      {
+        "src": "assets/sumida-booth.jpg",
+        "label": "ベジたべるぅキーホルダーのポップと陳列。隅田川のブース"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-tsunagi",
+    "title": "あみぐるみフレンズ",
+    "photos": [
+      {
+        "src": "assets/kiraria-tsunagi.jpg",
+        "label": "あみぐるみフレンズ13点がボードに並ぶ写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-omikuji",
+    "title": "あみものおみくじ",
+    "photos": [
+      {
+        "src": "assets/heart-omikuji.jpg",
+        "label": "あみものおみくじ1回500円のポップと、花・果物のキーホルダーの陳列"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-ichigogari",
+    "title": "いちご狩り",
+    "photos": [
+      {
+        "src": "assets/heart-ichigo.jpg",
+        "label": "いちご狩り1回300円のポップと、いちごのキーホルダーの陳列"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-hairpin",
+    "title": "ヘアピン",
+    "photos": [
+      {
+        "src": "assets/sumida-tulip.jpg",
+        "label": "チューリップのヘアピン2個を着けた着用写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-bigamigurumi",
+    "title": "大きいあみぐるみ",
+    "photos": [],
+    "photoType": "実物写真は未確認"
+  },
+  {
+    "id": "work-heart-bear",
+    "title": "ハートを持つくまのあみぐるみ",
+    "photos": [],
+    "photoType": "実物写真は未確認"
+  },
+  {
+    "id": "work-kuma-pouch",
+    "title": "くまのポーチ（おしゃぶり付き）",
+    "photos": [
+      {
+        "src": "assets/kiraria8-kuma-pouch.jpg",
+        "label": "おしゃぶりと哺乳瓶の飾りが付いた、ふわふわ素材のくまのポーチ2点"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-donut",
+    "title": "ドーナツとクッキーのキーホルダー",
+    "photos": [
+      {
+        "src": "assets/kiraria8-donut.jpg",
+        "label": "ドーナツとクッキーのキーホルダーが並ぶ陳列ボード"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-sushi",
+    "title": "お寿司のあみぐるみ",
+    "photos": [
+      {
+        "src": "assets/kiraria8-sushi-close.jpg",
+        "label": "トレーに並ぶお寿司のあみぐるみ12貫を斜めから寄って撮った写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-hairgomu",
+    "title": "ヘアゴム",
+    "photos": [
+      {
+        "src": "assets/kiraria5-hairgomu.jpg",
+        "label": "ハートの台紙に付いた動物の顔モチーフのヘアゴムがボードに並ぶ写真。「ハートの台紙は¥300」の看板つき"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-magnet",
+    "title": "マグネット",
+    "photos": [
+      {
+        "src": "assets/kiraria5-magnet.jpg",
+        "label": "絵柄入りのマグネットがボードに並ぶ写真。「マグネット 1コ100円」の価格看板つき"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-cat-burger",
+    "title": "ねこバーガーのキーホルダー",
+    "photos": [
+      {
+        "src": "assets/product-cat-burger.jpg",
+        "label": "ねこ型バーガーのキーホルダーと、白ねこの相方がチェーンでつながった写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-blue-dog",
+    "title": "水色の犬のあみぐるみ",
+    "photos": [
+      {
+        "src": "assets/product-blue-dog.jpg",
+        "label": "垂れ耳の水色の犬のあみぐるみ。木の机の上に座った姿"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-happy-pack",
+    "title": "ハッピーパック",
+    "photos": [
+      {
+        "src": "assets/pop-happy-pack.jpg",
+        "label": "ハッピーパックのイラスト。猫の巾着袋とシュシュ・猫ポーチ、「あみもの いろいろ 入ってます」「1,200円分以上入り → 500円」の表示"
+      }
+    ],
+    "photoType": "ポップ画像・実物写真は未確認"
+  }
+]

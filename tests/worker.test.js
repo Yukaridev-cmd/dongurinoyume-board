@@ -12,6 +12,7 @@ const id = '11111111-1111-4111-8111-111111111111';
 function database(path = ':memory:') {
   const sqlite = new DatabaseSync(path);
   sqlite.exec(readFileSync(new URL('../backend/schema.sql', import.meta.url), 'utf8'));
+  sqlite.exec(readFileSync(new URL('../backend/records-schema.sql', import.meta.url), 'utf8'));
   return { sqlite, prepare(sql) {
     return { bind(...args) { const stmt = sqlite.prepare(sql); return {
       async run() { return { meta: { changes: Number(stmt.run(...args).changes) } }; },
@@ -139,4 +140,66 @@ test('upstream and database failures return generic safe errors without private 
   f.env.DB = { prepare() { throw Error('SECRET DATABASE PASSWORD'); } };
   const response = await f.request();
   assert.equal(response.status, 503); assert.equal((await response.text()).includes('SECRET'), false);
+});
+test('private records reject unknown identities and keep missing amounts distinct from zero', async () => {
+  const f = fixture();
+  assert.equal((await f.request('/records', 'GET', undefined, { Authorization: '' })).status, 401);
+  f.subject = outsider;
+  assert.equal((await f.request('/records')).status, 403);
+  assert.equal((await f.request('/records','POST',{id,kind:'review',data:{title:'架空の振り返り',salesYen:0}})).status,403);
+  f.subject = first;
+  const response = await f.request('/records','POST',{id,kind:'review',data:{title:'架空の振り返り',salesYen:0,costsYen:null,notes:'テスト用の本文'}});
+  assert.equal(response.status,201);
+  const row=(await response.json()).record;
+  assert.equal(row.data.salesYen,0);assert.equal(row.data.costsYen,null);
+  assert.equal('owner' in row,false);assert.equal(row.author,'本人');
+  f.subject=second;
+  assert.equal((await (await f.request('/records')).json()).records[0].data.salesYen,0);
+  assert.equal((await f.request('/records/'+id,'PATCH',{version:1,data:{title:'上書き'}})).status,403);
+  assert.equal((await f.request('/records/'+id,'DELETE',{version:1})).status,403);
+});
+test('shared tasks support either member, optimistic updates and preserved prior versions', async () => {
+  const f=fixture();
+  const body={id,kind:'task',data:{title:'テストのやること',status:'未着手',dueDate:'2026-12-01',notes:'元の内容'}};
+  assert.equal((await f.request('/records','POST',body)).status,201);
+  assert.equal((await f.request('/records','POST',body)).status,201);
+  assert.equal(f.db.sqlite.prepare('SELECT COUNT(*) AS n FROM records').get().n,1);
+  assert.equal((await f.request('/records','POST',{...body,data:{...body.data,notes:'違う内容'}})).status,409);
+  f.subject=second;
+  const changed=await f.request('/records/'+id,'PATCH',{version:1,data:{...body.data,status:'完了'}});
+  assert.equal(changed.status,200);assert.equal((await changed.json()).record.updatedBy,'妻');
+  assert.equal((await f.request('/records/'+id,'PATCH',{version:1,data:body.data})).status,409);
+  const history=f.db.sqlite.prepare('SELECT * FROM record_history WHERE record_id = ?').get(id);
+  assert.equal(JSON.parse(history.data).status,'未着手');assert.equal(history.version,1);
+  assert.equal((await f.request('/records/'+id,'DELETE',{version:2})).status,200);
+  assert.equal((await (await f.request('/records')).json()).records.length,0);
+  assert.equal(f.db.sqlite.prepare('SELECT COUNT(*) AS n FROM record_history').get().n,2);
+});
+test('record kinds validate integers, dates, photo paths and allowed states; inventory remains a source reconciliation note', async () => {
+  const f=fixture();
+  const invalid=[
+    {kind:'other',data:{title:'x'}},
+    {kind:'review',data:{title:'x',salesYen:-1}},
+    {kind:'review',data:{title:'x',salesYen:'0'}},
+    {kind:'review',data:{title:'x',salesYen:1.5}},
+    {kind:'review',data:{title:'x',date:'2026-02-30'}},
+    {kind:'task',data:{title:'x',status:'unknown'}},
+    {kind:'inventory',data:{title:'x',stock:-1,status:'未確認'}},
+    {kind:'photo',data:{title:'x',status:'確認済み',asset:'https://attacker.example/track.jpg'}},
+    {kind:'photo',data:{title:'x',status:'確認済み',asset:'assets/../private.jpg'}},
+    {kind:'request',data:{title:'x',status:'未対応',notes:'x'.repeat(4001)}}
+  ];
+  for(const body of invalid)assert.equal((await f.request('/records','POST',{id,...body})).status,400);
+  assert.equal((await f.request('/records','POST',{id,kind:'inventory',data:{title:'架空の作品',status:'未確認',stock:null,source:'自動反映済み'}})).status,201);
+  const row=(await (await f.request('/records')).json()).records[0];
+  assert.equal(row.data.stock,null);assert.equal(row.data.source,'棚卸メモ・更新シート未反映');
+});
+test('records survive store reopen without being inserted into the public comment stream', async () => {
+  const dir=mkdtempSync(join(tmpdir(),'donguri-record-test-')),path=join(dir,'private.sqlite');let db=database(path);
+  try{
+    assert.equal((await fixture(db).request('/records','POST',{id,kind:'review',data:{title:'架空の記録',salesYen:1234}})).status,201);
+    db.sqlite.close();db=database(path);const f=fixture(db);f.subject=second;
+    assert.equal((await (await f.request('/records')).json()).records[0].data.salesYen,1234);
+    assert.equal((await (await f.request('/comments')).json()).comments.length,0);
+  }finally{db.sqlite.close();rmSync(path);rmdirSync(dir);}
 });

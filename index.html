@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="referrer" content="no-referrer" />
+<link rel="stylesheet" href="board-additions.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta http-equiv="Cache-Control" content="no-cache" />
 <meta http-equiv="Pragma" content="no-cache" />
@@ -529,6 +530,7 @@ footer{margin-top:32px}
 </div>
 <span class="updated">2026年11月16日 更新</span>
 </div>
+<a class="private-entry" href="private.html">二人の記録 ↗ <span>振り返り・売上・やりたいこと・棚卸メモ</span></a>
 <nav class="tabbar" role="tablist" aria-label="ボードのメニュー">
 <button type="button" role="tab" data-view-btn="home" aria-selected="true">ホーム</button>
 <button type="button" role="tab" data-view-btn="events" aria-selected="false">イベント</button>
@@ -547,7 +549,7 @@ footer{margin-top:32px}
 <ul class="now-list">
 <li><span class="k">次のイベント</span><span><button type="button" class="linklike" data-goto="event-tabashita">タバシタ あったか祭り（2026年12月）</button><br /><span class="dt">12/12（土）9:00〜17:00</span><span class="cd" data-until="2026-12-12"></span></span></li>
 <li><span class="k">その次</span><span><button type="button" class="linklike" data-goto="event-xmas">クリスマスマルシェ（2026年12月）</button><br /><span class="dt">12/19（土）10:00〜17:00</span><span class="cd" data-until="2026-12-19"></span></span></li>
-<li><span class="k">作品・在庫</span><span><button type="button" class="linklike" data-goto="works">26作品を登録</button>（価格確認済み 19作品）</span></li>
+<li><span class="k">作品・在庫</span><span><button type="button" class="linklike" data-goto="works">27作品を登録</button>（価格確認済み 19作品）</span></li>
 <li><span class="k">ポップ</span><span><button type="button" class="linklike" data-goto="pops">12点を登録（お支払い方法を追加）</button></span></li>
 <li><span class="k">ウォンバット</span><span><button type="button" class="linklike" data-goto="event-wombat">当日の写真 20枚を登録</button></span></li>
 <li><span class="k">やること</span><span><button type="button" class="linklike" data-goto="booth" data-goto-anchor="booth-tasks">5件</button>（印刷確認・価格と在庫の確認）</span></li>
@@ -576,7 +578,7 @@ footer{margin-top:32px}
 <img class="thumb" src="assets/product-pouches.jpg" alt="" />
 <span><h3>作品・在庫</h3>
 <p>写真・価格・在庫の一覧</p>
-<span class="count">登録 26作品</span></span>
+<span class="count">登録 27作品</span></span>
 </button>
 <button type="button" class="area" data-goto="booth">
 <img class="thumb" src="assets/pop-haniwa.jpg" alt="" />
@@ -1011,6 +1013,7 @@ footer{margin-top:32px}
 
 <!-- ================= 作品・在庫 ================= -->
 <main class="view" id="view-works">
+<p class="source-note">在庫数の空欄は未登録。写真に写る点数は現在の在庫を示さない。棚卸の結果は「二人の記録」に残し、更新シートと照合する</p>
 <div class="view-head"><h2>作品・在庫</h2></div>
 <p class="view-lead">写真・価格・在庫の一覧</p>
 
@@ -1281,6 +1284,15 @@ footer{margin-top:32px}
 <p class="memo"><b>メモ：</b>単品購入用に価格表へ掲載。写真なし（本体の写真は未登録）</p>
 </div>
 </article>
+<article class="work jump" id="work-heart-bear" data-cat="amigurumi">
+<div class="work-photo-pending">実物写真を確認する</div>
+<div class="body">
+<h3>ハートを持つくまのあみぐるみ</h3>
+<div class="price-line"><span class="badge tbd">価格 未確認</span></div>
+<dl><div><dt>種類</dt><dd>あみぐるみ</dd></div><div><dt>在庫</dt><dd><span class="badge tbd">在庫数 未登録</span></dd></div><div><dt>状態</dt><dd>未確認</dd></div></dl>
+<p class="memo"><b>メモ：</b>ハートはピンク。更新シートに登録済み。対応する実物写真を確認する</p>
+</div>
+</article>
 
 <article class="work jump" id="work-kuma-pouch" data-cat="pouch">
 <img src="assets/kiraria8-kuma-pouch.jpg" alt="おしゃぶりと哺乳瓶の飾りが付いた、ふわふわ素材のくまのポーチ2点" loading="lazy" />
@@ -1446,7 +1458,7 @@ footer{margin-top:32px}
 <span class="pill">文案完成 ・ 確認中</span></div></li>
 <li class="task"><span class="tno">3</span><div>
 <h3>作品の価格と在庫数を登録する</h3>
-<p><button type="button" class="linklike" data-goto="works">「作品・在庫」</button>に26作品を登録済み。残りは価格と在庫数の入力</p>
+<p><button type="button" class="linklike" data-goto="works">「作品・在庫」</button>に27作品を登録済み。残りは価格と在庫数の入力</p>
 <span class="pill">あと価格と在庫数</span></div></li>
 <li class="task"><span class="tno">4</span><div>
 <h3>クリスマスマルシェ（2026年12月）の日程を登録する</h3>
@@ -1973,6 +1985,15 @@ meta.append(who, time);
 var body = document.createElement('div');
 body.className = 'memo-text'; body.textContent = c.text;
 card.append(meta, body);
+var request = document.createElement('button'); request.type = 'button'; request.className = 'btn small'; request.textContent = '更新依頼にする';
+request.addEventListener('click', async function () {
+request.disabled = true;
+try {
+await window.DonguriComments.save('/records', 'POST', { id: c.id, kind: 'request', data: { title: c.target.slice(0,160), notes: c.text, status: '未対応' } });
+showToast('更新依頼に保存済み。「二人の記録」で確認');
+} catch (error) { showToast(error.message); request.disabled = false; }
+});
+card.appendChild(request);
 if (c.canEdit) {
 var edit = document.createElement('button'); edit.type = 'button'; edit.className = 'memo-del'; edit.textContent = '編集';
 var del = document.createElement('button'); del.type = 'button'; del.className = 'memo-del'; del.textContent = '消す';
@@ -2156,6 +2177,11 @@ container.appendChild(wrap);
 document.querySelectorAll('.work .body').forEach(function (body) {
 var card = body.closest('.work');
 var h = card? card.querySelector('h3'): null;
+if (card && !body.querySelector('.photo-caption')) {
+var caption = document.createElement('p'); caption.className = 'photo-caption';
+caption.textContent = card.id === 'work-happy-pack' ? 'ポップ画像。セットの実物写真と中身は確認待ち' : card.querySelector('img') ? '既存の作品・展示写真。現在の在庫と仕様は別途確認' : '対応する実物写真は確認待ち';
+body.appendChild(caption);
+}
 addInlineComment(body, '作品：' + (h? h.textContent: '作品'), '価格・在庫・作る数・直すところなど');
 });
 document.querySelectorAll('.pop-entry .foot').forEach(function (foot) {

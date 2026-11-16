@@ -24,6 +24,7 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
     if (failure) return Response.json({ error: '保存失敗' }, { status: failure });
     if (url.endsWith('/session')) return Response.json({ author: '本人' });
     if (options.method === 'POST') {
+      if (url.endsWith('/records')) return Response.json({ record: { ...JSON.parse(options.body), version: 1 } }, { status: 201 });
       if (deferPost) await deferPost;
       const body = JSON.parse(options.body);
       const c = { ...body, author: '本人', stamp: new Date().toISOString(), canEdit: true, version: 1 };
@@ -127,6 +128,15 @@ test('authentication failure clears all visible comments and summaries', async (
     assert.equal(add.disabled, true);
   } finally { b.dom.window.close(); }
 });
+test('page-cache navigation clears private comments and revalidates on return', async () => {
+  const b=browser();try{
+    await tick();const {ta,add,zone}=b.zone();ta.value='履歴に残さない本文';add.click();await tick();
+    b.w.dispatchEvent(new b.w.PageTransitionEvent('pagehide',{persisted:true}));
+    assert.equal(zone.querySelectorAll('.memo-card').length,0);assert.equal(add.disabled,true);
+    b.w.dispatchEvent(new b.w.PageTransitionEvent('pageshow',{persisted:true}));await tick();
+    assert.equal(zone.querySelectorAll('.memo-card').length,1);assert.equal(add.disabled,false);
+  }finally{b.dom.window.close();}
+});
 test('inline card and quick-panel submissions retain the correct target', async () => {
   const b = browser();
   try {
@@ -156,17 +166,30 @@ test('a late save response after authentication loss cannot redisplay private co
     assert.equal(add.disabled, true);
   } finally { b.dom.window.close(); }
 });
+test('comments become pending private update requests only through an explicit click', async () => {
+  const b=browser();
+  try{
+    await tick();const {ta,add,zone}=b.zone();ta.value='テストの更新依頼';add.click();await tick();
+    assert.equal(b.requests.filter(r=>r.url.endsWith('/records')).length,0);
+    [...zone.querySelectorAll('.memo-card button')].find(btn=>btn.textContent==='更新依頼にする').click();await tick();
+    const sent=b.requests.find(r=>r.url.endsWith('/records'));const body=JSON.parse(sent.options.body);
+    assert.equal(body.kind,'request');assert.equal(body.data.status,'未対応');assert.equal(body.data.notes,'テストの更新依頼');
+    assert.ok(b.requests.every(r=>r.url.startsWith('https://comments.example/')));assert.equal(b.errors.length,0);
+  }finally{b.dom.window.close();}
+});
 test('existing images, prices, event headings, page navigation, cream background and font are preserved', async () => {
   const b = browser({ configured: false });
   try {
     const d = b.w.document;
     const preserved = { images: [...d.querySelectorAll('img')].map(el => [el.getAttribute('src'), el.getAttribute('alt')]) };
     for (const selector of ['.view-head h2', '.price', '.meta', '[data-goto]']) {
-      preserved[selector] = [...d.querySelectorAll(selector)].map(el => el.textContent);
+      // The one intentional content-count change follows the added source-Sheet work.
+      preserved[selector] = [...d.querySelectorAll(selector)].map(el => selector === '[data-goto]' ? el.textContent.replace(/27作品/g,'26作品') : el.textContent);
     }
     // Snapshot of public content from original commit c88b5c1, independent of HEAD.
     assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'), 'c2851423fae55255eb7eebc5109b95730acd61afe3eb4013959da0afcadc3207');
     assert.ok(html.includes('--paper:#fdf6e0')); assert.ok(html.includes('Meiryo UI'));
+    assert.equal(html.includes('26作品'),false);assert.equal(d.querySelectorAll('.work').length,27);
     const nav = d.querySelector('[data-goto="works"]'); nav.click();
     assert.equal(d.querySelector('#view-works').classList.contains('active'), true);
     assert.ok(d.querySelectorAll('.work .inline-memo').length > 0);

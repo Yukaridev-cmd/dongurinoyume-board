@@ -4,9 +4,11 @@
 
 2026年11月16日にGitHubの接続アカウントと対象リポジトリの管理・書込権限を確認。リポジトリに `AGENTS.md` と `.agents/skills` は存在しない。READMEの編集規則を適用する。
 
-LINE Developersはログイン画面まで確認。既存プロバイダー・LINE Loginチャネル・LIFFアプリ・本人と妻のユーザーIDは未確認。Cloudflareは保存済みプロフィールを確認したものの、続行ボタンに利用規約への同意が含まれるため操作を停止。既存Worker・D1・料金プランは未確認。新規アカウント作成、規約同意、サービスの契約、外部設定、実環境への配備は未実施。
+LINE Developersは既存LINEアカウントで認証番号による本人確認まで到達。既存プロバイダー・LINE Loginチャネル・LIFFアプリ・本人と妻のユーザーIDは未確認。本人操作待ちのため、就寝中に再発行や通知を行わない。
 
-公開設定ファイルは空のまま保持する。`main` に変更を入れるとGitHub Pagesへ反映されるため、接続先と二人の確認を終えるまでレビュー用ブランチを維持する。
+Cloudflareは本人の明示承認後に既存Googleアカウントでログインし、Workers Freeが現在のプランであることを確認。既存アプリを変更せず、専用Worker `dongurinoyume-comments` と専用D1を作成。本人が承認した初期Hello World配備を経て、認証未設定で閉じるコメント・記録APIへ置換済み。D1にコメント・記録・履歴用の空スキーマを作成し、実コメント・金額・在庫実数は未投入。Workerのログ・トレース・プレビューURLは無効。課金プラン変更、新規アカウント作成、新しいOAuth/APIトークン付与は未実施。
+
+公開設定ファイルには配備済みAPIオリジンだけを設定し、LIFF IDは空のまま保持する。LINEの本人確認と二人の許可リストが揃うまで記録の取得・投稿を止める。`main` に変更を入れるとGitHub Pagesへ反映されるため、コードと実データの境界を確認してから反映する。
 
 ## 保存と本人確認
 
@@ -24,7 +26,7 @@ Workerの秘密設定 `LINE_MEMBERS` に、本人と妻のLINEユーザーIDと�
 2. そのチャネルにLIFFアプリを用意し、エンドポイントを `https://yukaridev-cmd.github.io/dongurinoyume-board/` に合わせる。`openid` のみを要求し、不要なメール・メッセージ送信権限を追加しない。開発中のチャネルでは二人のテスター権限と同意が必要になるため、権限を広げる前に確認する。[LIFF登録手順](https://developers.line.biz/en/docs/liff/registering-liff-apps/)
 3. 同じチャネルで確認した本人と妻の二件のユーザーIDを、各本人と照合する。チャネルのBasic settingsにある本人のIDや、検証済みIDトークンの `sub` を使う。別プロバイダーのID、表示名、LINEの検索用IDで代用しない。妻の値が未確認なら空欄のまま停止し、先着登録用エンドポイントを追加しない。
 4. Cloudflareにログインし、既存アカウント・契約・利用上限・保存先を確認する。利用規約同意、新規D1作成、料金の発生、バインディング作成や権限追加は確認を終えてから進める。Cloudflareは候補であり、採用・契約済みとは扱わない。
-5. 許可した保存先へWorkerコードを配備する。`backend/wrangler.toml.example` を `backend/wrangler.toml` にコピーし、確認済みのDB IDとLINE LoginチャネルIDを設定する。`ALLOWED_ORIGIN` は既存ページの `https://yukaridev-cmd.github.io` を使う。DBの `DB` バインディングを作り、`backend/schema.sql` を適用する。本番DBを対象とする操作は配備確認後に行う。[D1のバインディング](https://developers.cloudflare.com/d1/worker-api/)
+5. 専用Worker・D1・`DB`バインディング・`ALLOWED_ORIGIN`は準備済み。再配備する場合は `backend/wrangler.toml.example` を `backend/wrangler.toml` にコピーし、確認済みDB IDとLINE LoginチャネルIDを設定する。`ALLOWED_ORIGIN` は `https://yukaridev-cmd.github.io` を使う。新しいDBには `backend/schema.sql` と `backend/records-schema.sql` を適用する。既存の本番データを変更する操作は差分を確認してから行う。[D1のバインディング](https://developers.cloudflare.com/d1/worker-api/)
 6. `LINE_MEMBERS` をWorkerのSecretとして登録する。値は「本人の確認済みID→本人の表示名」「妻の確認済みID→妻の表示名」のJSONオブジェクトにする。実値を設定例、コミット、チケット、チャットへ貼り付けない。LINEのチャネルシークレットやMessaging APIのアクセストークンは、この方式では不要。[WorkerのSecret](https://developers.cloudflare.com/workers/configuration/secrets/)
 7. 確認済みのLIFF IDとWorkerのHTTPSオリジンだけを `comments-config.js` に設定する。`apiBase` の末尾に `/` を付けない。LIFF IDとAPI URLは公開識別子として扱う。
 8. 下記の実機確認を終え、本人が配備内容を確認してから `main` へ反映する。二人は通常のページURLではなく `https://liff.line.me/＜確認済みLIFF ID＞` をLINEで開く。外部ブラウザからのコメント操作は画面で止める。
@@ -37,7 +39,17 @@ Wranglerの `secret put` は新しいWorkerバージョンを配備するため�
 
 確認済みの項目：二人以外の拒否、設定不足時の停止、偽装した名前の無視、期限切れ・別チャネルの拒否、本人だけの編集・削除、更新競合、二重投稿防止、入力上限、SQLパラメーター化、HTMLとして解釈しない表示、ページ送り、DBを閉じた後の再取得、投稿・編集失敗時の入力保持、認証失敗時の表示消去。既存の画像・価格・イベント見出し・画面切替も比較する。Wrangler 4.163.0 の `deploy --dry-run` でWorkerのビルドを確認済み。dry-runは実際の配備や本番接続を行わない。
 
-未検証の項目：実際のLINE IDトークン検証、二台のLINE端末、LINE内の初回同意と復帰、Cloudflare WorkerランタイムとD1本番接続、LIFFの実エンドポイント、実画面のモバイル配置、サービス料金・利用上限。実サービスの設定が未完了のため、本番での永続保存はまだ利用開始できない。
+配備後の匿名スモーク検証ではコメント・記録の取得・投稿・削除・偽トークンの計9ケースで拒否と `no-store` を確認。許可オリジンからもLINE未設定なら503で停止し、他オリジンとオリジンなしは403。実D1のコメント・記録・履歴はいずれも0件。記録APIのコードはローカルの検証済みバンドルとSHA-256を照合して配備。ローカルChromeでデスクトップ表示と390px幅の入力欄を確認し、画面外への横はみ出しがないことを実測。
+
+未検証の項目：実際のLINE IDトークン検証、二台のLINE端末、LINE内の初回同意と復帰、認証成功後の実WorkerからD1への読書き、LIFFの実エンドポイント、現物を使った写真・在庫の最終照合。実サービスの認証設定が未完了のため、本番の記録はまだ利用開始できない。
+
+## 二人用の記録API
+
+`/records` はコメントと同じLINE検証と許可リストを使い、振り返り・やること・棚卸・写真照合・更新依頼を保存する。売上・費用・在庫は未入力を `null`、確認したゼロを `0` として区別する。振り返りの編集は書いた本人だけ、他の共同作業は二人のどちらも編集可能。更新番号が競合した場合は入力を残して再確認する。
+
+記録の変更前バージョンはDBトリガーで `record_history` に保存し、削除は非表示フラグを使う。通常APIから履歴や削除済み記録は返さない。画面の書き出しは表示中の記録だけを対象とするため、履歴の完全なバックアップや復元運用は別途確認する。ブラウザの自動保存は行わず、認証が切れた場合は金額・私的な入力欄も消去する。
+
+更新依頼はコピーまたは手元のファイルへ保存するだけで、外部AI、メール、LINEメッセージ、Google Sheetsへ自動送信しない。外部連携を追加する場合は送信先・対象データ・公開範囲を本人が確認してから進める。
 
 ## 実機での利用開始確認
 

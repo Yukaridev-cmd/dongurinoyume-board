@@ -33,7 +33,7 @@ async function request(path, method, body) {
 }
 async function connect() {
   if (flight) return flight;
-  if (document.querySelector('[data-comment-editor]')) { publish('編集を保存・取消してから再読込'); return; }
+  if (document.querySelector('[data-comment-editor], [data-private-dirty]')) { publish('入力を保存・取消してから再読込'); return; }
   var started = generation;
   flight = (async function () {
     try {
@@ -75,6 +75,8 @@ window.DonguriComments = {
 if (login) login.addEventListener('click', connect);
 // Revalidate on return to LINE and periodically; an expired/revoked login clears memory and summaries.
 document.addEventListener('visibilitychange', function () { if (document.hidden) lock('LINE認証を再確認'); else connect(); });
+window.addEventListener('pagehide', function () { lock('LINE認証を再確認'); });
+window.addEventListener('pageshow', function (event) { if (event.persisted) connect(); });
 setInterval(async function () {
   if (document.hidden || !ready) return;
   try { await request('/session'); } catch (error) { lock(error.message); }
