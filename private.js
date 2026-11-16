@@ -1,7 +1,7 @@
 (function () {
 'use strict';
 var records = [], ready = false, kind = 'review', editing = null, generation = 0, catalog = [];
-var currentViewer = '', drafts = new Map();
+var currentViewer = '', drafts = new Map(), saving = false;
 var draftFields = ['title','date','salesYen','costsYen','dueDate','stock','asset','status','notes'];
 var form = document.getElementById('record-form'), fields = document.getElementById('record-fields');
 var feedback = document.getElementById('record-feedback'), list = document.getElementById('record-list');
@@ -17,6 +17,11 @@ var states = {task:['未着手','進行中','完了'],inventory:['未確認','�
 function el(tag,text,className) { var n=document.createElement(tag); if(text!==undefined)n.textContent=text;if(className)n.className=className;return n; }
 function number(v) { return v === '' ? null : Number(v); }
 function money(v) { return v === null || v === undefined ? '未入力' : v.toLocaleString('ja-JP')+'円'; }
+function setSaving(value) {
+  saving=value;fields.disabled=!ready||saving;form.setAttribute('aria-busy',String(saving));
+  document.querySelectorAll('[data-kind],.record-card button').forEach(function(button){button.disabled=saving;});
+}
+function mutationBlocked() { if(!saving)return false;feedback.textContent='保存処理中。結果を確認してから別の記録を開く';return true; }
 function reset() { form.reset(); form.removeAttribute('data-private-dirty'); editing=null; delete form._recordId;document.getElementById('form-title').textContent='記録を追加';document.getElementById('record-cancel').hidden=true; document.getElementById('photo-preview').hidden=true; }
 function hasInput() {
   return form.hasAttribute('data-private-dirty') || editing || form._recordId ||
@@ -28,7 +33,7 @@ function protectDraft() {
     var values={};draftFields.forEach(function(key){values[key]=form.elements[key].value;});
     drafts.set(currentViewer,{kind:kind,values:values,id:form._recordId,editing:editing?{id:editing.id,version:editing.version}:null,dirty:dirty,query:query,openOnly:document.getElementById('open-only').checked});
   }
-  ready=false;generation++;records=[];reset();fields.disabled=true;
+  ready=false;generation++;records=[];reset();setSaving(false);
   document.getElementById('record-search').value='';document.getElementById('open-only').checked=false;
   document.getElementById('copy-requests').disabled=true;document.getElementById('export-records').disabled=true;
   feedback.textContent=drafts.size?'未保存入力をこのページ内で一時保護。同じLINEアカウントを確認後に復元':'';
@@ -48,7 +53,8 @@ function restoreDraft() {
   return true;
 }
 function setKind(next) {
-  if(form.hasAttribute('data-private-dirty') && !window.confirm('入力を取消して切り替える'))return;
+  if(mutationBlocked())return false;
+  if(form.hasAttribute('data-private-dirty') && !window.confirm('入力を取消して切り替える'))return false;
   kind=next;reset(); feedback.textContent='';
   document.querySelectorAll('[data-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.kind===kind));});
   document.querySelectorAll('[data-for]').forEach(function(block){block.hidden=block.dataset.for!==kind;block.querySelectorAll('input,select').forEach(function(input){input.disabled=block.hidden;});});
@@ -62,6 +68,7 @@ function setKind(next) {
   document.getElementById('notes-label').firstChild.textContent={review:'振り返り・次にやること',task:'やりたいことの詳細',inventory:'数えた条件・照合メモ',photo:'写真と中身の確認メモ',request:'変更内容・確認する根拠'}[kind];
   document.getElementById('open-only').checked=false;
   render();
+  return true;
 }
 function dataFromForm() {
   var f=form.elements, data={title:f.title.value.trim(),notes:f.notes.value.trim()};
@@ -73,6 +80,7 @@ function dataFromForm() {
   return data;
 }
 function beginEdit(record) {
+  if(mutationBlocked())return;
   if(form.hasAttribute('data-private-dirty') && !window.confirm('入力を取消して編集する'))return;
   reset();editing=record;
   Object.keys(record.data).forEach(function(key){if(form.elements[key])form.elements[key].value=record.data[key]===null?'':record.data[key];});
@@ -105,17 +113,18 @@ function render() {
     if(record.canEdit){
       var edit=el('button','編集');edit.type='button';edit.addEventListener('click',function(){beginEdit(record);});
       var del=el('button','消す');del.type='button';del.addEventListener('click',async function(){
-        if(!window.confirm('この記録を一覧から消す'))return;del.disabled=true;
-        try{await window.DonguriComments.save('/records/'+record.id,'DELETE',{version:record.version});records=records.filter(function(r){return r.id!==record.id;});if(editing&&editing.id===record.id)reset();render();}
-        catch(error){feedback.textContent=error.message;}finally{del.disabled=false;}
+        if(!ready||mutationBlocked()||!window.confirm('この記録を一覧から消す'))return;
+        var epoch=generation;setSaving(true);feedback.textContent='削除処理中';
+        try{await window.DonguriComments.save('/records/'+record.id,'DELETE',{version:record.version});if(epoch!==generation||!ready)return;records=records.filter(function(r){return r.id!==record.id;});if(editing&&editing.id===record.id)reset();render();feedback.textContent='記録を一覧から削除済み';}
+        catch(error){if(epoch===generation)feedback.textContent=error.message;}finally{if(epoch===generation)setSaving(false);}
       });actions.append(edit,del);
     }
     if(record.kind!=='request') {
       var request=el('button','この記録から更新依頼');request.type='button';request.addEventListener('click',function(){
-        setKind('request');if(kind!=='request')return;form.elements.title.value=record.data.title+'の更新';form.elements.notes.value='対象：'+labels[record.kind]+'「'+record.data.title+'」\n変更したいこと：\n確認した根拠：';markDirty();form.scrollIntoView({block:'start',behavior:'smooth'});form.elements.title.focus();
+        if(!setKind('request'))return;form.elements.title.value=record.data.title+'の更新';form.elements.notes.value='対象：'+labels[record.kind]+'「'+record.data.title+'」\n変更したいこと：\n確認した根拠：';markDirty();form.scrollIntoView({block:'start',behavior:'smooth'});form.elements.title.focus();
       });actions.appendChild(request);
     }
-    card.appendChild(actions);list.appendChild(card);
+    actions.querySelectorAll('button').forEach(function(button){button.disabled=saving;});card.appendChild(actions);list.appendChild(card);
   });
 }
 async function load() {
@@ -126,7 +135,7 @@ async function load() {
     if(epoch!==generation||!ready)return;
     records=rows;render();if(!hasInput())feedback.textContent='';
   }catch(error){if(epoch===generation)feedback.textContent=error.message;}
-  finally{if(epoch===generation)fields.disabled=!ready;}
+  finally{if(epoch===generation)fields.disabled=!ready||saving;}
 }
 function markDirty(){form.setAttribute('data-private-dirty','');document.getElementById('record-cancel').hidden=false;}
 form.addEventListener('input',markDirty);
@@ -135,16 +144,16 @@ form.addEventListener('submit',async function(event){
   event.preventDefault();if(!ready||fields.disabled)return;
   var epoch=generation,body={data:dataFromForm()};var wasEditing=editing;
   if(wasEditing)body.version=wasEditing.version;else{if(!form._recordId)form._recordId=crypto.randomUUID();body.id=form._recordId;body.kind=kind;}
-  fields.disabled=true;feedback.textContent='保存中';
+  setSaving(true);feedback.textContent='保存中';
   try{
     var result=await window.DonguriComments.save(wasEditing?'/records/'+wasEditing.id:'/records',wasEditing?'PATCH':'POST',body);
     if(epoch!==generation||!ready)return;
     records=records.filter(function(r){return r.id!==result.record.id;});records.push(result.record);drafts.delete(currentViewer);reset();render();feedback.textContent='記録保存済み';
   }catch(error){if(epoch===generation)feedback.textContent=error.message;}
-  finally{if(epoch===generation)fields.disabled=!ready;}
+  finally{if(epoch===generation)setSaving(false);}
 });
 document.querySelectorAll('[data-kind]').forEach(function(button){button.addEventListener('click',function(){if(kind!==button.dataset.kind)setKind(button.dataset.kind);});});
-document.getElementById('record-cancel').addEventListener('click',function(){drafts.delete(currentViewer);reset();feedback.textContent='';});
+document.getElementById('record-cancel').addEventListener('click',function(){if(mutationBlocked())return;drafts.delete(currentViewer);reset();feedback.textContent='';});
 document.getElementById('record-search').addEventListener('input',render);
 document.getElementById('open-only').addEventListener('change',render);
 function previewPhoto(){var path=form.elements.asset.value,img=document.getElementById('photo-preview');img.hidden=!path;if(path)img.src=path;}
