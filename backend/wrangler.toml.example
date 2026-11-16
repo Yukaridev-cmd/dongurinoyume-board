@@ -1,0 +1,15 @@
+# Copy to a private working directory as wrangler.toml. Do not put secrets here.
+name = "dongurinoyume-comments"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+workers_dev = true
+preview_urls = false
+[observability]
+enabled = false
+[vars]
+ALLOWED_ORIGIN = "https://yukaridev-cmd.github.io"
+LINE_CHANNEL_ID = "REPLACE_WITH_LINE_LOGIN_CHANNEL_ID"
+[[d1_databases]]
+binding = "DB"
+database_name = "dongurinoyume-comments"
+database_id = "REPLACE_WITH_APPROVED_DATABASE_ID"

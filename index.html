@@ -2,6 +2,7 @@
 <html lang="ja" style="background:#fdf6e0;color-scheme:light only">
 <head>
 <meta charset="utf-8" />
+<meta name="referrer" content="no-referrer" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta http-equiv="Cache-Control" content="no-cache" />
 <meta http-equiv="Pragma" content="no-cache" />
@@ -554,7 +555,7 @@ footer{margin-top:32px}
 </div>
 
 <section class="memo-zone" data-memo-zone aria-label="ホームのメモ">
-<div class="memo-head"><h3>コメント</h3><span class="memo-hint">名前を選んで記入し「コメントを追加」。まとめは下の「指摘事項まとめ」からコピー可能</span></div>
+<div class="memo-head"><h3>コメント</h3><span class="memo-hint">LINEで確認した名前で投稿。記入後に「コメントを追加」。まとめは下の「指摘事項まとめ」からコピー可能</span></div>
 <textarea class="free-write" rows="3" placeholder="気づいたこと、やること、連絡したいこと"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" data-memo-add>メモとして残す</button>
@@ -1764,6 +1765,11 @@ footer{margin-top:32px}
 あみぐるみストラップ 300円
 ― どんぐりの夢</template>
 
+<section class="memo-zone" aria-label="コメント共有の接続" style="margin:12px">
+<p id="comments-status" role="status">コメント共有の設定を確認中</p>
+<button type="button" class="btn small" id="comments-login">共有コメントを再読込</button>
+</section>
+<script src="comments-config.js"></script>
 <script>
 (function () {
 /* アプリ内ブラウザの自動ダーク化対策：配色方式をライト専用で固定 */
@@ -1887,24 +1893,66 @@ showToast('ポップの文面をコピー済み');
 });
 /* ---- comments: name-tagged, per item, with a summary copy ---- */
 var comments = [];
-var cSeq = 0;
-var currentAuthor = '知久';
+var currentAuthor = '';
+var commentsReady = false;
 function makeAuthorSelect() {
 var sel = document.createElement('select');
 sel.className = 'author-sel';
-sel.setAttribute('aria-label', '書く人');
-['知久', '明日海'].forEach(function (name) {
+sel.setAttribute('aria-label', 'LINEで確認した投稿者');
+sel.disabled = true;
 var o = document.createElement('option');
-o.value = name;
-o.textContent = name;
+o.value = currentAuthor;
+o.textContent = currentAuthor || 'LINE認証を確認';
 sel.appendChild(o);
-});
-sel.value = currentAuthor;
-sel.addEventListener('change', function () {
-currentAuthor = sel.value;
-document.querySelectorAll('.author-sel').forEach(function (s) { s.value = currentAuthor;});
-});
 return sel;
+}
+function setCommentAccess() {
+document.querySelectorAll('.author-sel').forEach(function (sel) {
+sel.options[0].value = currentAuthor;
+sel.options[0].textContent = currentAuthor || 'LINE認証を確認';
+});
+document.querySelectorAll('[data-memo-add], .inline-memo .btn, #quick-add').forEach(function (btn) { btn.disabled = !commentsReady; });
+document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text').forEach(function (ta) { ta.disabled = !commentsReady; ta.maxLength = 4000; });
+}
+function renderComments() {
+document.querySelectorAll('[data-memo-zone]').forEach(function (zone) {
+var list = zone.querySelector('.memo-list');
+if (list) list.setAttribute('data-comment-target', zoneTarget(zone));
+});
+document.querySelectorAll('[data-comment-target]').forEach(function (list) {
+if (list.querySelector('[data-comment-editor]')) return;
+list.replaceChildren();
+comments.filter(function (c) { return c.target === list.getAttribute('data-comment-target'); })
+.slice().sort(function (a, b) { return b.stamp.localeCompare(a.stamp) || b.id.localeCompare(a.id); })
+.forEach(function (c) { list.appendChild(commentCard(c)); });
+});
+rebuildSummary();
+}
+window.addEventListener('comments-auth', function (event) {
+commentsReady = event.detail.ready; currentAuthor = event.detail.author; setCommentAccess(); rebuildSummary();
+});
+window.addEventListener('comments-clear', function () {
+comments = [];
+document.querySelectorAll('[data-comment-editor]').forEach(function (ta) { ta.removeAttribute('data-comment-editor'); });
+renderComments();
+});
+window.addEventListener('comments-loaded', function (event) { comments = event.detail; renderComments(); });
+async function submitComment(target, ta, button) {
+if (!commentsReady || button.disabled) return false;
+var text = ta.value.trim();
+if (!text || text.length > 4000) { showToast('コメントは1〜4000文字で記入'); return false; }
+button.disabled = true;
+if (!ta._commentId) ta._commentId = crypto.randomUUID();
+try {
+var result = await window.DonguriComments.save('/comments', 'POST', { id: ta._commentId, target: target, text: text });
+comments = comments.filter(function (c) { return c.id !== result.comment.id; });
+comments.push(result.comment);
+// Only clear the submitted text; preserve any text typed while saving.
+if (ta.value.trim() === text) ta.value = '';
+ta._commentId = null;
+renderComments(); showToast('コメント保存済み'); return true;
+} catch (error) { showToast(error.message); return false; }
+finally { button.disabled = !commentsReady; }
 }
 function stamp() {
 var d = new Date();
@@ -1917,41 +1965,53 @@ card.className = 'memo-card';
 var meta = document.createElement('div');
 meta.className = 'memo-meta';
 var who = document.createElement('span');
-who.className = 'author-badge';
-who.textContent = c.author;
+who.className = 'author-badge'; who.textContent = c.author;
 var time = document.createElement('time');
-time.textContent = c.stamp;
-var del = document.createElement('button');
-del.type = 'button';
-del.className = 'memo-del';
-del.textContent = '消す';
-del.addEventListener('click', function () {
-comments = comments.filter(function (x) { return x.id!== c.id;});
-card.remove();
-rebuildSummary();
-showToast('コメント削除済み');
-});
-meta.appendChild(who);
-meta.appendChild(time);
-meta.appendChild(del);
+time.dateTime = c.stamp;
+time.textContent = new Date(c.stamp).toLocaleString('ja-JP');
+meta.append(who, time);
 var body = document.createElement('div');
-body.className = 'memo-text';
-body.contentEditable = 'true';
-body.textContent = c.text;
-body.addEventListener('input', function () { c.text = body.textContent; rebuildSummary();});
-card.appendChild(meta);
-card.appendChild(body);
-return card;
+body.className = 'memo-text'; body.textContent = c.text;
+card.append(meta, body);
+if (c.canEdit) {
+var edit = document.createElement('button'); edit.type = 'button'; edit.className = 'memo-del'; edit.textContent = '編集';
+var del = document.createElement('button'); del.type = 'button'; del.className = 'memo-del'; del.textContent = '消す';
+meta.append(edit, del);
+del.addEventListener('click', async function () {
+if (!window.confirm('このコメントを消す')) return;
+del.disabled = true; edit.disabled = true;
+try {
+await window.DonguriComments.save('/comments/' + c.id, 'DELETE', { version: c.version });
+comments = comments.filter(function (x) { return x.id !== c.id; });
+renderComments(); showToast('コメント削除済み');
+} catch (error) { showToast(error.message); }
+finally { del.disabled = false; edit.disabled = false; }
+});
+edit.addEventListener('click', function () {
+edit.disabled = true; del.disabled = true;
+var ta = document.createElement('textarea'); ta.value = c.text; ta.rows = 3; ta.maxLength = 4000;
+ta.setAttribute('aria-label', 'コメントを編集'); ta.setAttribute('data-comment-editor', '');
+var save = document.createElement('button'); save.type = 'button'; save.className = 'btn small'; save.textContent = '変更を保存';
+var cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'btn small'; cancel.textContent = '取消';
+body.replaceChildren(ta, save, cancel); ta.focus();
+cancel.addEventListener('click', function () { body.textContent = c.text; renderComments(); });
+save.addEventListener('click', async function () {
+save.disabled = true; cancel.disabled = true; ta.disabled = true;
+try {
+var result = await window.DonguriComments.save('/comments/' + c.id, 'PATCH', { version: c.version, text: ta.value });
+comments = comments.map(function (x) { return x.id === c.id ? result.comment : x; });
+ta.removeAttribute('data-comment-editor');
+renderComments(); showToast('変更保存済み');
+} catch (error) { showToast(error.message); }
+finally { save.disabled = false; cancel.disabled = false; ta.disabled = false; }
+});
+});
 }
-function addComment(target, author, text, listEl) {
-var c = { id: ++cSeq, target: target, author: author || currentAuthor, text: text, stamp: stamp()};
-comments.push(c);
-if (listEl) listEl.insertBefore(commentCard(c), listEl.firstChild);
-rebuildSummary();
+return card;
 }
 function groupedComments() {
 var order = [];
-var map = {};
+var map = Object.create(null);
 comments.forEach(function (c) {
 if (!map[c.target]) { map[c.target] = []; order.push(c.target);}
 map[c.target].push(c);
@@ -1977,7 +2037,7 @@ box.innerHTML = '';
 if (!comments.length) {
 var p = document.createElement('p');
 p.className = 'summary-empty';
-p.textContent = 'まだコメントなし。各作品・ポップ・イベントのコメント欄から追加可能';
+p.textContent = commentsReady ? 'まだコメントなし。各項目のコメント欄から追加' : 'LINE認証と共有設定を確認してからコメントを表示';
 box.appendChild(p);
 return;
 }
@@ -2056,10 +2116,7 @@ addBtn.setAttribute('data-bound', '1');
 addBtn.addEventListener('click', function () {
 var ta = zone.querySelector('.free-write');
 if (!ta ||!ta.value.trim()) { if (ta) ta.focus(); showToast('先にコメント欄への記入が必要'); return;}
-var sel = zone.querySelector('.author-sel');
-addComment(zoneTarget(zone), sel? sel.value: currentAuthor, ta.value.trim(), zone.querySelector('.memo-list'));
-ta.value = '';
-showToast('コメント追加済み。まとめはホーム下部からコピー可能');
+submitComment(zoneTarget(zone), ta, addBtn);
 });
 }
 }
@@ -2088,30 +2145,28 @@ row.appendChild(btn);
 wrap.appendChild(row);
 var list = document.createElement('div');
 list.className = 'memo-list';
+list.setAttribute('data-comment-target', target);
 wrap.appendChild(list);
 btn.addEventListener('click', function () {
 if (!ta.value.trim()) { ta.focus(); showToast('先にコメント記入が必要'); return;}
-var sel = row.querySelector('.author-sel');
-addComment(target, sel? sel.value: currentAuthor, ta.value.trim(), list);
-ta.value = '';
-showToast('コメント追加済み');
+submitComment(target, ta, btn);
 });
 container.appendChild(wrap);
 }
-document.querySelectorAll('.work.body').forEach(function (body) {
+document.querySelectorAll('.work .body').forEach(function (body) {
 var card = body.closest('.work');
 var h = card? card.querySelector('h3'): null;
 addInlineComment(body, '作品：' + (h? h.textContent: '作品'), '価格・在庫・作る数・直すところなど');
 });
-document.querySelectorAll('.pop-entry.foot').forEach(function (foot) {
+document.querySelectorAll('.pop-entry .foot').forEach(function (foot) {
 var entry = foot.closest('.pop-entry');
 var h = entry? entry.querySelector('.head h3'): null;
 addInlineComment(foot, 'ポップ：' + (h? h.textContent: 'ポップ'), '直したい文字、印刷サイズ、置く場所');
 });
-document.querySelectorAll('.event-card.body').forEach(function (body) {
+document.querySelectorAll('.event-card .body').forEach(function (body) {
 var card = body.closest('.event-card');
 var h = card? card.querySelector('h3'): null;
-var date = card? card.querySelector('.meta.m-line'): null;
+var date = card? card.querySelector('.meta .m-line'): null;
 var t = 'イベント：' + (h? h.textContent: 'イベント') + (date? '（' + date.textContent + '）': '');
 addInlineComment(body, t, 'このイベントについてのコメント');
 });
@@ -2163,16 +2218,16 @@ qAdd.addEventListener('click', function () {
 if (!qText ||!qText.value.trim()) { if (qText) qText.focus(); showToast('先にコメント記入が必要'); return;}
 var active = document.querySelector('.view.active');
 var zone = active? active.querySelector('[data-memo-zone]'): null;
-var sel = qPanel? qPanel.querySelector('.author-sel'): null;
-addComment(zone? zoneTarget(zone): 'ページ：その他', sel? sel.value: currentAuthor, qText.value.trim(), zone? zone.querySelector('.memo-list'): null);
-qText.value = '';
-closeQuick();
-if (zone) zone.scrollIntoView({ block: 'center'});
-showToast('今見ているページにコメント追加済み');
+submitComment(zone? zoneTarget(zone): 'ページ：その他', qText, qAdd).then(function (saved) {
+if (saved) { closeQuick(); if (zone) zone.scrollIntoView({ block: 'center'}); }
+});
 });
 }
+setCommentAccess();
 })();
 
 </script>
+<script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script defer src="comments-api.js"></script>
 </body>
 </html>
