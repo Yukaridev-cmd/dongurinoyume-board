@@ -1,8 +1,44 @@
 /* Keep the original cream palette while making controls easier to use. */
-.tabbar button,.filters button,.btn.small,.memo-del,.backlink,.foot-nav button{min-height:44px!important;min-width:44px}
-.photo-caption,.work-photo-pending,.event-card .meta,.sum-list li time{color:#5c564a!important}
-.quick-panel{max-height:calc(100dvh - 140px);overflow-y:auto;overscroll-behavior:contain}
-.quick-memo-btn{bottom:calc(12px + env(safe-area-inset-bottom,0px))!important}
-.quick-panel{bottom:calc(66px + env(safe-area-inset-bottom,0px))!important}
-@media(max-width:720px){input,textarea,select,.free-write,.inline-memo textarea,textarea.template-edit,.author-sel{font-size:16px!important}}
-@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+.tabbar button,
+.filters button,
+.btn.small,
+.memo-del,
+.backlink,
+.foot-nav button {
+  min-height: 44px !important;
+  min-width: 44px;
+}
+.photo-caption,
+.work-photo-pending,
+.event-card .meta,
+.sum-list li time {
+  color: #5c564a !important;
+}
+.quick-panel {
+  max-height: calc(100dvh - 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.quick-memo-btn {
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+}
+.quick-panel {
+  bottom: calc(66px + env(safe-area-inset-bottom, 0px)) !important;
+}
+@media (max-width: 720px) {
+  input,
+  textarea,
+  select,
+  .free-write,
+  .inline-memo textarea,
+  textarea.template-edit,
+  .author-sel {
+    font-size: 16px !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}

@@ -145,8 +145,13 @@
   {
     "id": "work-bigamigurumi",
     "title": "大きいあみぐるみ",
-    "photos": [],
-    "photoType": "実物写真は未確認"
+    "photos": [
+      {
+        "src": "assets/kiraria-bunny.jpg",
+        "label": "金のリボンを付けた若草色のうさぎ（大きいあみぐるみ）"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
   },
   {
     "id": "work-kuma-pouch",
