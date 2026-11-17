@@ -32,9 +32,9 @@ document.querySelectorAll('main[id^="view-event-"]').forEach(function(view){
  var lead=view.querySelector(':scope > .view-lead');if(lead)lead.hidden=true;
  select(['event-xmas','event-tabashita'].includes(id)?'prepare':'review');
 });
-// Event lists stay compact; older events are available without filling the initial screen.
+// Past event previews stay visible without opening a disclosure.
 var events=document.getElementById('view-events'),past=Array.from(events.querySelectorAll(':scope > h3')).find(function(n){return n.textContent==='終わったイベント';});
-if(past){var archive=el('details',null,'past-events');archive.appendChild(el('summary','過去の出店（7件）'));var next=past.nextElementSibling;past.replaceWith(archive);if(next)archive.appendChild(next);}
+if(past){var archive=el('section',null,'past-events');archive.setAttribute('aria-label','過去の出店');archive.appendChild(el('h3','過去の出店（7件）','subhead'));var next=past.nextElementSibling;past.replaceWith(archive);if(next)archive.appendChild(next);}
 var eventMemo=events.querySelector('[data-memo-zone]');if(eventMemo){var disclosure=el('details',null,'event-source');disclosure.appendChild(el('summary','出店全体にコメントを書く'));eventMemo.before(disclosure);disclosure.appendChild(eventMemo);}
 events.querySelectorAll('.event-card .body').forEach(function(body){var heading=body.querySelector('h3'),actions=body.querySelector('.pop-actions'),date=body.querySelector('.m-line'),more=el('details',null,'event-card-more');more.appendChild(el('summary','会場・補足'));Array.from(body.children).filter(function(n){return n!==heading&&n!==actions&&!n.matches('.inline-memo');}).forEach(function(n){more.appendChild(n);});if(date)heading.after(el('p',date.textContent,'event-date'));if(actions){var open=actions.querySelector('button');if(open){open.textContent='開く';open.setAttribute('aria-label',heading.textContent+'を開く');}}body.appendChild(more);});
 var actions=el('div',null,'workflow-shortcuts');actions.append(link('未分類の振り返り','private.html#kind=review&event=unassigned','review'),link('すべての作業','private.html#kind=task','task'));events.appendChild(actions);
