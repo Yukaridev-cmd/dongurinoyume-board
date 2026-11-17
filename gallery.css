@@ -1,0 +1,171 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  color: #443b34;
+  background: #faf8f2;
+  font-family: var(--app-font);
+  line-height: 1.6;
+}
+header,
+main {
+  max-width: 1120px;
+  margin: auto;
+  padding: 16px;
+}
+header {
+  padding-bottom: 0;
+}
+h1 {
+  font-size: 23px;
+  margin: 8px 0 12px;
+}
+a {
+  color: #405e43;
+}
+.back {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+}
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+button,
+input {
+  font: inherit;
+  color: inherit;
+  min-height: 44px;
+  border: 1px solid #c5bfb4;
+  border-radius: 8px;
+  background: white;
+  padding: 6px 12px;
+}
+button {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+button[aria-pressed='true'] {
+  color: #304b33;
+  background: #e8efdf;
+  border-color: #687b52;
+}
+input {
+  width: 100%;
+  margin-top: 10px;
+}
+.photo-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #645d53;
+  margin-top: 8px;
+}
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.photo-card {
+  background: white;
+  border: 1px solid #e1dcd3;
+  border-radius: 10px;
+  overflow: hidden;
+  min-width: 0;
+}
+.photo-card[hidden] {
+  display: none;
+}
+.photo-card a {
+  display: block;
+  background: #f2f0eb;
+}
+.photo-card img {
+  display: block;
+  width: 100%;
+  height: 220px;
+  object-fit: contain;
+}
+.photo-caption {
+  padding: 8px 10px;
+}
+.photo-caption h2 {
+  font-size: 15px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.photo-caption p {
+  font-size: 12px;
+  color: #645d53;
+  margin: 4px 0 0;
+  overflow-wrap: anywhere;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+:focus-visible {
+  outline: 3px solid #607c4c;
+  outline-offset: 2px;
+}
+dialog {
+  border: 1px solid #c5bfb4;
+  border-radius: 12px;
+  background: #faf8f2;
+  max-width: min(96vw, 1000px);
+  max-height: 94dvh;
+  padding: 12px;
+}
+dialog::backdrop {
+  background: #201b18bb;
+}
+dialog img {
+  display: block;
+  max-width: 100%;
+  max-height: 70dvh;
+  width: auto;
+  height: auto;
+  margin: 10px auto;
+  object-fit: contain;
+}
+dialog button {
+  display: block;
+  margin-left: auto;
+}
+dialog p {
+  margin: 4px 0;
+}
+@media (max-width: 700px) {
+  header,
+  main {
+    padding: 12px;
+  }
+  header {
+    padding-bottom: 0;
+  }
+  .photo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .photo-card img {
+    height: 180px;
+  }
+  nav button {
+    flex: 1 0 auto;
+    padding-inline: 8px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 360px) {
+  .photo-card img {
+    height: 145px;
+  }
+}
