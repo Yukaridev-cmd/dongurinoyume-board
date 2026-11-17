@@ -2634,7 +2634,27 @@ nav.primary-nav > a[aria-current='page']:hover {
 .booth-concept svg {
   display: block;
   width: 100%;
-  max-height: 330px;
+  max-height: 440px;
+}
+.booth-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.booth-detail {
+  margin: 0;
+  min-width: 0;
+}
+.booth-detail svg {
+  display: block;
+  width: 100%;
+  max-height: 300px;
+}
+.booth-detail figcaption {
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 6px;
 }
 .booth-concept figcaption {
   font-size: 12px;

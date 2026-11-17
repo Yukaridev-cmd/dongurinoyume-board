@@ -25,13 +25,26 @@ function fixture() {
       calls.push({ path, method, body });
       if (hold) await hold;
       if (fail) throw Error('架空の通信失敗');
-      return path === '/comments'
-        ? { comment: { ...body, author: '本人', stamp: '2026-11-17', version: 1 } }
-        : { record: { ...body } };
+      return method === 'PATCH' && path.startsWith('/comments/')
+        ? {
+            comment: {
+              id: path.split('/').at(-1),
+              target: '記録：test',
+              text: '架空の完了依頼',
+              author: '妻',
+              stamp: '2026-01-01',
+              version: body.version + 1,
+              resolved: body.resolved,
+            },
+          }
+        : path === '/comments'
+          ? { comment: { ...body, author: '本人', stamp: '2026-11-17', version: 1 } }
+          : { record: { ...body } };
     },
   };
   w.eval(readFileSync(new URL('../ime.js', import.meta.url), 'utf8'));
   w.eval(readFileSync(new URL('../ui-core.js', import.meta.url), 'utf8'));
+  w.eval(readFileSync(new URL('../comment-state.js', import.meta.url), 'utf8'));
   w.eval(source);
   const button = w.DonguriContextComments.button('記録：test', '非公開の架空作業', 'event-xmas');
   w.document.body.appendChild(button);
@@ -58,6 +71,45 @@ function fixture() {
     },
   };
 }
+test('targeted completion stays below pending comments, preserves composing drafts and fails without changing state', async () => {
+  const b = fixture();
+  try {
+    b.auth();
+    b.button.click();
+    b.w.dispatchEvent(
+      new b.w.CustomEvent('comments-loaded', {
+        detail: [
+          {
+            id: '11111111-1111-4111-8111-111111111111',
+            target: '記録：test',
+            text: '架空の完了依頼',
+            author: '妻',
+            stamp: '2026-01-01',
+            version: 1,
+          },
+        ],
+      })
+    );
+    b.input.value = 'て';
+    b.input.dispatchEvent(new b.w.CompositionEvent('compositionstart', { bubbles: true }));
+    b.fail = true;
+    b.host.querySelector('[data-comment-state]').click();
+    await tick();
+    assert.equal(b.host.querySelector('.comments-completed'), null);
+    assert.match(b.host.textContent, /架空の通信失敗/);
+    assert.equal(b.input.value, 'て');
+    b.fail = false;
+    b.host.querySelector('[data-comment-state]').click();
+    await tick();
+    assert.match(b.host.querySelector('.comments-completed').textContent, /架空の完了依頼/);
+    assert.equal(b.input.value, 'て');
+    b.suspend();
+    assert.equal(b.host.textContent.includes('架空の完了依頼'), false);
+    assert.equal(b.errors.length, 0);
+  } finally {
+    b.dom.window.close();
+  }
+});
 test('targeted comment drafts disappear on suspension and restore only for the verified same viewer', async () => {
   const b = fixture();
   try {

@@ -116,6 +116,9 @@ function present(row, user, members) {
     stamp: row.created_at,
     version: row.version,
     canEdit: row.owner === user.id,
+    resolved: row.resolved === 1,
+    resolvedAt: row.resolved_at || null,
+    resolvedBy: row.resolved_by ? members[row.resolved_by] || '共有メンバー' : null,
   };
 }
 const routeRecords = recordsApi({ HttpError, UUID, readBody, field });
@@ -212,11 +215,34 @@ export function createHandler(fetcher = fetch, { memberCount = 2 } = {}) {
           .bind(match[1])
           .first();
         if (!row) throw new HttpError(404, 'コメントなし。再読込して確認');
+        // Either verified member may triage a request. Text/deletion remain author-only.
+        // Share the comment version so status changes cannot overwrite an unseen edit.
+        if (request.method === 'PATCH' && Object.hasOwn(body, 'resolved')) {
+          if (typeof body.resolved !== 'boolean' || Object.hasOwn(body, 'text'))
+            throw new HttpError(400, '対応状態だけを指定');
+          const result = await env.DB.prepare(
+            'UPDATE comments SET resolved = ?, resolved_at = ?, resolved_by = ?, version = version + 1 WHERE id = ? AND version = ? AND deleted = 0'
+          )
+            .bind(
+              body.resolved ? 1 : 0,
+              body.resolved ? new Date().toISOString() : null,
+              body.resolved ? user.id : null,
+              row.id,
+              body.version
+            )
+            .run();
+          if (result.meta.changes !== 1)
+            throw new HttpError(409, '他の画面で変更済み。再読込して確認');
+          const updated = await env.DB.prepare('SELECT * FROM comments WHERE id = ?')
+            .bind(row.id)
+            .first();
+          return json({ comment: present(updated, user, members) });
+        }
         if (row.owner !== user.id) throw new HttpError(403, '自分のコメントだけ変更可能');
         const statement =
           request.method === 'PATCH'
             ? env.DB.prepare(
-                'UPDATE comments SET text = ?, version = version + 1 WHERE id = ? AND owner = ? AND version = ? AND deleted = 0'
+                'UPDATE comments SET text = ?, resolved = 0, resolved_at = NULL, resolved_by = NULL, version = version + 1 WHERE id = ? AND owner = ? AND version = ? AND deleted = 0'
               ).bind(field(body.text, 4000), row.id, user.id, body.version)
             : env.DB.prepare(
                 'UPDATE comments SET deleted = 1, version = version + 1 WHERE id = ? AND owner = ? AND version = ? AND deleted = 0'

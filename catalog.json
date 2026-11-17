@@ -22,17 +22,6 @@
     "photoType": "既存写真・現物との照合待ち"
   },
   {
-    "id": "work-bunny",
-    "title": "若草色のうさぎ",
-    "photos": [
-      {
-        "src": "assets/kiraria-bunny.jpg",
-        "label": "金のリボンを付けた、若草色のうさぎのあみぐるみの単体写真"
-      }
-    ],
-    "photoType": "既存写真・現物との照合待ち"
-  },
-  {
     "id": "work-pouch",
     "title": "くまモチーフの巾着ポーチ",
     "photos": [
@@ -200,6 +189,20 @@
       }
     ],
     "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-bunny",
+    "title": "若草色のうさぎ",
+    "saleStatus": "excluded",
+    "saleNote": "大きいあみぐるみに統合（同じ作品）",
+    "photos": [
+      {
+        "src": "assets/kiraria-bunny.jpg",
+        "label": "金のリボンを付けた、若草色のうさぎのあみぐるみの単体写真",
+        "display": "hidden"
+      }
+    ],
+    "photoType": "同じ作品へ写真を統合・以前の項目は参考保管"
   },
   {
     "id": "work-happy-pack",

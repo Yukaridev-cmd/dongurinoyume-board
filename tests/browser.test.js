@@ -73,7 +73,13 @@ function browser({
       const body = JSON.parse(options.body),
         id = url.split('/').at(-1);
       const c = records.find((row) => row.id === id);
-      Object.assign(c, { text: body.text, version: c.version + 1 });
+      Object.assign(
+        c,
+        Object.hasOwn(body, 'resolved')
+          ? { resolved: body.resolved }
+          : { text: body.text, resolved: false },
+        { version: c.version + 1 }
+      );
       return Response.json({ comment: c });
     }
     if (options.method === 'DELETE') {
@@ -86,6 +92,7 @@ function browser({
     return Response.json({ comments: records, next: null });
   };
   w.eval(readFileSync(new URL('../ui-core.js', import.meta.url), 'utf8'));
+  w.eval(readFileSync(new URL('../comment-state.js', import.meta.url), 'utf8'));
   w.eval(readFileSync(new URL('../board.js', import.meta.url), 'utf8'));
   w.eval(readFileSync(new URL('../ime.js', import.meta.url), 'utf8'));
   for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
@@ -122,6 +129,60 @@ function browser({
     },
   };
 }
+test('completed comments move below pending ones, survive reload and can reopen without deleting text or IME drafts', async () => {
+  const records = [
+    {
+      id: '11111111-1111-4111-8111-111111111111',
+      target: 'ページ：ブース',
+      text: '架空の未対応',
+      author: '本人',
+      stamp: '2026-01-01',
+      version: 1,
+      canEdit: true,
+    },
+    {
+      id: '22222222-2222-4222-8222-222222222222',
+      target: 'ページ：ブース',
+      text: '架空の完了',
+      author: '妻',
+      stamp: '2026-02-01',
+      version: 3,
+      resolved: true,
+    },
+  ];
+  const b = browser({ records });
+  try {
+    await tick();
+    const d = b.w.document;
+    const list = d.querySelector('[data-comment-target="ページ：ブース"]');
+    assert.match(list.firstElementChild.textContent, /架空の未対応/);
+    const archive = list.querySelector('.comments-completed');
+    assert.equal(archive.open, false);
+    assert.match(archive.textContent, /架空の完了/);
+    const draft = d.querySelector('#quick-text');
+    draft.value = 'て';
+    draft.dispatchEvent(new b.w.CompositionEvent('compositionstart', { bubbles: true }));
+    list.querySelector('[data-comment-state]').click();
+    await tick();
+    assert.equal(draft.value, 'て');
+    assert.equal(list.querySelectorAll(':scope>.memo-card').length, 0);
+    assert.equal(list.querySelectorAll('.comments-completed .memo-card').length, 2);
+    assert.equal(records[0].text, '架空の未対応');
+    assert.equal(records[0].resolved, true);
+    b.visibility(true);
+    assert.equal(list.textContent, '');
+    b.visibility(false);
+    await tick();
+    assert.equal(draft.value, 'て');
+    assert.equal(list.querySelectorAll('.comments-completed .memo-card').length, 2);
+    list.querySelector('[data-comment-state]').click();
+    await tick();
+    assert.equal(list.querySelectorAll(':scope>.memo-card').length, 1);
+    assert.equal(b.errors.length, 0);
+  } finally {
+    b.dom.window.close();
+  }
+});
 test('unconfigured and external-browser views disable every posting path', async () => {
   for (const options of [{ configured: false }, { inLine: false }, { loggedIn: false }]) {
     const b = browser(options);
@@ -435,7 +496,7 @@ test('work search combines with category filters, ignores confidential comments 
     d.querySelector('[data-filter=all]').click();
     assert.equal(
       [...d.querySelectorAll('.work:not([data-sale=excluded])')].filter((x) => !x.hidden).length,
-      18
+      17
     );
     assert.equal(d.querySelector('.inline-memo').tagName, 'DETAILS');
     assert.equal(b.errors.length, 0);
@@ -861,10 +922,10 @@ test('nine archived entries stay in separate reference storage, never sale searc
   try {
     await tick();
     const d = b.w.document;
-    assert.equal(d.querySelectorAll('.work:not([data-sale=excluded])').length, 18);
-    assert.equal(d.querySelectorAll('#reference-works .work[data-sale=excluded]').length, 9);
+    assert.equal(d.querySelectorAll('.work:not([data-sale=excluded])').length, 17);
+    assert.equal(d.querySelectorAll('#reference-works .work[data-sale=excluded]').length, 10);
     assert.equal(d.querySelector('#reference-works').open, false);
-    assert.equal(d.querySelector('#work-result-count').textContent, '18作品を表示');
+    assert.equal(d.querySelector('#work-result-count').textContent, '17作品を表示');
     const q = d.getElementById('work-search');
     q.value = 'マグネット';
     q.dispatchEvent(new b.w.Event('input'));
@@ -1101,9 +1162,12 @@ test('confirmed large-amigurumi photo correspondence keeps both original comment
   try {
     await tick();
     const d = b.w.document;
+    assert.equal(d.querySelector('#work-bunny').dataset.sale, 'excluded');
+    assert.ok(d.querySelector('#work-bunny').closest('#reference-works'));
+    assert.equal(d.querySelector('#work-bunny img'), null);
     assert.equal(
       d.querySelector('#work-bigamigurumi>img').getAttribute('src'),
-      d.querySelector('#work-bunny>img').getAttribute('src')
+      d.querySelector('#work-bunny [data-photo-alias]').dataset.referenceSrc
     );
     assert.ok(d.querySelector('#work-bunny [data-goto-anchor=work-bigamigurumi]'));
     assert.ok(d.querySelector('#work-bigamigurumi [data-goto-anchor=work-bunny]'));
@@ -1156,7 +1220,13 @@ test('booth distinguishes a labeled concept from photograph-backed practice with
     const d = b.w.document,
       booth = d.querySelector('[data-market-panel=booth]');
     assert.equal(booth.querySelectorAll('.booth-concept svg').length, 1);
-    assert.match(booth.querySelector('#booth-concept-caption').textContent, /実際の設置は確認待ち/);
+    assert.equal(booth.querySelectorAll('.booth-detail svg[role=img]').length, 2);
+    assert.match(booth.querySelector('#booth-turn-caption').textContent, /留め具・寸法は未確認/);
+    assert.match(booth.querySelector('#booth-pick-caption').textContent, /本人の実践記録/);
+    assert.match(
+      booth.querySelector('#booth-concept-caption').textContent,
+      /寸法・接合位置・耐荷重は未確認/
+    );
     assert.equal(booth.querySelectorAll('.practice-photo img').length, 4);
     assert.equal(
       [...booth.querySelectorAll('.practice-photo img')].some((e) =>

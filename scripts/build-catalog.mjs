@@ -24,11 +24,13 @@ const catalog = [...d.querySelectorAll('.work')].map((card) => ({
   photoType:
     card.id === 'work-happy-pack'
       ? 'ポップ画像・実物写真は未確認'
-      : card.querySelector('[data-reference-src]')
-        ? '既存写真は人物が写るため非表示'
-        : card.querySelector('img')
-          ? '既存写真・現物との照合待ち'
-          : '実物写真は未確認',
+      : card.querySelector('[data-photo-alias]')
+        ? '同じ作品へ写真を統合・以前の項目は参考保管'
+        : card.querySelector('[data-reference-src]')
+          ? '既存写真は人物が写るため非表示'
+          : card.querySelector('img')
+            ? '既存写真・現物との照合待ち'
+            : '実物写真は未確認',
 }));
 for (const item of catalog)
   for (const photo of item.photos)
