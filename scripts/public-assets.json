@@ -1,0 +1,31 @@
+{
+  "files": [
+    "index.html",
+    "private.html",
+    "private.js",
+    "private.css",
+    "comments-api.js",
+    "board-additions.css",
+    "accessibility.css",
+    "catalog.json",
+    "studio.css",
+    "ui-icons.js",
+    "workflow.js",
+    "events.json",
+    "pops.json",
+    "event.html",
+    "event.js",
+    "event.css",
+    "event-board.js",
+    "context-comments.js",
+    "ime.js",
+    "ui-core.js",
+    "board.js",
+    "board.css",
+    "typography.css"
+  ],
+  "fonts": [
+    "assets/fonts/ZenMaruGothic-Medium.woff2",
+    "assets/fonts/ZenMaruGothic-Bold.woff2"
+  ]
+}

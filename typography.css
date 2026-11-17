@@ -1,0 +1,50 @@
+/* Self-hosted Zen Maru Gothic. Optional display avoids swapping an active IME
+   editor's font after initial rendering; the system fallback stays readable. */
+@font-face {
+  font-family: 'Board Rounded';
+  src: url('assets/fonts/ZenMaruGothic-Medium.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 500;
+  font-display: optional;
+}
+@font-face {
+  font-family: 'Board Rounded';
+  src: url('assets/fonts/ZenMaruGothic-Bold.woff2') format('woff2');
+  font-style: normal;
+  font-weight: 700;
+  font-display: optional;
+}
+:root {
+  --app-font:
+    'Board Rounded', 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', 'Meiryo UI', Meiryo, sans-serif;
+}
+html,
+body,
+input,
+textarea,
+select,
+button {
+  font-family: var(--app-font) !important;
+}
+body {
+  font-weight: 500;
+  line-height: 1.75;
+}
+h1,
+h2,
+h3,
+h4,
+strong,
+b {
+  font-weight: 700 !important;
+}
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+.price,
+.record-numbers,
+.event-total-card {
+  font-variant-numeric: tabular-nums;
+}
