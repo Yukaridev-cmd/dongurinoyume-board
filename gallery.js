@@ -49,7 +49,7 @@
   var dialog = document.getElementById('photo-dialog');
   if (!dialog) return;
   var previousLink;
-  document.querySelectorAll('[data-photo-library] [data-photo]').forEach(function (link) {
+  document.querySelectorAll('[data-photo]').forEach(function (link) {
     link.addEventListener('click', function (event) {
       if (
         event.ctrlKey ||

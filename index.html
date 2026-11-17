@@ -19,9 +19,9 @@
 
 <link rel="stylesheet" href="accessibility.css" />
 <link rel="stylesheet" href="studio.css?v=20261118-corners"><link rel="stylesheet" href="event.css">
-<script defer src="ui-icons.js"></script>
+<script defer src="ui-icons.js?v=20261118-organized"></script>
 <link rel="stylesheet" href="typography.css?v=20261117-readable">
-<link rel="stylesheet" href="gallery.css?v=20261118-corners">
+<link rel="stylesheet" href="gallery.css?v=20261118-organized">
 </head>
 <body style="background:#fdf6e0;color-scheme:light only">
 <a class="skip-link" href="#view-events">本文へ進む</a><div class="wrap">
@@ -102,8 +102,8 @@
 
 <!-- ================= イベント一覧 ================= -->
 <main class="view" id="view-market" data-comment-key="section:view-market" data-comment-label="売り場"><div class="view-head"><h2>売り場</h2></div><div class="market-tabs" role="group" aria-label="売り場の内容"><button type="button" data-market="pops" data-icon="pops" aria-pressed="true">ポップ</button><button type="button" data-market="booth" data-icon="booth" aria-pressed="false">ブース・道具</button><button type="button" data-goto="share" data-icon="archive">資料</button></div><section data-market-panel="pops" aria-label="ポップ"></section><section data-market-panel="booth" aria-label="ブース・道具" hidden></section></main>
-<main class="view" id="view-events">
-<div class="view-head event-list-heading"><h2>イベント</h2><button type="button" class="btn small" data-goto="events" data-goto-anchor="event-photo-library">追加の出店写真</button></div>
+<main class="view" id="view-events" data-comment-key="section:event-photo-library" data-comment-label="出店写真全体">
+<div class="view-head event-list-heading"><h2>イベント</h2></div>
 <p class="view-lead">タップで各イベントのページへ移動</p>
 
 <div class="event-create-row"><h3 class="subhead">これからの出店</h3><a class="btn small" data-icon="add" href="event.html#new">出店を追加</a></div>
@@ -131,9 +131,16 @@
 </div>
 
 <details class="private-events-group"><summary>二人で追加した出店</summary><div id="private-events-list"></div></details><h3 class="subhead">終わったイベント</h3>
-<div class="event-list">
-<article class="event-card">
-<img src="assets/heart-ichigo.jpg" alt="ハートまつりのいちご狩りの陳列" />
+<div class="event-list" id="event-photo-library">
+
+
+
+
+
+
+
+<article class="event-card" data-event-month="2026-11">
+<img src="assets/heart-ichigo.jpg" alt="ハートまつりのいちご狩りの陳列">
 <div class="body">
 <h3>ハートまつり（2026年11月）</h3>
 <p class="meta"><span class="m-line">2026年11月15日（日）</span></p>
@@ -141,9 +148,8 @@
 <div class="row"><span class="badge on">終了</span><span class="badge">写真 4枚</span><span class="badge">ポップ 2点使用</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-heart">このイベントのページを開く</button></div>
 </div>
-</article>
-<article class="event-card">
-<img src="assets/kiraria-strap.jpg" alt="きらりあマルシェのストラップ陳列ボード" />
+</article><article class="event-card" data-event-month="2026-11">
+<img src="assets/kiraria-strap.jpg" alt="きらりあマルシェのストラップ陳列ボード">
 <div class="body">
 <h3>きらりあマルシェ（2026年11月）</h3>
 <p class="meta"><span class="m-line">2026年11月7日（土）13:30〜16:00</span><span class="m-line">きらりあ北</span></p>
@@ -151,9 +157,8 @@
 <div class="row"><span class="badge on">終了</span><span class="badge">写真 6枚</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-kiraria-1107">このイベントのページを開く</button></div>
 </div>
-</article>
-<article class="event-card">
-<img src="assets/wombat-booth1.jpg" alt="ウォンバットマルシェのブース全体の写真" />
+</article><article class="event-card" data-event-month="2026-10">
+<img src="assets/wombat-booth1.jpg" alt="ウォンバットマルシェのブース全体の写真">
 <div class="body">
 <h3>ウォンバットマルシェ（2026年10月）</h3>
 <p class="meta"><span class="m-line">2026年10月17日（土）終日</span><span class="m-line">大阪府池田市</span></p>
@@ -161,9 +166,8 @@
 <div class="row"><span class="badge on">終了</span><span class="badge">写真 20枚</span><span class="badge">TimeTree登録名：ウォンバットの日</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-wombat">このイベントのページを開く</button></div>
 </div>
-</article>
-<article class="event-card">
-<img src="assets/sumida-booth.jpg" alt="隅田川オープンテラスのブース全体" />
+</article><article class="event-card" data-event-month="2026-10">
+<img src="assets/sumida-booth.jpg" alt="隅田川オープンテラスのブース全体">
 <div class="body">
 <h3>隅田川オープンテラス 豊島5丁目団地（2026年10月）</h3>
 <p class="meta"><span class="m-line">2026年10月3日（土）終日</span><span class="m-line">隅田川オープンテラス</span></p>
@@ -171,9 +175,8 @@
 <div class="row"><span class="badge on">終了</span><span class="badge">写真 20枚</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-toyoshima">このイベントのページを開く</button></div>
 </div>
-</article>
-<article class="event-card">
-<img src="assets/kiraria8-donut.jpg" alt="8月のきらりあマルシェのドーナツとクッキーのキーホルダーの陳列ボード" />
+</article><article class="event-card" data-event-month="2026-08">
+<img src="assets/kiraria8-donut.jpg" alt="8月のきらりあマルシェのドーナツとクッキーのキーホルダーの陳列ボード">
 <div class="body">
 <h3>きらりあマルシェ（2026年8月）</h3>
 <p class="meta"><span class="m-line">2026年8月29日（土）13:00〜18:00</span><span class="m-line">きらりあ北</span></p>
@@ -181,9 +184,8 @@
 <div class="row"><span class="badge on">終了</span><span class="badge">写真 5枚</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-kiraria-0829">このイベントのページを開く</button></div>
 </div>
-</article>
-<article class="event-card">
-<img src="assets/kiraria5-booth-front.jpg" alt="5月のきらりあマルシェのブース全景。ヘアゴムのハートボードと「どんぐりの夢」の看板" />
+</article><article class="event-card" data-event-month="2026-05">
+<img src="assets/kiraria5-booth-front.jpg" alt="5月のきらりあマルシェのブース全景。ヘアゴムのハートボードと「どんぐりの夢」の看板">
 <div class="body">
 <h3>きらりあマルシェ（2026年5月）</h3>
 <p class="meta"><span class="m-line">2026年5月16日（土）13:30〜16:00</span><span class="m-line">きらりあ北</span></p>
@@ -191,9 +193,8 @@
 <div class="row"><span class="badge on">終了</span><span class="badge">写真 5枚</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-kiraria-0516">このイベントのページを開く</button></div>
 </div>
-</article>
-<article class="event-card">
-<img src="assets/kiraria2-booth.jpg" alt="2月のきらりあマルシェのブース全景。マグネットボードと野菜キーホルダー、右にがま口のカゴ" />
+</article><article class="event-card photo-event-record" id="event-record-aichi-202604" data-comment-key="event-record:aichi-202604" data-comment-label="ネコ市ネコ座 愛知・委託販売（2026年4月）" data-event-month="2026-04"><div class="body"><h3>ネコ市ネコ座 愛知・委託販売（2026年4月）</h3><p class="event-record-meta">開催日の詳細・会場の詳細は未確認</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 愛知・委託販売（2026年4月）" data-search="委託販売の展示 ネコ市ネコ座 愛知・委託販売（2026年4月）" data-comment-key="photo:photo-014" data-comment-label="委託販売の展示・ネコ市ネコ座 愛知・委託販売（2026年4月）"><a href="assets/gallery/photo-014.jpg" data-photo="" aria-label="委託販売の展示を拡大"><img src="assets/gallery/photo-014.jpg" width="811" height="1080" loading="lazy" alt="委託販売の展示"></a><div class="board-photo-caption"><h4>委託販売の展示</h4><p>ネコ市ネコ座 愛知・委託販売（2026年4月）</p></div></article></div></div></article><article class="event-card" data-event-month="2026-02">
+<img src="assets/kiraria2-booth.jpg" alt="2月のきらりあマルシェのブース全景。マグネットボードと野菜キーホルダー、右にがま口のカゴ">
 <div class="body">
 <h3>きらりあマルシェ（2026年2月）</h3>
 <p class="meta"><span class="m-line">2026年2月28日（土）10:00〜15:00</span><span class="m-line">きらりあ北</span></p>
@@ -201,20 +202,19 @@
 <div class="row"><span class="badge on">終了</span><span class="badge">写真 4枚</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-kiraria-0228">このイベントのページを開く</button></div>
 </div>
-</article>
-</div>
+</article><article class="event-card photo-event-record" id="event-record-heart-202511" data-comment-key="event-record:heart-202511" data-comment-label="ハートまつり（2025年11月）" data-event-month="2025-11"><div class="body"><h3>ハートまつり（2025年11月）</h3><p class="event-record-meta">開催日の詳細・会場の詳細は未確認</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="ハートまつり（2025年11月）" data-search="作品の展示 ハートまつり（2025年11月）" data-comment-key="photo:photo-009" data-comment-label="作品の展示・ハートまつり（2025年11月）"><a href="assets/gallery/photo-009.jpg" data-photo="" aria-label="作品の展示を拡大"><img src="assets/gallery/photo-009.jpg" width="811" height="1080" loading="lazy" alt="作品の展示"></a><div class="board-photo-caption"><h4>作品の展示</h4><p>ハートまつり（2025年11月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ハートまつり（2025年11月）" data-search="売り場の展示 ハートまつり（2025年11月）" data-comment-key="photo:photo-010" data-comment-label="売り場の展示・ハートまつり（2025年11月）"><a href="assets/gallery/photo-010.jpg" data-photo="" aria-label="売り場の展示を拡大"><img src="assets/gallery/photo-010.jpg" width="1080" height="810" loading="lazy" alt="売り場の展示"></a><div class="board-photo-caption"><h4>売り場の展示</h4><p>ハートまつり（2025年11月）</p></div></article></div></div></article><article class="event-card photo-event-record" id="event-record-kobe-202509" data-comment-key="event-record:kobe-202509" data-comment-label="ネコ市ネコ座 神戸（2025年9月）" data-event-month="2025-09"><div class="body"><h3>ネコ市ネコ座 神戸（2025年9月）</h3><p class="event-record-meta">開催日の詳細・会場の詳細は未確認</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 神戸（2025年9月）" data-search="出店写真のコラージュ ネコ市ネコ座 神戸（2025年9月）" data-comment-key="photo:photo-006" data-comment-label="出店写真のコラージュ・ネコ市ネコ座 神戸（2025年9月）"><a href="assets/gallery/photo-006.jpg" data-photo="" aria-label="出店写真のコラージュを拡大"><img src="assets/gallery/photo-006.jpg" width="1080" height="760" loading="lazy" alt="出店写真のコラージュ"></a><div class="board-photo-caption"><h4>出店写真のコラージュ</h4><p>ネコ市ネコ座 神戸（2025年9月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 神戸（2025年9月）" data-search="にゃんバーガーなどの展示 ネコ市ネコ座 神戸（2025年9月）" data-comment-key="photo:photo-007" data-comment-label="にゃんバーガーなどの展示・ネコ市ネコ座 神戸（2025年9月）"><a href="assets/gallery/photo-007.jpg" data-photo="" aria-label="にゃんバーガーなどの展示を拡大"><img src="assets/gallery/photo-007.jpg" width="811" height="1080" loading="lazy" alt="にゃんバーガーなどの展示"></a><div class="board-photo-caption"><h4>にゃんバーガーなどの展示</h4><p>ネコ市ネコ座 神戸（2025年9月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 神戸（2025年9月）" data-search="にゃんバーガーの展示 ネコ市ネコ座 神戸（2025年9月）" data-comment-key="photo:photo-008" data-comment-label="にゃんバーガーの展示・ネコ市ネコ座 神戸（2025年9月）"><a href="assets/gallery/photo-008.jpg" data-photo="" aria-label="にゃんバーガーの展示を拡大"><img src="assets/gallery/photo-008.jpg" width="811" height="1080" loading="lazy" alt="にゃんバーガーの展示"></a><div class="board-photo-caption"><h4>にゃんバーガーの展示</h4><p>ネコ市ネコ座 神戸（2025年9月）</p></div></article></div></div></article></div><section class="undated-event-records" id="undated-event-records"><h3 class="subhead">開催年月を確認する出店</h3><article class="event-card photo-event-record" id="event-record-tokyo-unconfirmed" data-comment-key="event-record:tokyo-unconfirmed" data-comment-label="ネコ市ネコ座 東京（開催年月未確認）" data-event-month=""><div class="body"><h3>ネコ市ネコ座 東京（開催年月未確認）</h3><p class="event-record-meta">写真を保管。開催年月・会場の詳細を確認する</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="にゃんバーガー ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-011" data-comment-label="にゃんバーガー・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-011.jpg" data-photo="" aria-label="にゃんバーガーを拡大"><img src="assets/gallery/photo-011.jpg" width="1080" height="811" loading="lazy" alt="にゃんバーガー"></a><div class="board-photo-caption"><h4>にゃんバーガー</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="にゃんバーガー（三毛柄） ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-012" data-comment-label="にゃんバーガー（三毛柄）・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-012.jpg" data-photo="" aria-label="にゃんバーガー（三毛柄）を拡大"><img src="assets/gallery/photo-012.jpg" width="811" height="1080" loading="lazy" alt="にゃんバーガー（三毛柄）"></a><div class="board-photo-caption"><h4>にゃんバーガー（三毛柄）</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="にゃんバーガー（色違い） ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-013" data-comment-label="にゃんバーガー（色違い）・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-013.jpg" data-photo="" aria-label="にゃんバーガー（色違い）を拡大"><img src="assets/gallery/photo-013.jpg" width="1080" height="811" loading="lazy" alt="にゃんバーガー（色違い）"></a><div class="board-photo-caption"><h4>にゃんバーガー（色違い）</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="にゃんバーガー ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-020" data-comment-label="にゃんバーガー・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-020.jpg" data-photo="" aria-label="にゃんバーガーを拡大"><img src="assets/gallery/photo-020.jpg" width="813" height="1080" loading="lazy" alt="にゃんバーガー"></a><div class="board-photo-caption"><h4>にゃんバーガー</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article></div></div></article><article class="event-card photo-event-record" id="event-record-neko-unconfirmed" data-comment-key="event-record:neko-unconfirmed" data-comment-label="ネコ市ネコ座（開催地・開催年月未確認）" data-event-month=""><div class="body"><h3>ネコ市ネコ座（開催地・開催年月未確認）</h3><p class="event-record-meta">写真を保管。開催年月・会場の詳細を確認する</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="サングラスのバーガーモチーフ ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-024" data-comment-label="サングラスのバーガーモチーフ・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-024.jpg" data-photo="" aria-label="サングラスのバーガーモチーフを拡大"><img src="assets/gallery/photo-024.jpg" width="811" height="1080" loading="lazy" alt="サングラスのバーガーモチーフ"></a><div class="board-photo-caption"><h4>サングラスのバーガーモチーフ</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="サングラスのバーガーモチーフ（棚の上） ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-025" data-comment-label="サングラスのバーガーモチーフ（棚の上）・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-025.jpg" data-photo="" aria-label="サングラスのバーガーモチーフ（棚の上）を拡大"><img src="assets/gallery/photo-025.jpg" width="1080" height="810" loading="lazy" alt="サングラスのバーガーモチーフ（棚の上）"></a><div class="board-photo-caption"><h4>サングラスのバーガーモチーフ（棚の上）</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="サングラスのバーガーモチーフ（別角度） ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-026" data-comment-label="サングラスのバーガーモチーフ（別角度）・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-026.jpg" data-photo="" aria-label="サングラスのバーガーモチーフ（別角度）を拡大"><img src="assets/gallery/photo-026.jpg" width="811" height="1080" loading="lazy" alt="サングラスのバーガーモチーフ（別角度）"></a><div class="board-photo-caption"><h4>サングラスのバーガーモチーフ（別角度）</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="バーガーモチーフのキーホルダー ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-027" data-comment-label="バーガーモチーフのキーホルダー・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-027.jpg" data-photo="" aria-label="バーガーモチーフのキーホルダーを拡大"><img src="assets/gallery/photo-027.jpg" width="1080" height="811" loading="lazy" alt="バーガーモチーフのキーホルダー"></a><div class="board-photo-caption"><h4>バーガーモチーフのキーホルダー</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="にゃんバーガーのキーホルダー ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-028" data-comment-label="にゃんバーガーのキーホルダー・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-028.jpg" data-photo="" aria-label="にゃんバーガーのキーホルダーを拡大"><img src="assets/gallery/photo-028.jpg" width="1080" height="811" loading="lazy" alt="にゃんバーガーのキーホルダー"></a><div class="board-photo-caption"><h4>にゃんバーガーのキーホルダー</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="袋入りのバーガーモチーフ ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-029" data-comment-label="袋入りのバーガーモチーフ・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-029.jpg" data-photo="" aria-label="袋入りのバーガーモチーフを拡大"><img src="assets/gallery/photo-029.jpg" width="1080" height="811" loading="lazy" alt="袋入りのバーガーモチーフ"></a><div class="board-photo-caption"><h4>袋入りのバーガーモチーフ</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="袋入りのバーガーモチーフ（別写真） ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-030" data-comment-label="袋入りのバーガーモチーフ（別写真）・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-030.jpg" data-photo="" aria-label="袋入りのバーガーモチーフ（別写真）を拡大"><img src="assets/gallery/photo-030.jpg" width="1080" height="811" loading="lazy" alt="袋入りのバーガーモチーフ（別写真）"></a><div class="board-photo-caption"><h4>袋入りのバーガーモチーフ（別写真）</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="サングラスのバーガーモチーフ（袋入り） ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-031" data-comment-label="サングラスのバーガーモチーフ（袋入り）・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-031.jpg" data-photo="" aria-label="サングラスのバーガーモチーフ（袋入り）を拡大"><img src="assets/gallery/photo-031.jpg" width="811" height="1080" loading="lazy" alt="サングラスのバーガーモチーフ（袋入り）"></a><div class="board-photo-caption"><h4>サングラスのバーガーモチーフ（袋入り）</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="バーガーモチーフの作品 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-032" data-comment-label="バーガーモチーフの作品・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-032.jpg" data-photo="" aria-label="バーガーモチーフの作品を拡大"><img src="assets/gallery/photo-032.jpg" width="811" height="1080" loading="lazy" alt="バーガーモチーフの作品"></a><div class="board-photo-caption"><h4>バーガーモチーフの作品</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article></div></div></article><article class="event-card photo-event-record" id="event-record-kiraria-september-unconfirmed" data-comment-key="event-record:kiraria-september-unconfirmed" data-comment-label="きらりあマルシェ（9月・開催年未確認）" data-event-month=""><div class="body"><h3>きらりあマルシェ（9月・開催年未確認）</h3><p class="event-record-meta">写真を保管。開催年月・会場の詳細を確認する</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="きらりあマルシェ（年未確認・9月）" data-search="くまのあみぐるみ きらりあマルシェ（年未確認・9月）" data-comment-key="photo:photo-036" data-comment-label="くまのあみぐるみ・きらりあマルシェ（年未確認・9月）"><a href="assets/gallery/photo-036.jpg" data-photo="" aria-label="くまのあみぐるみを拡大"><img src="assets/gallery/photo-036.jpg" width="1080" height="1080" loading="lazy" alt="くまのあみぐるみ"></a><div class="board-photo-caption"><h4>くまのあみぐるみ</h4><p>きらりあマルシェ（年未確認・9月）</p></div></article><article class="board-photo-card" data-category="events" data-group="きらりあマルシェ（年未確認・9月）" data-search="くまのあみぐるみ きらりあマルシェ（年未確認・9月）" data-comment-key="photo:photo-037" data-comment-label="くまのあみぐるみ・きらりあマルシェ（年未確認・9月）"><a href="assets/gallery/photo-037.jpg" data-photo="" aria-label="くまのあみぐるみを拡大"><img src="assets/gallery/photo-037.jpg" width="1080" height="1080" loading="lazy" alt="くまのあみぐるみ"></a><div class="board-photo-caption"><h4>くまのあみぐるみ</h4><p>きらりあマルシェ（年未確認・9月）</p></div></article></div></div></article><article class="event-card photo-event-record" id="event-record-first-exhibition-unconfirmed" data-comment-key="event-record:first-exhibition-unconfirmed" data-comment-label="初出展の記録（開催年月未確認）" data-event-month=""><div class="body"><h3>初出展の記録（開催年月未確認）</h3><p class="event-record-meta">写真を保管。開催年月・会場の詳細を確認する</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="初出展の作品（開催年月未確認）" data-search="マーニャン牌 初出展の作品（開催年月未確認）" data-comment-key="photo:photo-033" data-comment-label="マーニャン牌・初出展の作品（開催年月未確認）"><a href="assets/gallery/photo-033.jpg" data-photo="" aria-label="マーニャン牌を拡大"><img src="assets/gallery/photo-033.jpg" width="1080" height="1080" loading="lazy" alt="マーニャン牌"></a><div class="board-photo-caption"><h4>マーニャン牌</h4><p>初出展の作品（開催年月未確認）</p></div></article></div></div></article></section>
 
-<section class="memo-zone" data-memo-zone aria-label="イベント一覧のメモ">
+<section class="memo-zone" data-memo-zone="" aria-label="イベント一覧のメモ">
 <div class="memo-head"><h3>メモ</h3><span class="memo-hint">イベントについて自由記入</span></div>
 <textarea class="free-write" rows="3" placeholder="出店の気づき、次にやりたいこと"></textarea>
 <div class="memo-tools">
-<button type="button" class="btn small" data-memo-add>メモとして残す</button>
-<button type="button" class="btn ghost small" data-memo-copy>この場所のメモをコピー</button>
+<button type="button" class="btn small" data-memo-add="">メモとして残す</button>
+<button type="button" class="btn ghost small" data-memo-copy="">この場所のメモをコピー</button>
 </div>
 <div class="memo-list"></div>
 </section>
 
-<section id="event-photo-library" class="board-photo-library" data-photo-library aria-label="出店の追加写真" data-comment-key="section:event-photo-library" data-comment-label="出店の追加写真"><div class="board-photo-heading"><h3>出店の追加写真</h3><span data-photo-count role="status">28枚</span></div><label class="sr-only" for="event-photo-group">出店で写真を絞る</label><select id="event-photo-group" data-photo-group><option value="all">すべての出店</option><option>隅田川（開催年月未確認）</option><option>きらりあマルシェ（年未確認・5月）</option><option>ネコ市ネコ座 神戸（2025年9月）</option><option>ハートまつり（開催年月未確認）</option><option>ネコ市ネコ座 東京（開催年月未確認）</option><option>ネコ市ネコ座 愛知・委託販売（2026年4月）</option><option>ウォンバットマルシェ（開催年月未確認）</option><option>ネコ市ネコ座（開催地・開催年月未確認）</option><option>初出展の作品（開催年月未確認）</option><option>きらりあマルシェ（年未確認・9月）</option></select><label class="sr-only" for="event-photo-search">写真を探す</label><input id="event-photo-search" data-photo-search type="search" placeholder="作品名・出店名で写真を探す" autocomplete="off"><p class="board-photo-note">写真は当時の記録。現在の販売・在庫は別途確認</p><div class="board-photo-grid"><article class="board-photo-card" data-category="events" data-group="隅田川（開催年月未確認）" data-search="隅田川の宣材写真 隅田川（開催年月未確認）" data-comment-key="photo:photo-004" data-comment-label="隅田川の宣材写真・隅田川（開催年月未確認）"><a href="assets/gallery/photo-004.jpg" data-photo aria-label="隅田川の宣材写真を拡大"><img src="assets/gallery/photo-004.jpg" width="1080" height="1080" loading="lazy" alt="隅田川の宣材写真"></a><div class="board-photo-caption"><h4>隅田川の宣材写真</h4><p>隅田川（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="きらりあマルシェ（年未確認・5月）" data-search="花のキーホルダー きらりあマルシェ（年未確認・5月）" data-comment-key="photo:photo-005" data-comment-label="花のキーホルダー・きらりあマルシェ（年未確認・5月）"><a href="assets/gallery/photo-005.jpg" data-photo aria-label="花のキーホルダーを拡大"><img src="assets/gallery/photo-005.jpg" width="811" height="1080" loading="lazy" alt="花のキーホルダー"></a><div class="board-photo-caption"><h4>花のキーホルダー</h4><p>きらりあマルシェ（年未確認・5月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 神戸（2025年9月）" data-search="出店写真のコラージュ ネコ市ネコ座 神戸（2025年9月）" data-comment-key="photo:photo-006" data-comment-label="出店写真のコラージュ・ネコ市ネコ座 神戸（2025年9月）"><a href="assets/gallery/photo-006.jpg" data-photo aria-label="出店写真のコラージュを拡大"><img src="assets/gallery/photo-006.jpg" width="1080" height="760" loading="lazy" alt="出店写真のコラージュ"></a><div class="board-photo-caption"><h4>出店写真のコラージュ</h4><p>ネコ市ネコ座 神戸（2025年9月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 神戸（2025年9月）" data-search="出店の作品写真 ネコ市ネコ座 神戸（2025年9月）" data-comment-key="photo:photo-007" data-comment-label="出店の作品写真・ネコ市ネコ座 神戸（2025年9月）"><a href="assets/gallery/photo-007.jpg" data-photo aria-label="出店の作品写真を拡大"><img src="assets/gallery/photo-007.jpg" width="811" height="1080" loading="lazy" alt="出店の作品写真"></a><div class="board-photo-caption"><h4>出店の作品写真</h4><p>ネコ市ネコ座 神戸（2025年9月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 神戸（2025年9月）" data-search="出店の作品写真 ネコ市ネコ座 神戸（2025年9月）" data-comment-key="photo:photo-008" data-comment-label="出店の作品写真・ネコ市ネコ座 神戸（2025年9月）"><a href="assets/gallery/photo-008.jpg" data-photo aria-label="出店の作品写真を拡大"><img src="assets/gallery/photo-008.jpg" width="811" height="1080" loading="lazy" alt="出店の作品写真"></a><div class="board-photo-caption"><h4>出店の作品写真</h4><p>ネコ市ネコ座 神戸（2025年9月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ハートまつり（開催年月未確認）" data-search="作品の展示 ハートまつり（開催年月未確認）" data-comment-key="photo:photo-009" data-comment-label="作品の展示・ハートまつり（開催年月未確認）"><a href="assets/gallery/photo-009.jpg" data-photo aria-label="作品の展示を拡大"><img src="assets/gallery/photo-009.jpg" width="811" height="1080" loading="lazy" alt="作品の展示"></a><div class="board-photo-caption"><h4>作品の展示</h4><p>ハートまつり（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ハートまつり（開催年月未確認）" data-search="売り場の展示 ハートまつり（開催年月未確認）" data-comment-key="photo:photo-010" data-comment-label="売り場の展示・ハートまつり（開催年月未確認）"><a href="assets/gallery/photo-010.jpg" data-photo aria-label="売り場の展示を拡大"><img src="assets/gallery/photo-010.jpg" width="1080" height="810" loading="lazy" alt="売り場の展示"></a><div class="board-photo-caption"><h4>売り場の展示</h4><p>ハートまつり（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="作品写真 ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-011" data-comment-label="作品写真・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-011.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-011.jpg" width="1080" height="811" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="作品写真 ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-012" data-comment-label="作品写真・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-012.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-012.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="作品写真 ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-013" data-comment-label="作品写真・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-013.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-013.jpg" width="1080" height="811" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 愛知・委託販売（2026年4月）" data-search="委託販売の展示 ネコ市ネコ座 愛知・委託販売（2026年4月）" data-comment-key="photo:photo-014" data-comment-label="委託販売の展示・ネコ市ネコ座 愛知・委託販売（2026年4月）"><a href="assets/gallery/photo-014.jpg" data-photo aria-label="委託販売の展示を拡大"><img src="assets/gallery/photo-014.jpg" width="811" height="1080" loading="lazy" alt="委託販売の展示"></a><div class="board-photo-caption"><h4>委託販売の展示</h4><p>ネコ市ネコ座 愛知・委託販売（2026年4月）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座 東京（開催年月未確認）" data-search="出店の作品写真 ネコ市ネコ座 東京（開催年月未確認）" data-comment-key="photo:photo-020" data-comment-label="出店の作品写真・ネコ市ネコ座 東京（開催年月未確認）"><a href="assets/gallery/photo-020.jpg" data-photo aria-label="出店の作品写真を拡大"><img src="assets/gallery/photo-020.jpg" width="813" height="1080" loading="lazy" alt="出店の作品写真"></a><div class="board-photo-caption"><h4>出店の作品写真</h4><p>ネコ市ネコ座 東京（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ウォンバットマルシェ（開催年月未確認）" data-search="作品写真 ウォンバットマルシェ（開催年月未確認）" data-comment-key="photo:photo-021" data-comment-label="作品写真・ウォンバットマルシェ（開催年月未確認）"><a href="assets/gallery/photo-021.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-021.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ウォンバットマルシェ（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ウォンバットマルシェ（開催年月未確認）" data-search="作品写真 ウォンバットマルシェ（開催年月未確認）" data-comment-key="photo:photo-022" data-comment-label="作品写真・ウォンバットマルシェ（開催年月未確認）"><a href="assets/gallery/photo-022.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-022.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ウォンバットマルシェ（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ウォンバットマルシェ（開催年月未確認）" data-search="作品写真 ウォンバットマルシェ（開催年月未確認）" data-comment-key="photo:photo-023" data-comment-label="作品写真・ウォンバットマルシェ（開催年月未確認）"><a href="assets/gallery/photo-023.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-023.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ウォンバットマルシェ（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-024" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-024.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-024.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-025" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-025.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-025.jpg" width="1080" height="810" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-026" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-026.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-026.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-027" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-027.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-027.jpg" width="1080" height="811" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-028" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-028.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-028.jpg" width="1080" height="811" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-029" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-029.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-029.jpg" width="1080" height="811" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-030" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-030.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-030.jpg" width="1080" height="811" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-031" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-031.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-031.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ネコ市ネコ座（開催地・開催年月未確認）" data-search="作品写真 ネコ市ネコ座（開催地・開催年月未確認）" data-comment-key="photo:photo-032" data-comment-label="作品写真・ネコ市ネコ座（開催地・開催年月未確認）"><a href="assets/gallery/photo-032.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-032.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>ネコ市ネコ座（開催地・開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="初出展の作品（開催年月未確認）" data-search="マーニャン牌 初出展の作品（開催年月未確認）" data-comment-key="photo:photo-033" data-comment-label="マーニャン牌・初出展の作品（開催年月未確認）"><a href="assets/gallery/photo-033.jpg" data-photo aria-label="マーニャン牌を拡大"><img src="assets/gallery/photo-033.jpg" width="1080" height="1080" loading="lazy" alt="マーニャン牌"></a><div class="board-photo-caption"><h4>マーニャン牌</h4><p>初出展の作品（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="隅田川（開催年月未確認）" data-search="根菜うさぎ 隅田川（開催年月未確認）" data-comment-key="photo:photo-035" data-comment-label="根菜うさぎ・隅田川（開催年月未確認）"><a href="assets/gallery/photo-035.jpg" data-photo aria-label="根菜うさぎを拡大"><img src="assets/gallery/photo-035.jpg" width="1080" height="1080" loading="lazy" alt="根菜うさぎ"></a><div class="board-photo-caption"><h4>根菜うさぎ</h4><p>隅田川（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="きらりあマルシェ（年未確認・9月）" data-search="くまのあみぐるみ きらりあマルシェ（年未確認・9月）" data-comment-key="photo:photo-036" data-comment-label="くまのあみぐるみ・きらりあマルシェ（年未確認・9月）"><a href="assets/gallery/photo-036.jpg" data-photo aria-label="くまのあみぐるみを拡大"><img src="assets/gallery/photo-036.jpg" width="1080" height="1080" loading="lazy" alt="くまのあみぐるみ"></a><div class="board-photo-caption"><h4>くまのあみぐるみ</h4><p>きらりあマルシェ（年未確認・9月）</p></div></article><article class="board-photo-card" data-category="events" data-group="きらりあマルシェ（年未確認・9月）" data-search="くまのあみぐるみ きらりあマルシェ（年未確認・9月）" data-comment-key="photo:photo-037" data-comment-label="くまのあみぐるみ・きらりあマルシェ（年未確認・9月）"><a href="assets/gallery/photo-037.jpg" data-photo aria-label="くまのあみぐるみを拡大"><img src="assets/gallery/photo-037.jpg" width="1080" height="1080" loading="lazy" alt="くまのあみぐるみ"></a><div class="board-photo-caption"><h4>くまのあみぐるみ</h4><p>きらりあマルシェ（年未確認・9月）</p></div></article></div><p data-photo-empty hidden>該当する写真なし。分類や検索を変更する</p></section>
+
 </main>
 
 <!-- ================= イベント詳細：クリスマス ================= -->
@@ -282,24 +282,24 @@
 
 <h3 class="subhead">ブース全体</h3>
 <div class="photo-grid">
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-booth1.jpg" data-comment-label="ブース全体（屋外）"><img src="assets/wombat-booth1.jpg" alt="屋外ブース全体。バッグ、缶バッジ、ウォンバーガーを並べた様子" loading="lazy" /><figcaption>ブース全体（屋外）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-booth2.jpg" data-comment-label="ブース全体（屋外・引き）"><img src="assets/wombat-booth2.jpg" alt="屋外ブース全体を引いて撮った写真" loading="lazy" /><figcaption>ブース全体（屋外・引き）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-booth-indoor.jpg" data-comment-label="ブース全体（室内）"><img src="assets/wombat-booth-indoor.jpg" alt="室内会場のブース全体。バッグと缶バッジ、がまぐちを並べた様子" loading="lazy" /><figcaption>ブース全体（室内）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-badges.jpg" data-comment-label="缶バッジと店番のウォンバーガー"><img src="assets/wombat-badges.jpg" alt="缶バッジのボードと、店番の札を付けたウォンバーガー" loading="lazy" /><figcaption>缶バッジと店番のウォンバーガー</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-booth1.jpg" data-comment-label="ブース全体（屋外）"><img src="assets/wombat-booth1.jpg" alt="屋外ブース全体。バッグ、缶バッジ、ウォンバーガーを並べた様子" loading="lazy"><figcaption>ブース全体（屋外）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-booth2.jpg" data-comment-label="ブース全体（屋外・引き）"><img src="assets/wombat-booth2.jpg" alt="屋外ブース全体を引いて撮った写真" loading="lazy"><figcaption>ブース全体（屋外・引き）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-booth-indoor.jpg" data-comment-label="ブース全体（室内）"><img src="assets/wombat-booth-indoor.jpg" alt="室内会場のブース全体。バッグと缶バッジ、がまぐちを並べた様子" loading="lazy"><figcaption>ブース全体（室内）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-badges.jpg" data-comment-label="缶バッジと店番のウォンバーガー"><img src="assets/wombat-badges.jpg" alt="缶バッジのボードと、店番の札を付けたウォンバーガー" loading="lazy"><figcaption>缶バッジと店番のウォンバーガー</figcaption></figure>
 </div>
 
 <h3 class="subhead">陳列</h3>
 <div class="photo-grid">
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-badges-indoor.jpg" data-comment-label="缶バッジ（全点300円）"><img src="assets/wombat-badges-indoor.jpg" alt="室内で並べた缶バッジのボード。全点300円、名前入りの絵柄" loading="lazy" /><figcaption>缶バッジ（全点300円）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-badges-outdoor.jpg" data-comment-label="缶バッジ（屋外）"><img src="assets/wombat-badges-outdoor.jpg" alt="屋外で並べた缶バッジのボードと店番のウォンバーガー" loading="lazy" /><figcaption>缶バッジ（屋外）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-display.jpg" data-comment-label="ウォンバーガー（2,000円）"><img src="assets/wombat-burger-display.jpg" alt="WOM BURGER 2,000円の札と、ウォンバーガーのキーホルダーの陳列" loading="lazy" /><figcaption>ウォンバーガー（2,000円）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-close.jpg" data-comment-label="ウォンバーガー（寄り）"><img src="assets/wombat-burger-close.jpg" alt="ウォンバーガーのキーホルダーを寄って撮った写真" loading="lazy" /><figcaption>ウォンバーガー（寄り）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-small.jpg" data-comment-label="ウォンバーガーと小さいウォンバット"><img src="assets/wombat-burger-small.jpg" alt="ウォンバーガーの陳列と、下に置いた小さいウォンバット（1,300円の値札）" loading="lazy" /><figcaption>ウォンバーガーと小さいウォンバット</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-title.jpg" data-comment-label="ウォンバーガー陳列"><img src="assets/wombat-burger-title.jpg" alt="ウォンバーガーのタイトル文字を付けた陳列写真" loading="lazy" /><figcaption>ウォンバーガー陳列</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-pouches-display.jpg" data-comment-label="ポーチの並び"><img src="assets/wombat-pouches-display.jpg" alt="フラットポーチと編みポーチを並べた様子。900円・1,100円・800円の値札" loading="lazy" /><figcaption>ポーチの並び</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-keys.jpg" data-comment-label="ウォンバーガー キーホルダー5点"><img src="assets/wombat-burger-keys.jpg" alt="ウォンバーガーのキーホルダー5点を手に持った写真" loading="lazy" /><figcaption>ウォンバーガー キーホルダー5点</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-red-front.jpg" data-comment-label="赤いフェルトのウォンバット（正面）"><img src="assets/wombat-red-front.jpg" alt="赤いフェルトのウォンバットを正面から撮った写真" loading="lazy" /><figcaption>赤いフェルトのウォンバット（正面）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-red-side.jpg" data-comment-label="赤いフェルトのウォンバット（横）"><img src="assets/wombat-red-side.jpg" alt="赤いフェルトのウォンバットを横から撮った写真" loading="lazy" /><figcaption>赤いフェルトのウォンバット（横）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-badges-indoor.jpg" data-comment-label="缶バッジ（全点300円）"><img src="assets/wombat-badges-indoor.jpg" alt="室内で並べた缶バッジのボード。全点300円、名前入りの絵柄" loading="lazy"><figcaption>缶バッジ（全点300円）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-badges-outdoor.jpg" data-comment-label="缶バッジ（屋外）"><img src="assets/wombat-badges-outdoor.jpg" alt="屋外で並べた缶バッジのボードと店番のウォンバーガー" loading="lazy"><figcaption>缶バッジ（屋外）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-display.jpg" data-comment-label="ウォンバーガー（2,000円）"><img src="assets/wombat-burger-display.jpg" alt="WOM BURGER 2,000円の札と、ウォンバーガーのキーホルダーの陳列" loading="lazy"><figcaption>ウォンバーガー（2,000円）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-close.jpg" data-comment-label="ウォンバーガー（寄り）"><img src="assets/wombat-burger-close.jpg" alt="ウォンバーガーのキーホルダーを寄って撮った写真" loading="lazy"><figcaption>ウォンバーガー（寄り）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-small.jpg" data-comment-label="ウォンバーガーと小さいウォンバット"><img src="assets/wombat-burger-small.jpg" alt="ウォンバーガーの陳列と、下に置いた小さいウォンバット（1,300円の値札）" loading="lazy"><figcaption>ウォンバーガーと小さいウォンバット</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-title.jpg" data-comment-label="ウォンバーガー陳列"><img src="assets/wombat-burger-title.jpg" alt="ウォンバーガーのタイトル文字を付けた陳列写真" loading="lazy"><figcaption>ウォンバーガー陳列</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-pouches-display.jpg" data-comment-label="ポーチの並び"><img src="assets/wombat-pouches-display.jpg" alt="フラットポーチと編みポーチを並べた様子。900円・1,100円・800円の値札" loading="lazy"><figcaption>ポーチの並び</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-burger-keys.jpg" data-comment-label="ウォンバーガー キーホルダー5点"><img src="assets/wombat-burger-keys.jpg" alt="ウォンバーガーのキーホルダー5点を手に持った写真" loading="lazy"><figcaption>ウォンバーガー キーホルダー5点</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-red-front.jpg" data-comment-label="赤いフェルトのウォンバット（正面）"><img src="assets/wombat-red-front.jpg" alt="赤いフェルトのウォンバットを正面から撮った写真" loading="lazy"><figcaption>赤いフェルトのウォンバット（正面）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-wombat:wombat-red-side.jpg" data-comment-label="赤いフェルトのウォンバット（横）"><img src="assets/wombat-red-side.jpg" alt="赤いフェルトのウォンバットを横から撮った写真" loading="lazy"><figcaption>赤いフェルトのウォンバット（横）</figcaption></figure>
 </div>
 
 <h3 class="subhead">並べた作品</h3>
@@ -312,7 +312,7 @@
 <li data-comment-key="corner:view-event-wombat:equipment:06" data-comment-label="編みポーチウォンバット付き・800円"><span class="box" aria-hidden="true"></span><span><button type="button" class="linklike" data-goto="works" data-goto-anchor="work-wombat-amipouch">編みポーチ</button><small>ウォンバット付き・800円</small></span></li>
 <li data-comment-key="corner:view-event-wombat:equipment:07" data-comment-label="ウォンバットのあみぐるみ（小）1,300円"><span class="box" aria-hidden="true"></span><span><button type="button" class="linklike" data-goto="works" data-goto-anchor="work-wombat-small">ウォンバットのあみぐるみ（小）</button><small>1,300円</small></span></li>
 </ul>
-</main>
+<h3 class="subhead">ウォンバットマルシェの関連写真（開催回は未確認）</h3><div class="photo-grid"><article class="board-photo-card" data-category="events" data-group="ウォンバットマルシェ（開催年月未確認）" data-search="ウォンバットのあみぐるみ ウォンバットマルシェ（開催年月未確認）" data-comment-key="photo:photo-021" data-comment-label="ウォンバットのあみぐるみ・ウォンバットマルシェ（開催年月未確認）"><a href="assets/gallery/photo-021.jpg" data-photo="" aria-label="ウォンバットのあみぐるみを拡大"><img src="assets/gallery/photo-021.jpg" width="811" height="1080" loading="lazy" alt="ウォンバットのあみぐるみ"></a><div class="board-photo-caption"><h4>ウォンバットのあみぐるみ</h4><p>ウォンバットマルシェ（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ウォンバットマルシェ（開催年月未確認）" data-search="ウォンバットのあみぐるみ（赤い服） ウォンバットマルシェ（開催年月未確認）" data-comment-key="photo:photo-022" data-comment-label="ウォンバットのあみぐるみ（赤い服）・ウォンバットマルシェ（開催年月未確認）"><a href="assets/gallery/photo-022.jpg" data-photo="" aria-label="ウォンバットのあみぐるみ（赤い服）を拡大"><img src="assets/gallery/photo-022.jpg" width="811" height="1080" loading="lazy" alt="ウォンバットのあみぐるみ（赤い服）"></a><div class="board-photo-caption"><h4>ウォンバットのあみぐるみ（赤い服）</h4><p>ウォンバットマルシェ（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="ウォンバットマルシェ（開催年月未確認）" data-search="ウォンバットのあみぐるみ（黄色い服） ウォンバットマルシェ（開催年月未確認）" data-comment-key="photo:photo-023" data-comment-label="ウォンバットのあみぐるみ（黄色い服）・ウォンバットマルシェ（開催年月未確認）"><a href="assets/gallery/photo-023.jpg" data-photo="" aria-label="ウォンバットのあみぐるみ（黄色い服）を拡大"><img src="assets/gallery/photo-023.jpg" width="811" height="1080" loading="lazy" alt="ウォンバットのあみぐるみ（黄色い服）"></a><div class="board-photo-caption"><h4>ウォンバットのあみぐるみ（黄色い服）</h4><p>ウォンバットマルシェ（開催年月未確認）</p></div></article></div></main>
 
 <main class="view" id="view-event-kiraria-1107">
 <button type="button" class="backlink" data-goto="events">← イベント一覧へ戻る</button>
@@ -382,18 +382,18 @@
 </dl>
 <h3 class="subhead">当日の写真</h3>
 <div class="photo-grid">
-<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-front.jpg" data-comment-label="ブース全景（正面）"><img src="assets/kiraria5-booth-front.jpg" alt="ブース全景を正面から撮った写真。ヘアゴムのハートボードと「どんぐりの夢」の看板" loading="lazy" /><figcaption>ブース全景（正面）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-close.jpg" data-comment-label="ブースの寄り（ヘアゴムボード）"><img src="assets/kiraria5-booth-close.jpg" alt="ヘアゴムのハートボードに寄った写真。出展者バッジを持つ人の手元" loading="lazy" /><figcaption>ブースの寄り（ヘアゴムボード）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-side.jpg" data-comment-label="ブース側面（会場の様子つき）"><img src="assets/kiraria5-booth-side.jpg" alt="ブースを側面から撮った写真。会場の様子つき" loading="lazy" /><figcaption>ブース側面（会場の様子つき）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-display.jpg" data-comment-label="陳列の寄り（キーホルダー・がま口・マグネット）"><img src="assets/kiraria5-display.jpg" alt="陳列の寄り。あみぐるみキーホルダーとがま口、右端にマグネットの価格ボード" loading="lazy" /><figcaption>陳列の寄り（キーホルダー・がま口・マグネット）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-angle.jpg" data-comment-label="ブース全景（別角度）"><img src="assets/kiraria5-booth-angle.jpg" alt="ブース全景を別角度から撮った写真" loading="lazy" /><figcaption>ブース全景（別角度）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-front.jpg" data-comment-label="ブース全景（正面）"><img src="assets/kiraria5-booth-front.jpg" alt="ブース全景を正面から撮った写真。ヘアゴムのハートボードと「どんぐりの夢」の看板" loading="lazy"><figcaption>ブース全景（正面）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-close.jpg" data-comment-label="ブースの寄り（ヘアゴムボード）"><img src="assets/kiraria5-booth-close.jpg" alt="ヘアゴムのハートボードに寄った写真。出展者バッジを持つ人の手元" loading="lazy"><figcaption>ブースの寄り（ヘアゴムボード）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-side.jpg" data-comment-label="ブース側面（会場の様子つき）"><img src="assets/kiraria5-booth-side.jpg" alt="ブースを側面から撮った写真。会場の様子つき" loading="lazy"><figcaption>ブース側面（会場の様子つき）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-display.jpg" data-comment-label="陳列の寄り（キーホルダー・がま口・マグネット）"><img src="assets/kiraria5-display.jpg" alt="陳列の寄り。あみぐるみキーホルダーとがま口、右端にマグネットの価格ボード" loading="lazy"><figcaption>陳列の寄り（キーホルダー・がま口・マグネット）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-kiraria-0516:kiraria5-booth-angle.jpg" data-comment-label="ブース全景（別角度）"><img src="assets/kiraria5-booth-angle.jpg" alt="ブース全景を別角度から撮った写真" loading="lazy"><figcaption>ブース全景（別角度）</figcaption></figure>
 </div>
 <h3 class="subhead">並べた作品</h3>
 <ul class="checklist">
 <li data-comment-key="corner:view-event-kiraria-0516:equipment:01" data-comment-label="ヘアゴム300円／ハートの台紙付き"><span class="box" aria-hidden="true"></span><span><button type="button" class="linklike" data-goto="works" data-goto-anchor="work-hairgomu">ヘアゴム</button><small>300円／ハートの台紙付き</small></span></li>
 <li data-comment-key="corner:view-event-kiraria-0516:equipment:02" data-comment-label="マグネット1コ100円／3コ250円／5コ400円"><span class="box" aria-hidden="true"></span><span><button type="button" class="linklike" data-goto="works" data-goto-anchor="work-magnet">マグネット</button><small>1コ100円／3コ250円／5コ400円</small></span></li>
 </ul>
-</main>
+<h3 class="subhead">2026年5月の関連写真（個別の撮影日は未確認）</h3><div class="photo-grid"><article class="board-photo-card" data-category="events" data-group="きらりあマルシェ（2026年5月）" data-search="花のキーホルダー きらりあマルシェ（2026年5月）" data-comment-key="photo:photo-005" data-comment-label="花のキーホルダー・きらりあマルシェ（2026年5月）"><a href="assets/gallery/photo-005.jpg" data-photo="" aria-label="花のキーホルダーを拡大"><img src="assets/gallery/photo-005.jpg" width="811" height="1080" loading="lazy" alt="花のキーホルダー"></a><div class="board-photo-caption"><h4>花のキーホルダー</h4><p>きらりあマルシェ（2026年5月）</p></div></article></div></main>
 
 <main class="view" id="view-event-kiraria-0228">
 <button type="button" class="backlink" data-goto="events">← イベント一覧へ戻る</button>
@@ -435,39 +435,39 @@
 </dl>
 <h3 class="subhead">ブース全体</h3>
 <div class="photo-grid">
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-booth.jpg" data-comment-label="ブース全体（川沿い）"><img src="assets/sumida-booth.jpg" alt="川沿いのブース全体。ベジたべるぅキーホルダーのポップと陳列" loading="lazy" /><figcaption>ブース全体（川沿い）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-booth-title.jpg" data-comment-label="ブース全体"><img src="assets/sumida-booth-title.jpg" alt="すみだがわオープンテラス パークカミング秋マルシェの文字入りブース写真" loading="lazy" /><figcaption>ブース全体</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-booth-angle.jpg" data-comment-label="ブース（別角度）"><img src="assets/sumida-booth-angle.jpg" alt="ブースを別角度から撮った写真" loading="lazy" /><figcaption>ブース（別角度）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-board.jpg" data-comment-label="ストラップの陳列ボード"><img src="assets/sumida-strap-board.jpg" alt="あみぐるみストラップ300円の陳列ボードとポップ" loading="lazy" /><figcaption>ストラップの陳列ボード</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-wide.jpg" data-comment-label="ブース全景（川沿い・ポップ3枚）"><img src="assets/sumida-river-booth-wide.jpg" alt="川沿いのブース全景。ハッピーパック・あみぐるみフレンズ・あみものおみくじのポップ3枚を吊り下げた様子" loading="lazy" /><figcaption>ブース全景（川沿い・ポップ3枚）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-close.jpg" data-comment-label="ブース全景（寄り）"><img src="assets/sumida-river-booth-close.jpg" alt="ブース全景を寄って撮った写真。ポップ3枚と陳列" loading="lazy" /><figcaption>ブース全景（寄り）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-sky.jpg" data-comment-label="ブース全景（空多め）"><img src="assets/sumida-river-booth-sky.jpg" alt="空を多めに入れたブース全景" loading="lazy" /><figcaption>ブース全景（空多め）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-front.jpg" data-comment-label="ブース正面"><img src="assets/sumida-river-booth-front.jpg" alt="ブースを正面から撮った写真" loading="lazy" /><figcaption>ブース正面</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-booth.jpg" data-comment-label="ブース全体（川沿い）"><img src="assets/sumida-booth.jpg" alt="川沿いのブース全体。ベジたべるぅキーホルダーのポップと陳列" loading="lazy"><figcaption>ブース全体（川沿い）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-booth-title.jpg" data-comment-label="ブース全体"><img src="assets/sumida-booth-title.jpg" alt="すみだがわオープンテラス パークカミング秋マルシェの文字入りブース写真" loading="lazy"><figcaption>ブース全体</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-booth-angle.jpg" data-comment-label="ブース（別角度）"><img src="assets/sumida-booth-angle.jpg" alt="ブースを別角度から撮った写真" loading="lazy"><figcaption>ブース（別角度）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-board.jpg" data-comment-label="ストラップの陳列ボード"><img src="assets/sumida-strap-board.jpg" alt="あみぐるみストラップ300円の陳列ボードとポップ" loading="lazy"><figcaption>ストラップの陳列ボード</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-wide.jpg" data-comment-label="ブース全景（川沿い・ポップ3枚）"><img src="assets/sumida-river-booth-wide.jpg" alt="川沿いのブース全景。ハッピーパック・あみぐるみフレンズ・あみものおみくじのポップ3枚を吊り下げた様子" loading="lazy"><figcaption>ブース全景（川沿い・ポップ3枚）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-close.jpg" data-comment-label="ブース全景（寄り）"><img src="assets/sumida-river-booth-close.jpg" alt="ブース全景を寄って撮った写真。ポップ3枚と陳列" loading="lazy"><figcaption>ブース全景（寄り）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-sky.jpg" data-comment-label="ブース全景（空多め）"><img src="assets/sumida-river-booth-sky.jpg" alt="空を多めに入れたブース全景" loading="lazy"><figcaption>ブース全景（空多め）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-booth-front.jpg" data-comment-label="ブース正面"><img src="assets/sumida-river-booth-front.jpg" alt="ブースを正面から撮った写真" loading="lazy"><figcaption>ブース正面</figcaption></figure>
 </div>
 <h3 class="subhead">陳列の寄り</h3>
 <div class="photo-grid">
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-display-vege.jpg" data-comment-label="陳列の寄り（ベジたべるぅボードとポーチ類）"><img src="assets/sumida-river-display-vege.jpg" alt="ベジたべるぅキーホルダーのボードとポーチ類の陳列の寄り" loading="lazy" /><figcaption>陳列の寄り（ベジたべるぅボードとポーチ類）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-display-angle.jpg" data-comment-label="陳列の寄り（別角度）"><img src="assets/sumida-river-display-angle.jpg" alt="ベジたべるぅキーホルダーのボードとポーチ類の陳列を別角度から撮った写真" loading="lazy" /><figcaption>陳列の寄り（別角度）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-sign.jpg" data-comment-label="スマホケースの手書きシール"><img src="assets/sumida-river-sign.jpg" alt="スマホケースに貼った「どんぐりの夢 コカワ」の手書きシールとどんぐりの絵" loading="lazy" /><figcaption>スマホケースの手書きシール</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-display-vege.jpg" data-comment-label="陳列の寄り（ベジたべるぅボードとポーチ類）"><img src="assets/sumida-river-display-vege.jpg" alt="ベジたべるぅキーホルダーのボードとポーチ類の陳列の寄り" loading="lazy"><figcaption>陳列の寄り（ベジたべるぅボードとポーチ類）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-display-angle.jpg" data-comment-label="陳列の寄り（別角度）"><img src="assets/sumida-river-display-angle.jpg" alt="ベジたべるぅキーホルダーのボードとポーチ類の陳列を別角度から撮った写真" loading="lazy"><figcaption>陳列の寄り（別角度）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-sign.jpg" data-comment-label="スマホケースの手書きシール"><img src="assets/sumida-river-sign.jpg" alt="スマホケースに貼った「どんぐりの夢 コカワ」の手書きシールとどんぐりの絵" loading="lazy"><figcaption>スマホケースの手書きシール</figcaption></figure>
 </div>
 <h3 class="subhead">作品の寄り</h3>
 <div class="photo-grid">
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-tiger-brown.jpg" data-comment-label="ストラップ：トラ（茶）"><img src="assets/sumida-strap-tiger-brown.jpg" alt="あみぐるみストラップ、トラ（茶）の寄り" loading="lazy" /><figcaption>ストラップ：トラ（茶）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-shiba.jpg" data-comment-label="ストラップ：柴犬"><img src="assets/sumida-strap-shiba.jpg" alt="あみぐるみストラップ、柴犬の寄り" loading="lazy" /><figcaption>ストラップ：柴犬</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-tiger-yellow.jpg" data-comment-label="ストラップ：トラ（黄）"><img src="assets/sumida-strap-tiger-yellow.jpg" alt="あみぐるみストラップ、トラ（黄）の寄り" loading="lazy" /><figcaption>ストラップ：トラ（黄）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-koala.jpg" data-comment-label="ストラップ：コアラ"><img src="assets/sumida-strap-koala.jpg" alt="あみぐるみストラップ、コアラの寄り" loading="lazy" /><figcaption>ストラップ：コアラ</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-cookie.jpg" data-comment-label="クッキー風キーホルダーなど"><img src="assets/sumida-cookie.jpg" alt="クッキー風キーホルダーなどの寄り" loading="lazy" /><figcaption>クッキー風キーホルダーなど</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-tulip.jpg" data-comment-label="チューリップのヘアピン（着用）"><img src="assets/sumida-tulip.jpg" alt="チューリップのヘアピンを付けたお客さんの着用写真" loading="lazy" /><figcaption>チューリップのヘアピン（着用）</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-strap-tiger-brown.jpg" data-comment-label="ストラップ：トラ（茶）の寄り"><img src="assets/sumida-river-strap-tiger-brown.jpg" alt="手に持ったあみぐるみストラップ、トラ（茶）の寄り" loading="lazy" /><figcaption>ストラップ：トラ（茶）の寄り</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-strap-shiba.jpg" data-comment-label="ストラップ：柴犬の寄り"><img src="assets/sumida-river-strap-shiba.jpg" alt="手に持ったあみぐるみストラップ、柴犬の寄り" loading="lazy" /><figcaption>ストラップ：柴犬の寄り</figcaption></figure>
-<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-strap-tiger-yellow.jpg" data-comment-label="ストラップ：トラ（黄）の寄り"><img src="assets/sumida-river-strap-tiger-yellow.jpg" alt="手に持ったあみぐるみストラップ、トラ（黄）の寄り" loading="lazy" /><figcaption>ストラップ：トラ（黄）の寄り</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-tiger-brown.jpg" data-comment-label="ストラップ：トラ（茶）"><img src="assets/sumida-strap-tiger-brown.jpg" alt="あみぐるみストラップ、トラ（茶）の寄り" loading="lazy"><figcaption>ストラップ：トラ（茶）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-shiba.jpg" data-comment-label="ストラップ：柴犬"><img src="assets/sumida-strap-shiba.jpg" alt="あみぐるみストラップ、柴犬の寄り" loading="lazy"><figcaption>ストラップ：柴犬</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-tiger-yellow.jpg" data-comment-label="ストラップ：トラ（黄）"><img src="assets/sumida-strap-tiger-yellow.jpg" alt="あみぐるみストラップ、トラ（黄）の寄り" loading="lazy"><figcaption>ストラップ：トラ（黄）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-strap-koala.jpg" data-comment-label="ストラップ：コアラ"><img src="assets/sumida-strap-koala.jpg" alt="あみぐるみストラップ、コアラの寄り" loading="lazy"><figcaption>ストラップ：コアラ</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-cookie.jpg" data-comment-label="クッキー風キーホルダーなど"><img src="assets/sumida-cookie.jpg" alt="クッキー風キーホルダーなどの寄り" loading="lazy"><figcaption>クッキー風キーホルダーなど</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-tulip.jpg" data-comment-label="チューリップのヘアピン（着用）"><img src="assets/sumida-tulip.jpg" alt="チューリップのヘアピンを付けたお客さんの着用写真" loading="lazy"><figcaption>チューリップのヘアピン（着用）</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-strap-tiger-brown.jpg" data-comment-label="ストラップ：トラ（茶）の寄り"><img src="assets/sumida-river-strap-tiger-brown.jpg" alt="手に持ったあみぐるみストラップ、トラ（茶）の寄り" loading="lazy"><figcaption>ストラップ：トラ（茶）の寄り</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-strap-shiba.jpg" data-comment-label="ストラップ：柴犬の寄り"><img src="assets/sumida-river-strap-shiba.jpg" alt="手に持ったあみぐるみストラップ、柴犬の寄り" loading="lazy"><figcaption>ストラップ：柴犬の寄り</figcaption></figure>
+<figure class="booth-photo" data-comment-key="figure:view-event-toyoshima:sumida-river-strap-tiger-yellow.jpg" data-comment-label="ストラップ：トラ（黄）の寄り"><img src="assets/sumida-river-strap-tiger-yellow.jpg" alt="手に持ったあみぐるみストラップ、トラ（黄）の寄り" loading="lazy"><figcaption>ストラップ：トラ（黄）の寄り</figcaption></figure>
 </div>
 <h3 class="subhead">並べた作品</h3>
 <ul class="checklist">
 <li data-comment-key="corner:view-event-toyoshima:equipment:01" data-comment-label="ベジたべるぅキーホルダー800円（定価831円）"><span class="box" aria-hidden="true"></span><span><button type="button" class="linklike" data-goto="works" data-goto-anchor="work-vege">ベジたべるぅキーホルダー</button><small>800円（定価831円）</small></span></li>
 <li data-comment-key="corner:view-event-toyoshima:equipment:02" data-comment-label="あみぐるみストラップ300円"><span class="box" aria-hidden="true"></span><span><button type="button" class="linklike" data-goto="works" data-goto-anchor="work-strap">あみぐるみストラップ</button><small>300円</small></span></li>
 </ul>
-</main>
+<h3 class="subhead">隅田川の関連写真（開催回は未確認）</h3><div class="photo-grid"><article class="board-photo-card" data-category="events" data-group="隅田川（開催年月未確認）" data-search="隅田川の宣材写真 隅田川（開催年月未確認）" data-comment-key="photo:photo-004" data-comment-label="隅田川の宣材写真・隅田川（開催年月未確認）"><a href="assets/gallery/photo-004.jpg" data-photo="" aria-label="隅田川の宣材写真を拡大"><img src="assets/gallery/photo-004.jpg" width="1080" height="1080" loading="lazy" alt="隅田川の宣材写真"></a><div class="board-photo-caption"><h4>隅田川の宣材写真</h4><p>隅田川（開催年月未確認）</p></div></article><article class="board-photo-card" data-category="events" data-group="隅田川（開催年月未確認）" data-search="根菜うさぎ 隅田川（開催年月未確認）" data-comment-key="photo:photo-035" data-comment-label="根菜うさぎ・隅田川（開催年月未確認）"><a href="assets/gallery/photo-035.jpg" data-photo="" aria-label="根菜うさぎを拡大"><img src="assets/gallery/photo-035.jpg" width="1080" height="1080" loading="lazy" alt="根菜うさぎ"></a><div class="board-photo-caption"><h4>根菜うさぎ</h4><p>隅田川（開催年月未確認）</p></div></article></div></main>
 
 <main class="view" id="view-event-heart">
 <button type="button" class="backlink" data-goto="events">← イベント一覧へ戻る</button>
@@ -496,9 +496,17 @@
 
 <!-- ================= 作品・在庫 ================= -->
 <main class="view" id="view-works">
-<div class="view-head"><h2>作品・在庫</h2><button type="button" class="btn small" data-goto="works" data-goto-anchor="work-photo-library">作品・依頼・贈り物の写真</button></div>
-<div class="work-search"><label class="sr-only" for="work-search">作品を探す</label><input id="work-search" type="search" placeholder="作品を検索" autocomplete="off"><p id="work-result-count" role="status"></p></div>
-<details class="work-filter-menu"><summary>種類で絞る</summary><div class="filters" role="group" aria-label="種類でしぼりこむ">
+<div class="view-head"><h2>作品・在庫</h2></div>
+
+
+
+
+
+
+
+
+
+<div class="work-collections" id="work-photo-library" role="group" aria-label="作品の分類"><button type="button" data-work-collection="works" data-icon="works" aria-controls="work-collection-works" aria-pressed="true">作品</button><button type="button" data-work-collection="commission" data-icon="request" aria-controls="work-collection-commission" aria-pressed="false">個人依頼</button><button type="button" data-work-collection="personal" data-icon="photo" aria-controls="work-collection-personal" aria-pressed="false">個人作品</button><button type="button" data-work-collection="gift" data-icon="gift" aria-controls="work-collection-gift" aria-pressed="false">贈り物</button></div><div class="work-search"><label class="sr-only" for="work-search">作品・個人依頼・贈り物を探す</label><input id="work-search" type="search" placeholder="作品・個人依頼・贈り物を検索" autocomplete="off"><p id="work-result-count" role="status" class="sr-only"></p></div><p class="work-collection-status" id="work-collection-status" role="status"></p><div class="work-collection-panels" data-comment-key="section:work-photo-library" data-comment-label="作品・個人依頼・贈り物の写真全体"><section id="work-collection-works" data-work-panel="works" data-comment-key="work-collection:works" data-comment-label="作品全体"><details class="work-filter-menu"><summary>種類で絞る</summary><div class="filters" role="group" aria-label="種類でしぼりこむ">
 <button type="button" data-filter="all" aria-pressed="true">すべて</button>
 <button type="button" data-filter="amigurumi" aria-pressed="false">あみぐるみ</button>
 <button type="button" data-filter="strap" aria-pressed="false">キーホルダー・ストラップ</button>
@@ -507,10 +515,9 @@
 <button type="button" data-filter="unknown" aria-pressed="false">価格 未確認</button>
 </div>
 
-</details>
-<div class="work-grid">
+</details><div class="work-grid">
 <article class="work jump" id="work-haniwa" data-cat="strap">
-<img src="assets/kiraria-haniwa.jpg" alt="はにわのポップと、ボードに並ぶはにわキーホルダー4点" />
+<img src="assets/kiraria-haniwa.jpg" alt="はにわのポップと、ボードに並ぶはにわキーホルダー4点">
 <div class="body">
 <h3>はにわキーホルダー</h3>
 <div class="price-line"><span class="price">800円 <small>対面販売価格（定価820円）</small></span></div>
@@ -524,7 +531,7 @@
 </article>
 
 <article class="work jump" id="work-strap" data-cat="strap">
-<img src="assets/kiraria-strap.jpg" alt="あみぐるみストラップ300円のポップと、ボードに並ぶストラップ8点" />
+<img src="assets/kiraria-strap.jpg" alt="あみぐるみストラップ300円のポップと、ボードに並ぶストラップ8点">
 <div class="body">
 <h3>あみぐるみストラップ</h3>
 <div class="price-line"><span class="price">300円</span></div>
@@ -540,7 +547,7 @@
 
 
 <article class="work jump" id="work-pouch" data-cat="pouch">
-<img src="assets/kiraria-pouches.jpg" alt="くまモチーフの巾着ポーチ9点を並べた写真" />
+<img src="assets/kiraria-pouches.jpg" alt="くまモチーフの巾着ポーチ9点を並べた写真">
 <div class="body">
 <h3>くまモチーフの巾着ポーチ</h3>
 <div class="price-line"><span class="badge tbd">価格 未確認</span></div>
@@ -554,7 +561,7 @@
 </article>
 
 <article class="work jump" id="work-womburger" data-cat="strap">
-<img src="assets/wombat-burger-keys.jpg" alt="ウォンバーガーのキーホルダー5点を手に持った写真" loading="lazy" />
+<img src="assets/wombat-burger-keys.jpg" alt="ウォンバーガーのキーホルダー5点を手に持った写真" loading="lazy">
 <div class="body">
 <h3>ウォンバーガー</h3>
 <div class="price-line"><span class="price">2,000円</span></div>
@@ -568,7 +575,7 @@
 </article>
 
 <article class="work jump" id="work-wombat-kinchaku" data-cat="pouch">
-<img src="assets/wombat-pouch-blue.jpg" alt="フェルトのウォンバット柄が付いた、青い編み巾着ポーチ" loading="lazy" />
+<img src="assets/wombat-pouch-blue.jpg" alt="フェルトのウォンバット柄が付いた、青い編み巾着ポーチ" loading="lazy">
 <div class="body">
 <h3>ウォンバットモチーフの巾着ポーチ</h3>
 <div class="price-line"><span class="badge tbd">価格 未登録</span></div>
@@ -590,7 +597,7 @@
 
 
 <article class="work jump" id="work-wombat-amipouch" data-cat="pouch">
-<img src="assets/wombat-burger-display.jpg" alt="ウォンバーガーの陳列の横に並ぶ、ウォンバット付きの編みポーチ" loading="lazy" />
+<img src="assets/wombat-burger-display.jpg" alt="ウォンバーガーの陳列の横に並ぶ、ウォンバット付きの編みポーチ" loading="lazy">
 <div class="body">
 <h3>編みポーチ（ウォンバット付き）</h3>
 <div class="price-line"><span class="price">800円</span></div>
@@ -604,7 +611,7 @@
 </article>
 
 <article class="work jump" id="work-wombat-small" data-cat="amigurumi">
-<img src="assets/wombat-burger-small.jpg" alt="ウォンバーガーの陳列の下に立つ、小さいウォンバットのあみぐるみ" loading="lazy" />
+<img src="assets/wombat-burger-small.jpg" alt="ウォンバーガーの陳列の下に立つ、小さいウォンバットのあみぐるみ" loading="lazy">
 <div class="body">
 <h3>ウォンバットのあみぐるみ（小）</h3>
 <div class="price-line"><span class="price">1,300円</span></div>
@@ -618,7 +625,7 @@
 </article>
 
 <article class="work jump" id="work-vege" data-cat="strap">
-<img src="assets/sumida-booth.jpg" alt="ベジたべるぅキーホルダーのポップと陳列。隅田川のブース" loading="lazy" />
+<img src="assets/sumida-booth.jpg" alt="ベジたべるぅキーホルダーのポップと陳列。隅田川のブース" loading="lazy">
 <div class="body">
 <h3>ベジたべるぅキーホルダー</h3>
 <div class="price-line"><span class="price">800円 <small>対面販売価格（定価831円）</small></span></div>
@@ -632,7 +639,7 @@
 </article>
 
 <article class="work jump" id="work-tsunagi" data-cat="amigurumi">
-<img src="assets/kiraria-tsunagi.jpg" alt="あみぐるみフレンズ13点がボードに並ぶ写真" loading="lazy" />
+<img src="assets/kiraria-tsunagi.jpg" alt="あみぐるみフレンズ13点がボードに並ぶ写真" loading="lazy">
 <div class="body">
 <h3>あみぐるみフレンズ</h3>
 <div class="price-line"><span class="price">1,000円</span></div>
@@ -646,7 +653,7 @@
 </article>
 
 <article class="work jump" id="work-omikuji" data-cat="goods">
-<img src="assets/heart-omikuji.jpg" alt="あみものおみくじ1回500円のポップと、花・果物のキーホルダーの陳列" loading="lazy" />
+<img src="assets/heart-omikuji.jpg" alt="あみものおみくじ1回500円のポップと、花・果物のキーホルダーの陳列" loading="lazy">
 <div class="body">
 <h3>あみものおみくじ</h3>
 <div class="price-line"><span class="price">1回 500円</span></div>
@@ -660,7 +667,7 @@
 </article>
 
 <article class="work jump" id="work-ichigogari" data-cat="goods">
-<img src="assets/heart-ichigo.jpg" alt="いちご狩り1回300円のポップと、いちごのキーホルダーの陳列" loading="lazy" />
+<img src="assets/heart-ichigo.jpg" alt="いちご狩り1回300円のポップと、いちごのキーホルダーの陳列" loading="lazy">
 <div class="body">
 <h3>いちご狩り</h3>
 <div class="price-line"><span class="price">1回 300円</span></div>
@@ -674,7 +681,7 @@
 </article>
 
 <article class="work jump" id="work-hairpin" data-cat="goods">
-<img src="assets/sumida-tulip.jpg" alt="チューリップのヘアピン2個を着けた着用写真" loading="lazy" />
+<img src="assets/sumida-tulip.jpg" alt="チューリップのヘアピン2個を着けた着用写真" loading="lazy">
 <div class="body">
 <h3>ヘアピン</h3>
 <div class="price-line"><span class="price">2個 600円</span></div>
@@ -688,7 +695,7 @@
 </article>
 
 <article class="work jump" id="work-bigamigurumi" data-cat="amigurumi">
-<img src="assets/kiraria-bunny.jpg" alt="金のリボンを付けた若草色のうさぎ（大きいあみぐるみ）" data-shared-photo loading="lazy" />
+<img src="assets/kiraria-bunny.jpg" alt="金のリボンを付けた若草色のうさぎ（大きいあみぐるみ）" data-shared-photo="" loading="lazy">
 <div class="body">
 <h3>大きいあみぐるみ</h3>
 <div class="price-line"><span class="price">1,500円</span></div>
@@ -703,7 +710,7 @@
 
 
 <article class="work jump" id="work-kuma-pouch" data-cat="pouch">
-<img src="assets/kiraria8-kuma-pouch.jpg" alt="おしゃぶりと哺乳瓶の飾りが付いた、ふわふわ素材のくまのポーチ2点" loading="lazy" />
+<img src="assets/kiraria8-kuma-pouch.jpg" alt="おしゃぶりと哺乳瓶の飾りが付いた、ふわふわ素材のくまのポーチ2点" loading="lazy">
 <div class="body">
 <h3>くまのポーチ（おしゃぶり付き）</h3>
 <div class="price-line"><span class="badge tbd">価格 未登録</span></div>
@@ -717,7 +724,7 @@
 </article>
 
 <article class="work jump" id="work-donut" data-cat="strap">
-<img src="assets/kiraria8-donut.jpg" alt="ドーナツとクッキーのキーホルダーが並ぶ陳列ボード" loading="lazy" />
+<img src="assets/kiraria8-donut.jpg" alt="ドーナツとクッキーのキーホルダーが並ぶ陳列ボード" loading="lazy">
 <div class="body">
 <h3>ドーナツとクッキーのキーホルダー</h3>
 <div class="price-line"><span class="badge tbd">価格 未登録</span></div>
@@ -731,7 +738,7 @@
 </article>
 
 <article class="work jump" id="work-sushi" data-cat="amigurumi">
-<img src="assets/kiraria8-sushi-wood.jpg" alt="お寿司のあみぐるみ12貫と手書きのお品書きポップ" data-original-src="assets/kiraria8-sushi-close.jpg" data-original-alt="トレーに並ぶお寿司のあみぐるみ12貫を斜めから寄って撮った写真" loading="lazy" />
+<img src="assets/kiraria8-sushi-wood.jpg" alt="お寿司のあみぐるみ12貫と手書きのお品書きポップ" data-original-src="assets/kiraria8-sushi-close.jpg" data-original-alt="トレーに並ぶお寿司のあみぐるみ12貫を斜めから寄って撮った写真" loading="lazy">
 <div class="body">
 <h3>お寿司のあみぐるみ</h3><p><a href="assets/kiraria8-sushi-close.jpg" target="_blank" rel="noopener noreferrer">以前の寄り写真を開く</a></p>
 <div class="price-line"><span class="price">一貫 300円 <small>四貫お買得パック 1,000円</small></span></div>
@@ -745,7 +752,7 @@
 </article>
 
 <article class="work jump" id="work-hairgomu" data-cat="goods">
-<img src="assets/kiraria5-hairgomu.jpg" alt="ハートの台紙に付いた動物の顔モチーフのヘアゴムがボードに並ぶ写真。「ハートの台紙は¥300」の看板つき" loading="lazy" />
+<img src="assets/kiraria5-hairgomu.jpg" alt="ハートの台紙に付いた動物の顔モチーフのヘアゴムがボードに並ぶ写真。「ハートの台紙は¥300」の看板つき" loading="lazy">
 <div class="body">
 <h3>ヘアゴム</h3>
 <div class="price-line"><span class="price">300円</span></div>
@@ -766,19 +773,15 @@
 
 
 
-</div>
-
-<section class="memo-zone" data-memo-zone aria-label="作品・在庫のメモ">
+</div><section class="memo-zone" data-memo-zone="" aria-label="作品・在庫のメモ">
 <div class="memo-head"><h3>コメント</h3><span class="memo-hint">在庫・価格・作る予定の記入欄。各作品のカードにもコメント欄あり</span></div>
 <textarea class="free-write" rows="3" placeholder="例：うさぎの価格決定／ストラップの追加制作数"></textarea>
 <div class="memo-tools">
-<button type="button" class="btn small" data-memo-add>メモとして残す</button>
-<button type="button" class="btn ghost small" data-memo-copy>この場所のメモをコピー</button>
+<button type="button" class="btn small" data-memo-add="">メモとして残す</button>
+<button type="button" class="btn ghost small" data-memo-copy="">この場所のメモをコピー</button>
 </div>
 <div class="memo-list"></div>
-</section>
-
-<details class="work-reference" data-comment-key="section:work-reference-1" data-comment-label="価格・在庫の登録状況"><summary>価格・在庫の登録状況</summary><p class="source-note">在庫数の空欄は未登録。写真に写る点数は現在の在庫を示さない。棚卸の結果は「二人の記録」に残し、更新シートと照合する</p>
+</section><details class="work-reference" data-comment-key="section:work-reference-1" data-comment-label="価格・在庫の登録状況"><summary>価格・在庫の登録状況</summary><p class="source-note">在庫数の空欄は未登録。写真に写る点数は現在の在庫を示さない。棚卸の結果は「二人の記録」に残し、更新シートと照合する</p>
 
 <p class="view-lead">写真・価格・在庫の一覧</p>
 
@@ -789,8 +792,7 @@
 <div class="stat"><div class="num">27</div><div class="lbl">在庫数 未登録</div></div>
 </div>
 
-</details>
-<details id="reference-works" class="reference-works" data-comment-key="section:reference-works" data-comment-label="販売候補から外した作品（10件）"><summary>販売候補から外した作品（10件）</summary><p>別家族の出品・非売品・作品やポップへ統合した項目を保管。個別の注記を優先し、区分未確定の作品も含む。以前の説明・価格は参考情報で、販売・持参候補には含めない。</p><div class="work-grid"><article class="work jump" id="work-bunny" data-cat="amigurumi" data-sale="excluded" data-sale-note="大きいあみぐるみに統合（同じ作品）">
+</details><details id="reference-works" class="reference-works" data-comment-key="section:reference-works" data-comment-label="販売候補から外した作品（10件）"><summary>販売候補から外した作品（10件）</summary><p>別家族の出品・非売品・作品やポップへ統合した項目を保管。個別の注記を優先し、区分未確定の作品も含む。以前の説明・価格は参考情報で、販売・持参候補には含めない。</p><div class="work-grid"><article class="work jump" id="work-bunny" data-cat="amigurumi" data-sale="excluded" data-sale-note="大きいあみぐるみに統合（同じ作品）">
 <div class="work-photo-pending" data-photo-alias="work-bigamigurumi" data-reference-src="assets/kiraria-bunny.jpg" data-reference-alt="金のリボンを付けた、若草色のうさぎのあみぐるみの単体写真">写真は「大きいあみぐるみ」に統合</div>
 <div class="body">
 <h3>若草色のうさぎ</h3><p class="memo"><button type="button" class="linklike" data-goto="works" data-goto-anchor="work-bigamigurumi">統合先の写真・作品を見る</button>。同じ作品のため、以前の名称・説明とコメントを参考保管。</p>
@@ -803,7 +805,7 @@
 <p class="memo"><b>メモ：</b>白い耳と金のリボンつき</p>
 </div>
 </article><article class="work jump" id="work-happy-pack" data-sale="excluded" data-sale-note="ポップへ統合・実物写真は未確認" data-cat="goods">
-<img src="assets/pop-happy-pack.jpg" alt="ハッピーパックのイラスト。猫の巾着袋とシュシュ・猫ポーチ、「あみもの いろいろ 入ってます」「1,200円分以上入り → 500円」の表示" loading="lazy" />
+<img src="assets/pop-happy-pack.jpg" alt="ハッピーパックのイラスト。猫の巾着袋とシュシュ・猫ポーチ、「あみもの いろいろ 入ってます」「1,200円分以上入り → 500円」の表示" loading="lazy">
 <div class="body">
 <h3>ハッピーパック</h3><p class="memo"><button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-happy">ポップを見る</button>。以前の作品情報は参考保管。</p>
 <div class="price-line"><span class="price">500円 <small>1,200円分以上入り</small></span></div>
@@ -815,7 +817,7 @@
 <p class="memo"><b>メモ：</b>あみものいろいろ入り（1,200円分以上入り）。ポップは<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-happy">ハッピーパックポップ</button>を使用。写真はポップのイラストを流用</p>
 </div>
 </article><article class="work jump" id="work-wombat-badge" data-sale="excluded" data-cat="goods">
-<img src="assets/wombat-badges-indoor.jpg" alt="ウォンバットの缶バッジがボードに並ぶ写真。全点300円" loading="lazy" />
+<img src="assets/wombat-badges-indoor.jpg" alt="ウォンバットの缶バッジがボードに並ぶ写真。全点300円" loading="lazy">
 <div class="body">
 <h3>缶バッジ（ウォンバット）</h3>
 <div class="price-line"><span class="price">300円</span></div>
@@ -828,7 +830,7 @@
 </div>
 </article>
 <article class="work jump" id="work-wombat-gamaguchi" data-sale="excluded" data-cat="pouch">
-<img src="assets/wombat-booth-indoor.jpg" alt="ウォンバット柄のがまぐちとバッグを並べた室内ブースの写真" loading="lazy" />
+<img src="assets/wombat-booth-indoor.jpg" alt="ウォンバット柄のがまぐちとバッグを並べた室内ブースの写真" loading="lazy">
 <div class="body">
 <h3>がまぐち（ウォンバット柄）</h3>
 <div class="price-line"><span class="price">1,000円</span></div>
@@ -841,7 +843,7 @@
 </div>
 </article>
 <article class="work jump" id="work-gamaguchi-cloth" data-sale="excluded" data-cat="pouch">
-<img src="assets/product-gamaguchi-cloth.jpg" alt="布製のがま口を白いカゴに並べた写真。「がま口 1コ700円」の看板つき" loading="lazy" />
+<img src="assets/product-gamaguchi-cloth.jpg" alt="布製のがま口を白いカゴに並べた写真。「がま口 1コ700円」の看板つき" loading="lazy">
 <div class="body">
 <h3>がま口（布製）</h3>
 <div class="price-line"><span class="price">700円</span></div>
@@ -854,7 +856,7 @@
 </div>
 </article>
 <article class="work jump" id="work-wombat-flatpouch" data-sale="excluded" data-cat="pouch">
-<img src="assets/wombat-pouches-display.jpg" alt="ウォンバット柄のフラットポーチを並べた写真" loading="lazy" />
+<img src="assets/wombat-pouches-display.jpg" alt="ウォンバット柄のフラットポーチを並べた写真" loading="lazy">
 <div class="body">
 <h3>フラットポーチ（ウォンバット柄）</h3>
 <div class="price-line"><span class="price">900円</span></div>
@@ -876,7 +878,7 @@
 </div>
 </article>
 <article class="work jump" id="work-cat-burger" data-comment-name="ねこバーガーのキーホルダー" data-sale="excluded" data-cat="strap">
-<img src="assets/product-cat-burger.jpg" alt="ねこ型バーガーのキーホルダーと、白ねこの相方がチェーンでつながった写真" loading="lazy" />
+<img src="assets/product-cat-burger.jpg" alt="ねこ型バーガーのキーホルダーと、白ねこの相方がチェーンでつながった写真" loading="lazy">
 <div class="body">
 <h3>にゃんバーガー</h3>
 <div class="price-line"><span class="badge tbd">価格 未確認</span></div>
@@ -889,7 +891,7 @@
 </div>
 </article>
 <article class="work jump" id="work-blue-dog" data-sale="excluded" data-cat="amigurumi">
-<img src="assets/product-blue-dog.jpg" alt="垂れ耳の水色の犬のあみぐるみ。木の机の上に座った姿" loading="lazy" />
+<img src="assets/product-blue-dog.jpg" alt="垂れ耳の水色の犬のあみぐるみ。木の机の上に座った姿" loading="lazy">
 <div class="body">
 <h3>水色の犬のあみぐるみ</h3>
 <div class="price-line"><span class="badge tbd">価格 未確認</span></div>
@@ -913,9 +915,7 @@
 </dl>
 <p class="memo"><b>メモ：</b>絵柄は複数あり。ボードに並べて販売。まとめ買いの価格は価格看板から登録</p>
 </div>
-</article></div></details>
-<section id="work-photo-library" class="board-photo-library" data-photo-library aria-label="作品・個人依頼・贈り物の写真" data-comment-key="section:work-photo-library" data-comment-label="作品・個人依頼・贈り物の写真"><div class="board-photo-heading"><h3>作品・個人依頼・贈り物の写真</h3><span data-photo-count role="status">16枚</span></div><div class="board-photo-filters" role="group" aria-label="作品写真の分類"><button type="button" data-category-filter="all" aria-pressed="true">すべて</button><button type="button" data-category-filter="works" aria-pressed="false">作品</button><button type="button" data-category-filter="commission" aria-pressed="false">個人依頼</button><button type="button" data-category-filter="personal" aria-pressed="false">個人作品</button><button type="button" data-category-filter="gift" aria-pressed="false">贈り物</button></div><label class="sr-only" for="work-photo-search">写真を探す</label><input id="work-photo-search" data-photo-search type="search" placeholder="作品名・出店名で写真を探す" autocomplete="off"><p class="board-photo-note">写真は当時の記録。現在の販売・在庫は別途確認</p><div class="board-photo-grid"><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="犬のスタイ 個人依頼" data-comment-key="photo:photo-001" data-comment-label="犬のスタイ・個人依頼"><a href="assets/gallery/photo-001.jpg" data-photo aria-label="犬のスタイを拡大"><img src="assets/gallery/photo-001.jpg" width="811" height="1080" loading="lazy" alt="犬のスタイ"></a><div class="board-photo-caption"><h4>犬のスタイ</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="鳥のソフトクリーム 個人依頼" data-comment-key="photo:photo-002" data-comment-label="鳥のソフトクリーム・個人依頼"><a href="assets/gallery/photo-002.jpg" data-photo aria-label="鳥のソフトクリームを拡大"><img src="assets/gallery/photo-002.jpg" width="811" height="1080" loading="lazy" alt="鳥のソフトクリーム"></a><div class="board-photo-caption"><h4>鳥のソフトクリーム</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="ニャカロン 個人依頼" data-comment-key="photo:photo-003" data-comment-label="ニャカロン・個人依頼"><a href="assets/gallery/photo-003.jpg" data-photo aria-label="ニャカロンを拡大"><img src="assets/gallery/photo-003.jpg" width="811" height="1080" loading="lazy" alt="ニャカロン"></a><div class="board-photo-caption"><h4>ニャカロン</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="作品写真 個人作品" data-comment-key="photo:photo-015" data-comment-label="作品写真・個人作品"><a href="assets/gallery/photo-015.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-015.jpg" width="1080" height="810" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>個人作品</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="作品写真 個人作品" data-comment-key="photo:photo-016" data-comment-label="作品写真・個人作品"><a href="assets/gallery/photo-016.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-016.jpg" width="1080" height="810" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>個人作品</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="作品写真 個人作品" data-comment-key="photo:photo-017" data-comment-label="作品写真・個人作品"><a href="assets/gallery/photo-017.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-017.jpg" width="1080" height="810" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>個人作品</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="作品写真 個人作品" data-comment-key="photo:photo-018" data-comment-label="作品写真・個人作品"><a href="assets/gallery/photo-018.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-018.jpg" width="1080" height="810" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>個人作品</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="ウェディングフォト 個人作品" data-comment-key="photo:photo-019" data-comment-label="ウェディングフォト・個人作品"><a href="assets/gallery/photo-019.jpg" data-photo aria-label="ウェディングフォトを拡大"><img src="assets/gallery/photo-019.jpg" width="1080" height="811" loading="lazy" alt="ウェディングフォト"></a><div class="board-photo-caption"><h4>ウェディングフォト</h4><p>個人作品</p></div></article><article class="board-photo-card" data-category="gift" data-group="贈り物" data-search="ウェディングの贈り物 贈り物" data-comment-key="photo:photo-034" data-comment-label="ウェディングの贈り物・贈り物"><a href="assets/gallery/photo-034.jpg" data-photo aria-label="ウェディングの贈り物を拡大"><img src="assets/gallery/photo-034.jpg" width="1080" height="1080" loading="lazy" alt="ウェディングの贈り物"></a><div class="board-photo-caption"><h4>ウェディングの贈り物</h4><p>贈り物</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="ワンバーガー 個人依頼" data-comment-key="photo:photo-038" data-comment-label="ワンバーガー・個人依頼"><a href="assets/gallery/photo-038.jpg" data-photo aria-label="ワンバーガーを拡大"><img src="assets/gallery/photo-038.jpg" width="1080" height="811" loading="lazy" alt="ワンバーガー"></a><div class="board-photo-caption"><h4>ワンバーガー</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="works" data-group="作品" data-search="作品写真 作品" data-comment-key="photo:photo-039" data-comment-label="作品写真・作品"><a href="assets/gallery/photo-039.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-039.jpg" width="1080" height="810" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>作品</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="作品写真 個人依頼" data-comment-key="photo:photo-040" data-comment-label="作品写真・個人依頼"><a href="assets/gallery/photo-040.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-040.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="ブローチ 個人依頼" data-comment-key="photo:photo-041" data-comment-label="ブローチ・個人依頼"><a href="assets/gallery/photo-041.jpg" data-photo aria-label="ブローチを拡大"><img src="assets/gallery/photo-041.jpg" width="811" height="1080" loading="lazy" alt="ブローチ"></a><div class="board-photo-caption"><h4>ブローチ</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="作品写真 個人依頼" data-comment-key="photo:photo-042" data-comment-label="作品写真・個人依頼"><a href="assets/gallery/photo-042.jpg" data-photo aria-label="作品写真を拡大"><img src="assets/gallery/photo-042.jpg" width="811" height="1080" loading="lazy" alt="作品写真"></a><div class="board-photo-caption"><h4>作品写真</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="gift" data-group="贈り物" data-search="贈り物 贈り物" data-comment-key="photo:photo-043" data-comment-label="贈り物・贈り物"><a href="assets/gallery/photo-043.jpg" data-photo aria-label="贈り物を拡大"><img src="assets/gallery/photo-043.jpg" width="811" height="1080" loading="lazy" alt="贈り物"></a><div class="board-photo-caption"><h4>贈り物</h4><p>贈り物</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="個人作品 個人作品" data-comment-key="photo:photo-044" data-comment-label="個人作品・個人作品"><a href="assets/gallery/photo-044.jpg" data-photo aria-label="個人作品を拡大"><img src="assets/gallery/photo-044.jpg" width="811" height="1080" loading="lazy" alt="個人作品"></a><div class="board-photo-caption"><h4>個人作品</h4><p>個人作品</p></div></article></div><p data-photo-empty hidden>該当する写真なし。分類や検索を変更する</p></section>
-</main>
+</article></div></details><h3 class="subhead">その他の作品</h3><div class="board-photo-grid"><article class="board-photo-card" data-category="works" data-group="作品" data-search="動物モチーフのあみぐるみ 作品" data-comment-key="photo:photo-039" data-comment-label="動物モチーフのあみぐるみ・作品"><a href="assets/gallery/photo-039.jpg" data-photo="" aria-label="動物モチーフのあみぐるみを拡大"><img src="assets/gallery/photo-039.jpg" width="1080" height="810" loading="lazy" alt="動物モチーフのあみぐるみ"></a><div class="board-photo-caption"><h4>動物モチーフのあみぐるみ</h4><p>作品</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article></div></section><section id="work-collection-commission" data-work-panel="commission" hidden="" data-comment-key="work-collection:commission" data-comment-label="個人依頼全体"><h3 class="subhead">個人依頼</h3><div class="board-photo-grid"><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="犬のスタイ 個人依頼" data-comment-key="photo:photo-001" data-comment-label="犬のスタイ・個人依頼"><a href="assets/gallery/photo-001.jpg" data-photo="" aria-label="犬のスタイを拡大"><img src="assets/gallery/photo-001.jpg" width="811" height="1080" loading="lazy" alt="犬のスタイ"></a><div class="board-photo-caption"><h4>犬のスタイ</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="鳥のソフトクリーム 個人依頼" data-comment-key="photo:photo-002" data-comment-label="鳥のソフトクリーム・個人依頼"><a href="assets/gallery/photo-002.jpg" data-photo="" aria-label="鳥のソフトクリームを拡大"><img src="assets/gallery/photo-002.jpg" width="811" height="1080" loading="lazy" alt="鳥のソフトクリーム"></a><div class="board-photo-caption"><h4>鳥のソフトクリーム</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="ニャカロン 個人依頼" data-comment-key="photo:photo-003" data-comment-label="ニャカロン・個人依頼"><a href="assets/gallery/photo-003.jpg" data-photo="" aria-label="ニャカロンを拡大"><img src="assets/gallery/photo-003.jpg" width="811" height="1080" loading="lazy" alt="ニャカロン"></a><div class="board-photo-caption"><h4>ニャカロン</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="ワンバーガー 個人依頼" data-comment-key="photo:photo-038" data-comment-label="ワンバーガー・個人依頼"><a href="assets/gallery/photo-038.jpg" data-photo="" aria-label="ワンバーガーを拡大"><img src="assets/gallery/photo-038.jpg" width="1080" height="811" loading="lazy" alt="ワンバーガー"></a><div class="board-photo-caption"><h4>ワンバーガー</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="にゃんバーガーとカップモチーフ 個人依頼" data-comment-key="photo:photo-040" data-comment-label="にゃんバーガーとカップモチーフ・個人依頼"><a href="assets/gallery/photo-040.jpg" data-photo="" aria-label="にゃんバーガーとカップモチーフを拡大"><img src="assets/gallery/photo-040.jpg" width="811" height="1080" loading="lazy" alt="にゃんバーガーとカップモチーフ"></a><div class="board-photo-caption"><h4>にゃんバーガーとカップモチーフ</h4><p>個人依頼</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="ねこのブローチ 個人依頼" data-comment-key="photo:photo-041" data-comment-label="ねこのブローチ・個人依頼"><a href="assets/gallery/photo-041.jpg" data-photo="" aria-label="ねこのブローチを拡大"><img src="assets/gallery/photo-041.jpg" width="811" height="1080" loading="lazy" alt="ねこのブローチ"></a><div class="board-photo-caption"><h4>ねこのブローチ</h4><p>個人依頼</p></div></article><article class="board-photo-card" data-category="commission" data-group="個人依頼" data-search="動物モチーフの作品（個人依頼） 個人依頼" data-comment-key="photo:photo-042" data-comment-label="動物モチーフの作品（個人依頼）・個人依頼"><a href="assets/gallery/photo-042.jpg" data-photo="" aria-label="動物モチーフの作品（個人依頼）を拡大"><img src="assets/gallery/photo-042.jpg" width="811" height="1080" loading="lazy" alt="動物モチーフの作品（個人依頼）"></a><div class="board-photo-caption"><h4>動物モチーフの作品（個人依頼）</h4><p>個人依頼</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article></div></section><section id="work-collection-personal" data-work-panel="personal" hidden="" data-comment-key="work-collection:personal" data-comment-label="個人作品全体"><h3 class="subhead">個人作品</h3><div class="board-photo-grid"><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="緑の帽子をかぶった動物の作品 個人作品" data-comment-key="photo:photo-015" data-comment-label="緑の帽子をかぶった動物の作品・個人作品"><a href="assets/gallery/photo-015.jpg" data-photo="" aria-label="緑の帽子をかぶった動物の作品を拡大"><img src="assets/gallery/photo-015.jpg" width="1080" height="810" loading="lazy" alt="緑の帽子をかぶった動物の作品"></a><div class="board-photo-caption"><h4>緑の帽子をかぶった動物の作品</h4><p>個人作品</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="動物や鳥のモチーフの作品 個人作品" data-comment-key="photo:photo-016" data-comment-label="動物や鳥のモチーフの作品・個人作品"><a href="assets/gallery/photo-016.jpg" data-photo="" aria-label="動物や鳥のモチーフの作品を拡大"><img src="assets/gallery/photo-016.jpg" width="1080" height="810" loading="lazy" alt="動物や鳥のモチーフの作品"></a><div class="board-photo-caption"><h4>動物や鳥のモチーフの作品</h4><p>個人作品</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="緑の帽子をかぶった動物の作品（別角度） 個人作品" data-comment-key="photo:photo-017" data-comment-label="緑の帽子をかぶった動物の作品（別角度）・個人作品"><a href="assets/gallery/photo-017.jpg" data-photo="" aria-label="緑の帽子をかぶった動物の作品（別角度）を拡大"><img src="assets/gallery/photo-017.jpg" width="1080" height="810" loading="lazy" alt="緑の帽子をかぶった動物の作品（別角度）"></a><div class="board-photo-caption"><h4>緑の帽子をかぶった動物の作品（別角度）</h4><p>個人作品</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="カラフルな小さな作品 個人作品" data-comment-key="photo:photo-018" data-comment-label="カラフルな小さな作品・個人作品"><a href="assets/gallery/photo-018.jpg" data-photo="" aria-label="カラフルな小さな作品を拡大"><img src="assets/gallery/photo-018.jpg" width="1080" height="810" loading="lazy" alt="カラフルな小さな作品"></a><div class="board-photo-caption"><h4>カラフルな小さな作品</h4><p>個人作品</p><p class="photo-name-note">写真の見た目による仮の呼び名</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="ハートを持つくまのあみぐるみ（ウェディングフォト） 個人作品" data-comment-key="photo:photo-019" data-comment-label="ハートを持つくまのあみぐるみ（ウェディングフォト）・個人作品"><a href="assets/gallery/photo-019.jpg" data-photo="" aria-label="ハートを持つくまのあみぐるみ（ウェディングフォト）を拡大"><img src="assets/gallery/photo-019.jpg" width="1080" height="811" loading="lazy" alt="ハートを持つくまのあみぐるみ（ウェディングフォト）"></a><div class="board-photo-caption"><h4>ハートを持つくまのあみぐるみ（ウェディングフォト）</h4><p>個人作品</p></div></article><article class="board-photo-card" data-category="personal" data-group="個人作品" data-search="灰色の犬のあみぐるみ 個人作品" data-comment-key="photo:photo-044" data-comment-label="灰色の犬のあみぐるみ・個人作品"><a href="assets/gallery/photo-044.jpg" data-photo="" aria-label="灰色の犬のあみぐるみを拡大"><img src="assets/gallery/photo-044.jpg" width="811" height="1080" loading="lazy" alt="灰色の犬のあみぐるみ"></a><div class="board-photo-caption"><h4>灰色の犬のあみぐるみ</h4><p>個人作品</p></div></article></div></section><section id="work-collection-gift" data-work-panel="gift" hidden="" data-comment-key="work-collection:gift" data-comment-label="贈り物全体"><h3 class="subhead">贈り物</h3><div class="board-photo-grid"><article class="board-photo-card" data-category="gift" data-group="贈り物" data-search="くまのあみぐるみ（ウェディングの贈り物） 贈り物" data-comment-key="photo:photo-034" data-comment-label="くまのあみぐるみ（ウェディングの贈り物）・贈り物"><a href="assets/gallery/photo-034.jpg" data-photo="" aria-label="くまのあみぐるみ（ウェディングの贈り物）を拡大"><img src="assets/gallery/photo-034.jpg" width="1080" height="1080" loading="lazy" alt="くまのあみぐるみ（ウェディングの贈り物）"></a><div class="board-photo-caption"><h4>くまのあみぐるみ（ウェディングの贈り物）</h4><p>贈り物</p></div></article><article class="board-photo-card" data-category="gift" data-group="贈り物" data-search="あみぐるみの贈り物 贈り物" data-comment-key="photo:photo-043" data-comment-label="あみぐるみの贈り物・贈り物"><a href="assets/gallery/photo-043.jpg" data-photo="" aria-label="あみぐるみの贈り物を拡大"><img src="assets/gallery/photo-043.jpg" width="811" height="1080" loading="lazy" alt="あみぐるみの贈り物"></a><div class="board-photo-caption"><h4>あみぐるみの贈り物</h4><p>贈り物</p></div></article></div></section></div></main>
 
 <!-- ================= ブース ================= -->
 <main class="view" id="view-booth">
@@ -1329,13 +1329,14 @@
 <script src="comment-state.js?v=20261117-status"></script>
 <script src="ime.js?v=20261117-ime2"></script>
 <script src="comments-config.js?v=20261117-ime2"></script>
-<script src="board.js?v=20261118-corners"></script>
-<script src="workflow.js?v=20261118-corners"></script><script src="preparation.js?v=20261117-prep"></script>
-<script src="event-board.js?v=20261118-corners"></script>
+<script src="board.js?v=20261118-organized"></script>
+<script src="workflow.js?v=20261118-organized"></script><script src="preparation.js?v=20261118-organized"></script>
+<script src="event-board.js?v=20261118-organized"></script>
 <script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script defer src="comments-api.js?v=20261117-ime2"></script>
 <dialog id="photo-dialog" class="board-photo-dialog" aria-label="写真の拡大"><button id="photo-close" type="button" autofocus>閉じる</button><img id="photo-large" alt=""><p id="photo-label"></p></dialog>
-<script src="gallery.js?v=20261117-integrated"></script>
-<script src="comment-coverage.js?v=20261118-corners"></script>
+<script src="work-collections.js?v=20261118-organized"></script>
+<script src="gallery.js?v=20261118-organized"></script>
+<script src="comment-coverage.js?v=20261118-organized"></script>
 </body>
 </html>

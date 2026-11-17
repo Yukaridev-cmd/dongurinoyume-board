@@ -21,8 +21,8 @@ test('all declared new corner targets persist independently, reload for the seco
     for (const event of events)
       for (const phase of ['prepare', 'day', 'review'])
         keys.push('phase:' + event.id + ':' + phase);
-    assert.equal(keys.length, 202);
-    assert.equal(new Set(keys).size, 202);
+    assert.equal(keys.length, 213);
+    assert.equal(new Set(keys).size, 213);
     for (const key of keys) {
       const r = await f.request('/comments', 'POST', {
         id: randomUUID(),
@@ -39,8 +39,8 @@ test('all declared new corner targets persist independently, reload for the seco
       rows.push(...r.comments);
       cursor = r.next;
     } while (cursor);
-    assert.equal(rows.length, 202);
-    assert.equal(new Set(rows.map((r) => r.target)).size, 202);
+    assert.equal(rows.length, 213);
+    assert.equal(new Set(rows.map((r) => r.target)).size, 213);
     assert.ok(rows.every((r) => r.text === '架空の網羅テスト'));
     f.subject = outsider;
     for (const key of keys)
@@ -55,7 +55,7 @@ test('all declared new corner targets persist independently, reload for the seco
         403
       );
     assert.equal((await f.request('/comments')).status, 403);
-    assert.equal(f.db.sqlite.prepare('SELECT COUNT(*) AS n FROM comments').get().n, 202);
+    assert.equal(f.db.sqlite.prepare('SELECT COUNT(*) AS n FROM comments').get().n, 213);
   } finally {
     f.db.sqlite.close();
   }

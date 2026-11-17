@@ -118,7 +118,7 @@
       Array.from(group.children).forEach(function (figure) {
         var img = figure.querySelector('img');
         if (img) {
-          var a = el('a');
+          var a = img.closest('a') || el('a');
           a.href = img.getAttribute('src');
           a.target = '_blank';
           a.rel = 'noopener noreferrer';
@@ -126,8 +126,10 @@
             'aria-label',
             (figure.querySelector('figcaption')?.textContent || img.alt) + 'を大きく見る'
           );
-          img.before(a);
-          a.appendChild(img);
+          if (img.parentElement !== a) {
+            img.before(a);
+            a.appendChild(img);
+          }
         }
         photoGrid.appendChild(figure);
       });
@@ -136,7 +138,13 @@
     });
     if (photoCount) {
       gallery.appendChild(
-        el('p', '出店当時の記録。現在の販売候補は「作品・在庫」で確認。', 'workflow-note')
+        el(
+          'p',
+          photoGrid.querySelector('.board-photo-card')
+            ? '追加写真の撮影日・開催回は各見出しを確認。'
+            : '出店当時の記録。現在の販売候補は「作品・在庫」で確認。',
+          'workflow-note'
+        )
       );
       gallery.appendChild(photoGrid);
     } else gallery.appendChild(el('p', '写真はまだ未登録', 'workflow-note'));
@@ -250,6 +258,9 @@
     disclosure.appendChild(eventMemo);
   }
   events.querySelectorAll('.event-card .body').forEach(function (body) {
+    // Public photo records have inline thumbnails; the compact legacy card's
+    // supplemental disclosure must never swallow their photos.
+    if (body.closest('.photo-event-record')) return;
     var heading = body.querySelector('h3'),
       actions = body.querySelector('.pop-actions'),
       date = body.querySelector('.m-line'),
