@@ -334,3 +334,10 @@ test('eight excluded works stay in separate reference storage, never sale search
  const q=d.getElementById('work-search');q.value='マグネット';q.dispatchEvent(new b.w.Event('input'));assert.match(d.getElementById('work-result-count').textContent,/^0作品/);assert.equal(d.querySelectorAll('img[src="assets/kiraria5-magnet.jpg"]').length,0);assert.ok(d.querySelector('#work-magnet [data-reference-src]'));assert.equal(d.querySelectorAll('.work').length,27);
  }finally{b.dom.window.close();}
 });
+
+test('past event list and all seven original photo previews are visible without opening a disclosure',()=>{
+ const b=browser({configured:false});try{const d=b.w.document;d.querySelector('[data-view-btn=events]').click();const past=d.querySelector('.past-events');assert.equal(past.tagName,'SECTION');assert.equal(past.closest('details'),null);assert.equal(past.querySelectorAll('.event-card').length,7);assert.equal(past.querySelectorAll('.event-card>img').length,7);
+ for(const img of past.querySelectorAll('.event-card>img')){assert.equal(img.closest('details:not([open])'),null);assert.equal(img.closest('[hidden]'),null);const card=img.closest('.event-card'),id=card.querySelector('[data-goto]').dataset.goto;assert.ok([...d.querySelectorAll('#view-'+id+' .event-photo-gallery img')].some(photo=>photo.getAttribute('src')===img.getAttribute('src')));}
+ assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
