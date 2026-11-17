@@ -12,6 +12,7 @@
     comment: ['M4 4h16v12H9l-5 4z', 'M8 8h8M8 12h5'],
     events: ['M4 5h16v16H4zM4 9h16M8 3v4M16 3v4', 'M8 13h2M14 13h2M8 17h2'],
     works: ['M4 8h16v13H4z', 'M8 8V6a4 4 0 0 1 8 0v2', 'M8 12v1M16 12v1'],
+    gift: ['M3 9h18v4H3zM5 13v8h14v-8M12 9v12', 'M12 9C3 9 5 1 9 4l3 5c9 0 7-8 3-5z'],
     booth: ['M3 10h18l-2-6H5z', 'M5 10v11M19 10v11M3 21h18M8 14h8v7'],
     pops: ['M5 3h14v15H5zM9 18l-2 4M15 18l2 4', 'M8 7h8M8 11h5M8 14h8'],
     share: ['M6 5h12v11H6z', 'M9 8h6M9 12h3', 'M15 19H3m3-3-3 3 3 3'],

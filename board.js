@@ -889,6 +889,7 @@
   });
   document.querySelectorAll('.event-card .body').forEach(function (body) {
     var card = body.closest('.event-card');
+    if (card.hasAttribute('data-comment-key')) return;
     var h = card ? card.querySelector('h3') : null;
     var date = card ? card.querySelector('.meta .m-line') : null;
     var t =

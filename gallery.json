@@ -39,7 +39,7 @@
     "id": "photo-005",
     "category": "events",
     "title": "花のキーホルダー",
-    "group": "きらりあマルシェ（年未確認・5月）",
+    "group": "きらりあマルシェ（2026年5月）",
     "src": "assets/gallery/photo-005.jpg",
     "width": 811,
     "height": 1080
@@ -56,7 +56,7 @@
   {
     "id": "photo-007",
     "category": "events",
-    "title": "出店の作品写真",
+    "title": "にゃんバーガーなどの展示",
     "group": "ネコ市ネコ座 神戸（2025年9月）",
     "src": "assets/gallery/photo-007.jpg",
     "width": 811,
@@ -65,7 +65,7 @@
   {
     "id": "photo-008",
     "category": "events",
-    "title": "出店の作品写真",
+    "title": "にゃんバーガーの展示",
     "group": "ネコ市ネコ座 神戸（2025年9月）",
     "src": "assets/gallery/photo-008.jpg",
     "width": 811,
@@ -75,7 +75,7 @@
     "id": "photo-009",
     "category": "events",
     "title": "作品の展示",
-    "group": "ハートまつり（開催年月未確認）",
+    "group": "ハートまつり（2025年11月）",
     "src": "assets/gallery/photo-009.jpg",
     "width": 811,
     "height": 1080
@@ -84,7 +84,7 @@
     "id": "photo-010",
     "category": "events",
     "title": "売り場の展示",
-    "group": "ハートまつり（開催年月未確認）",
+    "group": "ハートまつり（2025年11月）",
     "src": "assets/gallery/photo-010.jpg",
     "width": 1080,
     "height": 810
@@ -92,7 +92,7 @@
   {
     "id": "photo-011",
     "category": "events",
-    "title": "作品写真",
+    "title": "にゃんバーガー",
     "group": "ネコ市ネコ座 東京（開催年月未確認）",
     "src": "assets/gallery/photo-011.jpg",
     "width": 1080,
@@ -101,7 +101,7 @@
   {
     "id": "photo-012",
     "category": "events",
-    "title": "作品写真",
+    "title": "にゃんバーガー（三毛柄）",
     "group": "ネコ市ネコ座 東京（開催年月未確認）",
     "src": "assets/gallery/photo-012.jpg",
     "width": 811,
@@ -110,7 +110,7 @@
   {
     "id": "photo-013",
     "category": "events",
-    "title": "作品写真",
+    "title": "にゃんバーガー（色違い）",
     "group": "ネコ市ネコ座 東京（開催年月未確認）",
     "src": "assets/gallery/photo-013.jpg",
     "width": 1080,
@@ -128,7 +128,7 @@
   {
     "id": "photo-015",
     "category": "personal",
-    "title": "作品写真",
+    "title": "緑の帽子をかぶった動物の作品",
     "group": "個人作品",
     "src": "assets/gallery/photo-015.jpg",
     "width": 1080,
@@ -137,7 +137,7 @@
   {
     "id": "photo-016",
     "category": "personal",
-    "title": "作品写真",
+    "title": "動物や鳥のモチーフの作品",
     "group": "個人作品",
     "src": "assets/gallery/photo-016.jpg",
     "width": 1080,
@@ -146,7 +146,7 @@
   {
     "id": "photo-017",
     "category": "personal",
-    "title": "作品写真",
+    "title": "緑の帽子をかぶった動物の作品（別角度）",
     "group": "個人作品",
     "src": "assets/gallery/photo-017.jpg",
     "width": 1080,
@@ -155,7 +155,7 @@
   {
     "id": "photo-018",
     "category": "personal",
-    "title": "作品写真",
+    "title": "カラフルな小さな作品",
     "group": "個人作品",
     "src": "assets/gallery/photo-018.jpg",
     "width": 1080,
@@ -164,7 +164,7 @@
   {
     "id": "photo-019",
     "category": "personal",
-    "title": "ウェディングフォト",
+    "title": "ハートを持つくまのあみぐるみ（ウェディングフォト）",
     "group": "個人作品",
     "src": "assets/gallery/photo-019.jpg",
     "width": 1080,
@@ -173,7 +173,7 @@
   {
     "id": "photo-020",
     "category": "events",
-    "title": "出店の作品写真",
+    "title": "にゃんバーガー",
     "group": "ネコ市ネコ座 東京（開催年月未確認）",
     "src": "assets/gallery/photo-020.jpg",
     "width": 813,
@@ -182,7 +182,7 @@
   {
     "id": "photo-021",
     "category": "events",
-    "title": "作品写真",
+    "title": "ウォンバットのあみぐるみ",
     "group": "ウォンバットマルシェ（開催年月未確認）",
     "src": "assets/gallery/photo-021.jpg",
     "width": 811,
@@ -191,7 +191,7 @@
   {
     "id": "photo-022",
     "category": "events",
-    "title": "作品写真",
+    "title": "ウォンバットのあみぐるみ（赤い服）",
     "group": "ウォンバットマルシェ（開催年月未確認）",
     "src": "assets/gallery/photo-022.jpg",
     "width": 811,
@@ -200,7 +200,7 @@
   {
     "id": "photo-023",
     "category": "events",
-    "title": "作品写真",
+    "title": "ウォンバットのあみぐるみ（黄色い服）",
     "group": "ウォンバットマルシェ（開催年月未確認）",
     "src": "assets/gallery/photo-023.jpg",
     "width": 811,
@@ -209,7 +209,7 @@
   {
     "id": "photo-024",
     "category": "events",
-    "title": "作品写真",
+    "title": "サングラスのバーガーモチーフ",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-024.jpg",
     "width": 811,
@@ -218,7 +218,7 @@
   {
     "id": "photo-025",
     "category": "events",
-    "title": "作品写真",
+    "title": "サングラスのバーガーモチーフ（棚の上）",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-025.jpg",
     "width": 1080,
@@ -227,7 +227,7 @@
   {
     "id": "photo-026",
     "category": "events",
-    "title": "作品写真",
+    "title": "サングラスのバーガーモチーフ（別角度）",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-026.jpg",
     "width": 811,
@@ -236,7 +236,7 @@
   {
     "id": "photo-027",
     "category": "events",
-    "title": "作品写真",
+    "title": "バーガーモチーフのキーホルダー",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-027.jpg",
     "width": 1080,
@@ -245,7 +245,7 @@
   {
     "id": "photo-028",
     "category": "events",
-    "title": "作品写真",
+    "title": "にゃんバーガーのキーホルダー",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-028.jpg",
     "width": 1080,
@@ -254,7 +254,7 @@
   {
     "id": "photo-029",
     "category": "events",
-    "title": "作品写真",
+    "title": "袋入りのバーガーモチーフ",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-029.jpg",
     "width": 1080,
@@ -263,7 +263,7 @@
   {
     "id": "photo-030",
     "category": "events",
-    "title": "作品写真",
+    "title": "袋入りのバーガーモチーフ（別写真）",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-030.jpg",
     "width": 1080,
@@ -272,7 +272,7 @@
   {
     "id": "photo-031",
     "category": "events",
-    "title": "作品写真",
+    "title": "サングラスのバーガーモチーフ（袋入り）",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-031.jpg",
     "width": 811,
@@ -281,7 +281,7 @@
   {
     "id": "photo-032",
     "category": "events",
-    "title": "作品写真",
+    "title": "バーガーモチーフの作品",
     "group": "ネコ市ネコ座（開催地・開催年月未確認）",
     "src": "assets/gallery/photo-032.jpg",
     "width": 811,
@@ -299,7 +299,7 @@
   {
     "id": "photo-034",
     "category": "gift",
-    "title": "ウェディングの贈り物",
+    "title": "くまのあみぐるみ（ウェディングの贈り物）",
     "group": "贈り物",
     "src": "assets/gallery/photo-034.jpg",
     "width": 1080,
@@ -344,7 +344,7 @@
   {
     "id": "photo-039",
     "category": "works",
-    "title": "作品写真",
+    "title": "動物モチーフのあみぐるみ",
     "group": "作品",
     "src": "assets/gallery/photo-039.jpg",
     "width": 1080,
@@ -353,7 +353,7 @@
   {
     "id": "photo-040",
     "category": "commission",
-    "title": "作品写真",
+    "title": "にゃんバーガーとカップモチーフ",
     "group": "個人依頼",
     "src": "assets/gallery/photo-040.jpg",
     "width": 811,
@@ -362,7 +362,7 @@
   {
     "id": "photo-041",
     "category": "commission",
-    "title": "ブローチ",
+    "title": "ねこのブローチ",
     "group": "個人依頼",
     "src": "assets/gallery/photo-041.jpg",
     "width": 811,
@@ -371,7 +371,7 @@
   {
     "id": "photo-042",
     "category": "commission",
-    "title": "作品写真",
+    "title": "動物モチーフの作品（個人依頼）",
     "group": "個人依頼",
     "src": "assets/gallery/photo-042.jpg",
     "width": 811,
@@ -380,7 +380,7 @@
   {
     "id": "photo-043",
     "category": "gift",
-    "title": "贈り物",
+    "title": "あみぐるみの贈り物",
     "group": "贈り物",
     "src": "assets/gallery/photo-043.jpg",
     "width": 811,
@@ -389,7 +389,7 @@
   {
     "id": "photo-044",
     "category": "personal",
-    "title": "個人作品",
+    "title": "灰色の犬のあみぐるみ",
     "group": "個人作品",
     "src": "assets/gallery/photo-044.jpg",
     "width": 811,

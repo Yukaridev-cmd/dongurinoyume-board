@@ -26,7 +26,7 @@
   function audit() {
     var required = Array.from(
       document.querySelectorAll(
-        '.work,.pop-entry,.event-card,.board-photo-card,[data-photo-library],figure,.idea,.task,.checklist li,.resource-group,.work-reference,#reference-works,.board-reference,#comment-summary,[data-phase-panel]'
+        '.work,.pop-entry,.event-card,.board-photo-card,[data-photo-library],[data-work-panel],figure,.idea,.task,.checklist li,.resource-group,.work-reference,#reference-works,.board-reference,#comment-summary,[data-phase-panel]'
       )
     );
     var uncovered = required.filter(function (owner) {

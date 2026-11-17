@@ -18,6 +18,7 @@ try {
     'ime.js',
     'board.js',
     'workflow.js',
+    'work-collections.js',
     'gallery.js',
     'comment-coverage.js',
   ])

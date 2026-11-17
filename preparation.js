@@ -70,7 +70,9 @@
     });
     if (!ready) return;
     document.querySelectorAll('.work,.event-card,.pop-entry').forEach(function (card) {
-      var list = card.querySelector('[data-comment-target]');
+      var list = card.matches('.photo-event-record')
+        ? card.querySelector(':scope > .comment-corner-slot [data-comment-target]')
+        : card.querySelector('[data-comment-target]');
       if (!list) return;
       var matching = rows
         .filter(function (c) {

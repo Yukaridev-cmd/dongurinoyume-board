@@ -13,7 +13,14 @@ test('every content corner has its own editor and new corner omissions fail the 
     const d = b.w.document,
       audit = b.w.DonguriCommentCoverage.audit();
     assert.deepEqual(Array.from(audit.uncovered), []);
-    assert.equal(audit.registered, 202);
+    assert.equal(audit.registered, 213);
+    const baseline = JSON.parse(
+      readFileSync(new URL('fixtures/comment-targets-v17.json', import.meta.url), 'utf8')
+    );
+    const keys = new Set(
+      [...d.querySelectorAll('[data-comment-key]')].map((n) => n.dataset.commentKey)
+    );
+    for (const key of baseline) assert.ok(keys.has(key), 'preserved target ' + key);
     assert.equal(
       d.querySelectorAll('.board-photo-card .comment-corner-slot [data-inline-memo]').length,
       44
@@ -116,20 +123,14 @@ test('photo entry points stay inside the four-tab board and never write private 
   try {
     const d = b.w.document;
     b.w.eval(readFileSync(new URL('../gallery.js', import.meta.url), 'utf8'));
-    d.querySelector('[data-goto-anchor="work-photo-library"]').click();
+    b.w.DonguriBoard.showView('works', 'work-photo-library');
     assert.equal(d.querySelector('.view.active').id, 'view-works');
     assert.equal(b.w.location.hash, '#work-photo-library');
-    assert.equal(
-      d.querySelectorAll('#work-photo-library .board-photo-card:not([hidden])').length,
-      16
-    );
-    d.querySelector('[data-goto-anchor="event-photo-library"]').click();
+    assert.equal(d.querySelectorAll('#view-works .board-photo-card:not([hidden])').length, 16);
+    b.w.DonguriBoard.showView('events', 'event-photo-library');
     assert.equal(d.querySelector('.view.active').id, 'view-events');
     assert.equal(b.w.location.hash, '#event-photo-library');
-    assert.equal(
-      d.querySelectorAll('#event-photo-library .board-photo-card:not([hidden])').length,
-      28
-    );
+    assert.equal(d.querySelectorAll('#view-events .board-photo-card:not([hidden])').length, 22);
     await tick();
     assert.equal(
       b.requests.filter((r) => r.options?.method && r.options.method !== 'GET').length,
@@ -231,6 +232,7 @@ function browser({
   w.eval(readFileSync(new URL('../ime.js', import.meta.url), 'utf8'));
   for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
   w.eval(readFileSync(new URL('../workflow.js', import.meta.url), 'utf8'));
+  w.eval(readFileSync(new URL('../work-collections.js', import.meta.url), 'utf8'));
   w.eval(readFileSync(new URL('../comment-coverage.js', import.meta.url), 'utf8'));
   w.eval(readFileSync(new URL('../event-board.js', import.meta.url), 'utf8'));
   w.eval(client);
@@ -651,7 +653,7 @@ test('existing images, prices, event headings, page navigation, cream background
             !e.closest('.board-welcome') &&
             !e.hasAttribute('data-shared-photo') &&
             !e.closest('[data-reference-only]') &&
-            !e.closest('[data-photo-library]') &&
+            !e.closest('[data-photo-library],.board-photo-card') &&
             e.id !== 'photo-large'
         )
         .map((e) => [
@@ -1095,7 +1097,7 @@ test('past event list and all seven original photo previews are visible without 
     const past = d.querySelector('.past-events');
     assert.equal(past.tagName, 'SECTION');
     assert.equal(past.closest('details'), null);
-    assert.equal(past.querySelectorAll('.event-card').length, 7);
+    assert.equal(past.querySelectorAll('.event-card:not(.photo-event-record)').length, 7);
     assert.equal(past.querySelectorAll('.event-card>img').length, 7);
     for (const img of past.querySelectorAll('.event-card>img')) {
       assert.equal(img.closest('details:not([open])'), null);

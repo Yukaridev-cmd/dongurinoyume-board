@@ -12,6 +12,7 @@
 - `backend/events.js` / `backend/events-schema.sql`：出店準備の保存・競合検知・変更前の履歴
 - `assets/`：写真とポップの画像
 - `gallery.js` / `gallery.css` / `gallery.json`：出店タブと作品・在庫タブに追加写真を統合。作品・個人依頼・個人作品・贈り物・出店写真を分類し、検索・拡大を用意。旧 `gallery.html` のリンクはボード内の写真へ移動。開催回が不明な写真を既存イベントIDに自動で紐付けない
+- `work-collections.js`：作品／個人依頼／個人作品／贈り物の切替と分類横断検索。出店写真は対応する既存の出店ページへ追加し、未登録の開催回は出店情報の枠を設ける。[配置と保全](docs/works-event-organization.md)を参照
 - `icon.webp`：アイコン
 - `context-comments.js`：私的な記録・出店準備の対象別コメントとAI依頼への導線
 - `comments-config.js` / `comments-api.js`：LINE内のコメント共有接続
