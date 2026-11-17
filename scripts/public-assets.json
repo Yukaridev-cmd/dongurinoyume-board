@@ -29,5 +29,10 @@
   "fonts": [
     "assets/fonts/ZenMaruGothic-Medium.woff2",
     "assets/fonts/ZenMaruGothic-Bold.woff2"
+  ],
+  "media": [
+    "assets/pop-omikuji-artwork.png",
+    "assets/pop-instagram-qr.pdf",
+    "assets/pop-instagram-qr-preview.png"
   ]
 }

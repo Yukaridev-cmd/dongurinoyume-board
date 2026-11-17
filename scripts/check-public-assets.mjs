@@ -9,6 +9,7 @@ const files = [
   ...manifest.files,
   'comments-config.js',
   ...manifest.fonts,
+  ...(manifest.media || []),
   'assets/fonts/OFL-ZenMaruGothic.txt',
 ];
 const digest = (bytes) => createHash('sha256').update(bytes).digest('hex');

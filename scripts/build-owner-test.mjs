@@ -32,7 +32,7 @@ for (const name of names) {
 for (const row of JSON.parse(assets['/catalog.json'].body))
   for (const photo of row.photos) imagePaths.add('/' + photo.src);
 // Only public, licensed font files join the existing public-media redirect allowlist.
-for (const path of manifest.fonts) imagePaths.add('/' + path);
+for (const path of [...manifest.fonts, ...(manifest.media || [])]) imagePaths.add('/' + path);
 mkdirSync(new URL('.wrangler/owner-test/', root), { recursive: true });
 writeFileSync(
   new URL('.wrangler/owner-test-entry.js', root),
