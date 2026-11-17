@@ -190,7 +190,7 @@ test('comments become pending private update requests only through an explicit c
   try{
     await tick();const {ta,add,zone}=b.zone();ta.value='テストの更新依頼';add.click();await tick();
     assert.equal(b.requests.filter(r=>r.url.endsWith('/records')).length,0);
-    [...zone.querySelectorAll('.memo-card button')].find(btn=>btn.textContent==='更新依頼にする').click();await tick();
+    [...zone.querySelectorAll('.memo-card button')].find(btn=>btn.textContent==='AIへの依頼に追加').click();await tick();
     const sent=b.requests.find(r=>r.url.endsWith('/records'));const body=JSON.parse(sent.options.body);
     assert.equal(body.kind,'request');assert.equal(body.data.status,'未対応');assert.equal(body.data.notes,'テストの更新依頼');
     assert.ok(b.requests.every(r=>r.url.startsWith('https://comments.example/')));assert.equal(b.errors.length,0);
