@@ -56,8 +56,8 @@ function restoreDraft() {
 function setKind(next) {
   if(mutationBlocked())return false;
   if(form.hasAttribute('data-private-dirty') && !window.confirm('入力を取消して切り替える'))return false;
-  kind=next;reset(); feedback.textContent='';
-  document.querySelectorAll('[data-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.kind===kind));});
+  kind=next;reset(); feedback.textContent='';document.querySelector('.inventory-tools').hidden=!['inventory','photo'].includes(kind);
+  document.querySelectorAll('[data-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.kind===kind||(kind==='photo'&&b.dataset.kind==='inventory')));});
   document.querySelectorAll('[data-for]').forEach(function(block){block.hidden=block.dataset.for!==kind;block.querySelectorAll('input,select').forEach(function(input){input.disabled=block.hidden;});});
   document.getElementById('section-title').textContent=labels[kind];
   document.getElementById('section-kicker').textContent=descriptions[kind][0];

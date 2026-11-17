@@ -519,6 +519,7 @@ footer{margin-top:32px}
 </style>
 <link rel="stylesheet" href="accessibility.css" />
 <link rel="stylesheet" href="studio.css">
+<script defer src="ui-icons.js"></script>
 </head>
 <body style="background:#fdf6e0;color-scheme:light only">
 <a class="skip-link" href="#view-home">本文へ進む</a><div class="wrap">
@@ -545,7 +546,7 @@ footer{margin-top:32px}
 
 <!-- ================= ホーム ================= -->
 <main class="view active" id="view-home">
-<section class="home-tools" aria-label="よく使う機能"><a href="private.html#kind=review"><strong>振り返り・売上</strong><span>記録を見る・追加する</span></a><a href="private.html#kind=task"><strong>やりたいこと</strong><span>追加・進み具合・完了</span></a><a href="private.html#kind=inventory"><strong>棚卸メモ</strong><span>在庫数を確認・記録</span></a><a href="private.html#kind=request"><strong>AI更新依頼</strong><span>変更したい内容をまとめる</span></a><button type="button" id="home-comment"><strong>コメントを書く</strong><span>二人への連絡・相談</span></button><a href="private.html#kind=photo"><strong>写真の確認</strong><span>作品と写真を照合</span></a></section><details class="board-reference"><summary>出店予定・資料・これまでのコメント</summary>
+<section class="home-tools" aria-label="よく使う機能"><a data-icon="review" href="private.html#kind=review"><strong>振り返り・売上</strong><span>記録を見る・追加する</span></a><a data-icon="task" href="private.html#kind=task"><strong>やりたいこと</strong><span>追加・進み具合・完了</span></a><a data-icon="inventory" href="private.html#kind=inventory"><strong>棚卸メモ</strong><span>在庫数を確認・記録</span></a><a data-icon="request" href="private.html#kind=request"><strong>AI更新依頼</strong><span>変更したい内容をまとめる</span></a><button type="button" data-icon="comment" id="home-comment"><strong>コメントを書く</strong><span>二人への連絡・相談</span></button><a href="#works" data-icon="works"><strong>作品写真</strong><span>作品・価格を見る</span></a></section><details class="board-reference"><summary>出店予定・資料・これまでのコメント</summary>
 <div class="now">
 <h2>いまの様子</h2>
 <ul class="now-list">
@@ -1022,10 +1023,10 @@ footer{margin-top:32px}
 <p class="view-lead">写真・価格・在庫の一覧</p>
 
 <div class="stock-summary" aria-label="在庫の概要">
-<div class="stat"><div class="num">26</div><div class="lbl">登録作品</div></div>
+<div class="stat"><div class="num">27</div><div class="lbl">登録作品</div></div>
 <div class="stat"><div class="num">19</div><div class="lbl">価格確認済み</div></div>
-<div class="stat"><div class="num">7</div><div class="lbl">価格 未確認</div></div>
-<div class="stat"><div class="num">26</div><div class="lbl">在庫数 未登録</div></div>
+<div class="stat"><div class="num">8</div><div class="lbl">価格 未確認</div></div>
+<div class="stat"><div class="num">27</div><div class="lbl">在庫数 未登録</div></div>
 </div>
 
 <div class="work-search"><label for="work-search">作品を探す</label><input id="work-search" type="search" placeholder="作品名・素材・メモで検索" autocomplete="off"><p id="work-result-count" role="status"></p></div>
@@ -1755,7 +1756,7 @@ footer{margin-top:32px}
 </footer>
 </div>
 
-<button type="button" class="quick-memo-btn" id="quick-memo-btn" aria-expanded="false" aria-controls="quick-panel">コメントを書く</button>
+<button type="button" class="quick-memo-btn" data-icon="comment" id="quick-memo-btn" aria-expanded="false" aria-controls="quick-panel">コメントを書く</button>
 <div class="quick-panel" id="quick-panel" hidden>
 <h3>コメント（今見ているページに追加）</h3>
 <textarea class="free-write" id="quick-text" rows="4" placeholder="気づいたこと・直してほしいところ"></textarea>

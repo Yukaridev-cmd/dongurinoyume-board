@@ -1,7 +1,7 @@
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
 const root=new URL('../',import.meta.url),assets={},imagePaths=new Set();
-const names=['index.html','private.html','private.js','private.css','comments-api.js','board-additions.css','accessibility.css','catalog.json','studio.css'];
+const names=['index.html','private.html','private.js','private.css','comments-api.js','board-additions.css','accessibility.css','catalog.json','studio.css','ui-icons.js'];
 for(const name of names){
   let body=readFileSync(new URL(name,root),'utf8');
   if(name.endsWith('.html')){
