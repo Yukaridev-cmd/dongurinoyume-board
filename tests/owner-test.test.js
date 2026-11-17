@@ -44,12 +44,12 @@ test('same-origin GET needs browser provenance and supplied foreign Origin is ne
   assert.equal((await handler(make({'Sec-Fetch-Site':'same-origin',Origin:'https://untrusted.example'}),f.env)).status,403);
  }finally{f.sqlite.close();}
 });
-test('test assets contain public config only and proxy only whitelisted public images without credentials',async()=>{
+test('test assets contain public config only and redirect only whitelisted public images without query or referrer',async()=>{
  const f=fixture();try{
   const root=await f.request();assert.equal(await root.text(),'public fixture');assert.equal(root.headers.get('Cache-Control'),'no-store, private');
   const config=await(await f.request('/comments-config.js')).text();assert.ok(config.includes('123456-test'));assert.ok(!config.includes(owner));assert.ok(!config.includes('signed.id.token'));
-  await f.request('/assets/existing.jpg?private=do-not-forward');assert.equal(f.external[0].url,'https://yukaridev-cmd.github.io/dongurinoyume-board/assets/existing.jpg');assert.deepEqual(f.external[0].options.headers,{});
-  assert.equal((await f.request('/assets/unknown.jpg')).status,404);assert.equal(f.external.length,1);
+  const image=await f.request('/assets/existing.jpg?private=do-not-forward');assert.equal(image.status,302);assert.equal(image.headers.get('Location'),'https://yukaridev-cmd.github.io/dongurinoyume-board/assets/existing.jpg');assert.equal(image.headers.get('Referrer-Policy'),'no-referrer');assert.equal(await image.text(),'');
+  assert.equal((await f.request('/assets/unknown.jpg')).status,404);assert.equal(f.external.length,0);
  }finally{f.sqlite.close();}
 });
 test('production entry still rejects one member even with owner-test flags present',async()=>{

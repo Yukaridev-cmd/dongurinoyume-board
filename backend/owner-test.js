@@ -31,11 +31,9 @@ export function createOwnerTestHandler({ assets = {}, imagePaths = [], fetcher =
         type='text/javascript; charset=utf-8';
         body='window.DONGURI_COMMENTS_CONFIG=Object.freeze('+JSON.stringify({liffId:env.TEST_LIFF_ID,apiBase:url.origin})+');';
       } else if(allowedImages.has(url.pathname)) {
-        // Only already-public repository images, without incoming headers/query.
-        const response=await fetcher(new URL(url.pathname.slice(1),PUBLIC_BOARD).href,{headers:{},redirect:'error'});
-        if(!response.ok)return json('既存画像を読み込めず',503);
-        const bytes=await response.arrayBuffer();
-        return new Response(request.method==='HEAD'?null:bytes,{headers:{...headers,'Content-Type':'image/jpeg'}});
+        // Fixed allowlist of already-public photos. Avoid the failing Worker image
+        // proxy; never include the incoming query or a private record in the URL.
+        return new Response(null,{status:302,headers:{...headers,Location:new URL(url.pathname.slice(1),PUBLIC_BOARD).href}});
       } else {
         const asset=assets[url.pathname==='/'?'/index.html':url.pathname];
         if(!asset)return json('対象なし',404);

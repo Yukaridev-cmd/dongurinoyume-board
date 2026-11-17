@@ -74,6 +74,16 @@ test('new record respects an unsaved draft and searches distinguish no matches f
     assert.equal(b.calls.filter(x=>x.method!=='GET').length,0);
   }finally{b.dom.window.close();}
 });
+test('empty kinds omit list controls but a no-match filter always remains recoverable',async()=>{
+ const b=fixture('#kind=task');try{b.auth(true);await tick();const d=b.w.document;
+  assert.equal(d.querySelector('.list-tools').hidden,true);assert.equal(d.querySelector('.event-scope').hidden,true);
+  d.getElementById('new-record').click();b.form.elements.title.value='架空の作業';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();
+  assert.equal(d.querySelector('.list-tools').hidden,false);assert.equal(d.querySelector('.list-order').hidden,false);assert.equal(d.querySelector('.event-scope').hidden,false);
+  d.getElementById('record-search').value='一致なし';d.getElementById('record-search').dispatchEvent(new b.w.Event('input'));assert.equal(d.querySelectorAll('.record-card').length,0);assert.equal(d.querySelector('.list-tools').hidden,false);
+  d.getElementById('record-search').value='';d.getElementById('record-search').dispatchEvent(new b.w.Event('input'));assert.equal(d.querySelectorAll('.record-card').length,1);
+  b.clear();assert.equal(d.querySelector('.list-tools').hidden,true);assert.equal(d.querySelectorAll('.record-card').length,0);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
 test('private forms stay locked without LINE identity and contain no seeded financial records',async()=>{
   const b=fixture();try{await tick();assert.equal(b.w.document.getElementById('record-fields').disabled,true);assert.equal(b.calls.length,0);assert.equal(b.form.elements.salesYen.value,'');assert.equal(b.errors.length,0);assert.ok(!b.w.document.body.textContent.includes('1234円'));}finally{b.dom.window.close();}
 });

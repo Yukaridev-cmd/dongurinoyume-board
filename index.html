@@ -533,7 +533,7 @@ footer{margin-top:32px}
 </div>
 <span class="updated">2026年11月16日 更新</span>
 </div>
-<div class="board-utilities"><a href="private.html#kind=review">売上・振り返り</a><a href="private.html#kind=request">AI更新依頼</a></div>
+<div class="board-utilities"><button type="button" id="quick-memo-btn" data-icon="comment" aria-expanded="false" aria-controls="quick-panel">相談</button><a href="private.html#kind=review">売上・振り返り</a><a href="private.html#kind=request">AI更新依頼</a></div>
 <nav class="tabbar primary-nav" role="tablist" aria-label="ボードのメニュー"><button type="button" role="tab" data-view-btn="events" aria-selected="true">出店</button><button type="button" role="tab" data-view-btn="works" aria-selected="false">作品・在庫</button><button type="button" role="tab" data-view-btn="market" data-icon="booth" aria-selected="false">売り場</button><a data-icon="task" href="private.html#kind=task">やること</a></nav>
 </header>
 
@@ -601,10 +601,10 @@ footer{margin-top:32px}
 <!-- ================= イベント一覧 ================= -->
 <main class="view" id="view-market"><div class="view-head"><h2>売り場</h2></div><div class="market-tabs" role="group" aria-label="売り場の内容"><button type="button" data-market="pops" data-icon="pops" aria-pressed="true">ポップ</button><button type="button" data-market="booth" data-icon="booth" aria-pressed="false">ブース・道具</button><button type="button" data-goto="share" data-icon="archive">資料</button></div><section data-market-panel="pops" aria-label="ポップ"></section><section data-market-panel="booth" aria-label="ブース・道具" hidden></section></main>
 <main class="view" id="view-events">
-<div class="view-head"><h2>イベント</h2></div>
+<div class="view-head event-list-heading"><h2>イベント</h2></div>
 <p class="view-lead">タップで各イベントのページへ移動</p>
 
-<div class="event-create-row"><h3 class="subhead">これからのイベント</h3><a class="btn small" data-icon="add" href="event.html#new">出店を追加</a></div>
+<div class="event-create-row"><h3 class="subhead">これからの出店</h3><a class="btn small" data-icon="add" href="event.html#new">出店を追加</a></div>
 <div class="event-list">
 <article class="event-card">
 <div class="body">
@@ -628,7 +628,7 @@ footer{margin-top:32px}
 </article>
 </div>
 
-<details class="private-events-group" open><summary>二人で追加した出店</summary><div id="private-events-list"></div></details><h3 class="subhead">終わったイベント</h3>
+<details class="private-events-group"><summary>二人で追加した出店</summary><div id="private-events-list"></div></details><h3 class="subhead">終わったイベント</h3>
 <div class="event-list">
 <article class="event-card">
 <img src="assets/heart-ichigo.jpg" alt="ハートまつりのいちご狩りの陳列" />
@@ -994,19 +994,8 @@ footer{margin-top:32px}
 <!-- ================= 作品・在庫 ================= -->
 <main class="view" id="view-works">
 <div class="view-head"><h2>作品・在庫</h2></div>
-<p class="source-note">在庫数の空欄は未登録。写真に写る点数は現在の在庫を示さない。棚卸の結果は「二人の記録」に残し、更新シートと照合する</p>
-
-<p class="view-lead">写真・価格・在庫の一覧</p>
-
-<div class="stock-summary" aria-label="在庫の概要">
-<div class="stat"><div class="num">27</div><div class="lbl">登録作品</div></div>
-<div class="stat"><div class="num">19</div><div class="lbl">価格確認済み</div></div>
-<div class="stat"><div class="num">8</div><div class="lbl">価格 未確認</div></div>
-<div class="stat"><div class="num">27</div><div class="lbl">在庫数 未登録</div></div>
-</div>
-
-<div class="work-search"><label for="work-search">作品を探す</label><input id="work-search" type="search" placeholder="作品名・素材・メモで検索" autocomplete="off"><p id="work-result-count" role="status"></p></div>
-<div class="filters" role="group" aria-label="種類でしぼりこむ">
+<div class="work-search"><label class="sr-only" for="work-search">作品を探す</label><input id="work-search" type="search" placeholder="作品を検索" autocomplete="off"><p id="work-result-count" role="status"></p></div>
+<details class="work-filter-menu"><summary>種類で絞る</summary><div class="filters" role="group" aria-label="種類でしぼりこむ">
 <button type="button" data-filter="all" aria-pressed="true">すべて</button>
 <button type="button" data-filter="amigurumi" aria-pressed="false">あみぐるみ</button>
 <button type="button" data-filter="strap" aria-pressed="false">キーホルダー・ストラップ</button>
@@ -1015,6 +1004,7 @@ footer{margin-top:32px}
 <button type="button" data-filter="unknown" aria-pressed="false">価格 未確認</button>
 </div>
 
+</details>
 <div class="work-grid">
 <article class="work jump" id="work-haniwa" data-cat="strap">
 <img src="assets/kiraria-haniwa.jpg" alt="はにわのポップと、ボードに並ぶはにわキーホルダー4点" />
@@ -1400,6 +1390,18 @@ footer{margin-top:32px}
 <div class="memo-list"></div>
 </section>
 
+<details class="work-reference"><summary>価格・在庫の登録状況</summary><p class="source-note">在庫数の空欄は未登録。写真に写る点数は現在の在庫を示さない。棚卸の結果は「二人の記録」に残し、更新シートと照合する</p>
+
+<p class="view-lead">写真・価格・在庫の一覧</p>
+
+<div class="stock-summary" aria-label="在庫の概要">
+<div class="stat"><div class="num">27</div><div class="lbl">登録作品</div></div>
+<div class="stat"><div class="num">19</div><div class="lbl">価格確認済み</div></div>
+<div class="stat"><div class="num">8</div><div class="lbl">価格 未確認</div></div>
+<div class="stat"><div class="num">27</div><div class="lbl">在庫数 未登録</div></div>
+</div>
+
+</details>
 </main>
 
 <!-- ================= ブース ================= -->
@@ -1750,7 +1752,7 @@ footer{margin-top:32px}
 </footer>
 </div>
 
-<button type="button" class="quick-memo-btn" data-icon="comment" id="quick-memo-btn" aria-expanded="false" aria-controls="quick-panel">コメントを書く</button>
+
 <div class="quick-panel" id="quick-panel" hidden>
 <h3>コメント（今見ているページに追加）</h3>
 <textarea class="free-write" id="quick-text" rows="4" placeholder="気づいたこと・直してほしいところ"></textarea>

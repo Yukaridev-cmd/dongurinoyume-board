@@ -113,6 +113,9 @@ function render() {
   document.getElementById('visible-count').textContent='';
   ['review','task','waiting'].forEach(function(key){var node=document.getElementById(key+'-count'); if(!ready){node.textContent='—';return;}node.textContent=key==='review'?records.filter(function(r){return r.kind==='review';}).length:key==='task'?records.filter(function(r){return r.kind==='task'&&!done(r);}).length:records.filter(function(r){return (r.kind==='request'||r.kind==='photo')&&!done(r);}).length;});
   list.replaceChildren();
+  var hasKind=ready&&records.some(function(r){return r.kind===kind;});
+  document.querySelector('.event-scope').hidden=!hasKind&&eventFilter.value==='all';
+  document.querySelector('.list-tools').hidden=!hasKind;document.querySelector('.list-order').hidden=!hasKind;
   if(!ready){list.appendChild(el('p','LINE認証後に記録を表示','empty'));return;}
   var query=document.getElementById('record-search').value.trim().toLocaleLowerCase();
   var rows=records.filter(function(r){return r.kind===kind&&inScope(r)&&(!document.getElementById('open-only').checked||!done(r))&&(!query||(r.data.title+' '+r.data.notes+' '+r.author).toLocaleLowerCase().includes(query));}).sort(function(a,b){return b.updatedAt.localeCompare(a.updatedAt)||a.id.localeCompare(b.id);});
@@ -120,7 +123,7 @@ function render() {
   if(order==='title')rows.sort(function(a,b){return a.data.title.localeCompare(b.data.title,'ja');});
   if(order==='due')rows.sort(function(a,b){return (a.data.dueDate||a.data.date||'9999').localeCompare(b.data.dueDate||b.data.date||'9999');});
   document.getElementById('visible-count').textContent=rows.length+'件を表示';
-  if(!rows.length){list.appendChild(el('p',query||document.getElementById('open-only').checked?'条件に合う記録なし。検索や未完了の条件を変更':'この種類の記録はまだなし。最初の気づきから残す。','empty'));return;}
+  if(!rows.length){list.appendChild(el('p',query||document.getElementById('open-only').checked?'条件に合う記録なし。検索や未完了の条件を変更':'記録はまだなし。「追加」から記入','empty'));return;}
   rows.forEach(function(record){
     var card=el('article',undefined,'record-card'),meta=el('div',undefined,'record-meta');
     meta.append(el('span',record.author),el('time',new Date(record.updatedAt).toLocaleString('ja-JP')));
