@@ -25,6 +25,30 @@ function fixture(){
   w.eval(source);
   return{dom,w,errors,calls,rows,copied,set fail(v){fail=v;},set delay(v){delay=v;},set delayWrite(v){delayWrite=v;},auth(ready,viewer='a'.repeat(64)){w.dispatchEvent(new w.CustomEvent('comments-auth',{detail:{ready,author:ready?'本人':'',viewer:ready?viewer:''}}));},clear(){w.dispatchEvent(new w.CustomEvent('comments-clear'));},form:w.document.getElementById('record-form')};
 }
+test('dashboard prioritizes dated tasks, completes with original version and hides private previews on suspension',async()=>{
+  const b=fixture();try{
+    const make=(id,kind,title,data)=>({id,kind,data:{title,notes:'架空の本文',...data},author:'本人',updatedBy:'本人',version:3,canEdit:true,updatedAt:'2026-11-17T00:00:00Z'});
+    b.rows.push(make('task-later','task','後の作業',{status:'未着手',dueDate:'2026-12-20'}),make('task-first','task','先の作業',{status:'進行中',dueDate:'2026-12-01'}),make('request','request','架空の依頼',{status:'未対応'}));
+    b.auth(true);await tick();const d=b.w.document;
+    assert.ok(d.querySelector('.next-action').textContent.includes('先の作業'));
+    d.querySelector('[data-kind=task]').click();
+    const card=[...d.querySelectorAll('.record-card')].find(x=>x.textContent.includes('先の作業'));
+    [...card.querySelectorAll('button')].find(x=>x.textContent==='完了にする').click();await tick();
+    assert.equal(b.calls.find(x=>x.method==='PATCH').body.version,3);
+    assert.equal(d.getElementById('task-count').textContent,'1');
+    assert.ok(!d.getElementById('next-actions').textContent.includes('先の作業'));
+    d.getElementById('preview-requests').click();assert.ok(d.getElementById('request-preview').textContent.includes('架空の本文'));
+    b.clear();assert.equal(d.getElementById('request-preview').textContent,'');assert.equal(d.getElementById('request-preview').hidden,true);
+    assert.ok(!d.getElementById('next-actions').textContent.includes('後の作業'));assert.equal(b.errors.length,0);
+  }finally{b.dom.window.close();}
+});
+test('new record respects an unsaved draft and searches distinguish no matches from empty records',async()=>{
+  const b=fixture();try{b.auth(true);await tick();const d=b.w.document;
+    b.form.elements.title.value='残す下書き';b.form.dispatchEvent(new b.w.Event('input'));b.w.confirm=()=>false;d.getElementById('new-record').click();assert.equal(b.form.elements.title.value,'残す下書き');
+    d.getElementById('record-search').value='ない項目';d.getElementById('record-search').dispatchEvent(new b.w.Event('input'));assert.ok(d.getElementById('record-list').textContent.includes('条件に合う記録なし'));
+    assert.equal(b.calls.filter(x=>x.method!=='GET').length,0);
+  }finally{b.dom.window.close();}
+});
 test('private forms stay locked without LINE identity and contain no seeded financial records',async()=>{
   const b=fixture();try{await tick();assert.equal(b.w.document.getElementById('record-fields').disabled,true);assert.equal(b.calls.length,0);assert.equal(b.form.elements.salesYen.value,'');assert.equal(b.errors.length,0);assert.ok(!b.w.document.body.textContent.includes('1234円'));}finally{b.dom.window.close();}
 });

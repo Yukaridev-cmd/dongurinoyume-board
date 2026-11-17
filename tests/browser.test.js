@@ -182,11 +182,21 @@ test('comments become pending private update requests only through an explicit c
     assert.ok(b.requests.every(r=>r.url.startsWith('https://comments.example/')));assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });
+test('work search combines with category filters, ignores confidential comments and links to public-name inventory context',async()=>{
+  const b=browser();try{await tick();const d=b.w.document,input=d.getElementById('work-search');
+    input.value='マグネット';input.dispatchEvent(new b.w.Event('input'));let shown=[...d.querySelectorAll('.work')].filter(x=>!x.hidden);assert.equal(shown.length,1);assert.ok(shown[0].textContent.includes('マグネット'));
+    const link=shown[0].querySelector('a[href^="private.html#inventory="]');assert.ok(link);assert.ok(decodeURIComponent(link.getAttribute('href')).includes('マグネット'));
+    d.querySelector('[data-filter=amigurumi]').click();assert.equal([...d.querySelectorAll('.work')].filter(x=>!x.hidden).length,0);
+    input.value='';input.dispatchEvent(new b.w.Event('input'));d.querySelector('[data-filter=all]').click();assert.equal([...d.querySelectorAll('.work')].filter(x=>!x.hidden).length,27);
+    assert.equal(d.querySelector('.inline-memo').tagName,'DETAILS');assert.equal(b.errors.length,0);
+  }finally{b.dom.window.close();}
+});
 test('existing images, prices, event headings, page navigation, cream background and font are preserved', async () => {
   const b = browser({ configured: false });
   try {
     const d = b.w.document;
-    const preserved = { images: [...d.querySelectorAll('img')].map(el => [el.getAttribute('src'), el.getAttribute('alt')]) };
+    // The new welcome section reuses an existing photo; all original image/alt pairs remain intact.
+    const preserved = { images: [...d.querySelectorAll('img')].filter(el=>!el.closest('.board-welcome')).map(el => [el.getAttribute('src'), el.getAttribute('alt')]) };
     for (const selector of ['.view-head h2', '.price', '.meta', '[data-goto]']) {
       // The one intentional content-count change follows the added source-Sheet work.
       preserved[selector] = [...d.querySelectorAll(selector)].map(el => selector === '[data-goto]' ? el.textContent.replace(/27作品/g,'26作品') : el.textContent);

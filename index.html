@@ -518,9 +518,10 @@ footer{margin-top:32px}
 
 </style>
 <link rel="stylesheet" href="accessibility.css" />
+<link rel="stylesheet" href="studio.css">
 </head>
 <body style="background:#fdf6e0;color-scheme:light only">
-<div class="wrap">
+<a class="skip-link" href="#view-home">本文へ進む</a><div class="wrap">
 
 <header class="top">
 <div class="top-inner">
@@ -544,7 +545,7 @@ footer{margin-top:32px}
 
 <!-- ================= ホーム ================= -->
 <main class="view active" id="view-home">
-<p class="home-lead">次のイベントと在庫のまとめ</p>
+<section class="board-welcome"><div><span class="eyebrow">手づくりの日々を、二人で。</span><h2>作る楽しみ。<br>届けるよろこび。</h2><p>作品と出店の準備を、ひとつのボードに。</p><a class="studio-cta" href="private.html">二人の記録を開く <span>振り返り・売上・やりたいこと →</span></a></div><img src="assets/product-pouches.jpg" alt="既存の作品写真：手づくりのポーチ" width="480" height="480"></section>
 <div class="now">
 <h2>いまの様子</h2>
 <ul class="now-list">
@@ -1026,6 +1027,7 @@ footer{margin-top:32px}
 <div class="stat"><div class="num">26</div><div class="lbl">在庫数 未登録</div></div>
 </div>
 
+<div class="work-search"><label for="work-search">作品を探す</label><input id="work-search" type="search" placeholder="作品名・素材・メモで検索" autocomplete="off"><p id="work-result-count" role="status"></p></div>
 <div class="filters" role="group" aria-label="種類でしぼりこむ">
 <button type="button" data-filter="all" aria-pressed="true">すべて</button>
 <button type="button" data-filter="amigurumi" aria-pressed="false">あみぐるみ</button>
@@ -1885,23 +1887,20 @@ var now = new Date(); now.setHours(0, 0, 0, 0);
 var d = Math.round((t - now) / 86400000);
 el.textContent = d > 0? 'あと' + d + '日': (d === 0? '当日': '終了');
 });
-/* ---- works filter ---- */
-document.querySelectorAll('[data-filter]').forEach(function (btn) {
-btn.addEventListener('click', function () {
-var f = btn.getAttribute('data-filter');
-document.querySelectorAll('[data-filter]').forEach(function (b) {
-b.setAttribute('aria-pressed', b === btn? 'true': 'false');
-});
-document.querySelectorAll('.work[data-cat]').forEach(function (card) {
-if (f === 'unknown') {
-var pl = card.querySelector('.price-line');
-card.hidden =!(pl && /未確認|未登録/.test(pl.textContent));
-} else {
-card.hidden =!(f === 'all' || card.getAttribute('data-cat') === f);
+/* ---- works filter and search ---- */
+var workQuery=document.getElementById('work-search');
+function filterWorks(){
+  var selected=document.querySelector('[data-filter][aria-pressed="true"]'),f=selected?selected.getAttribute('data-filter'):'all';
+  var q=workQuery?workQuery.value.trim().normalize('NFKC').toLocaleLowerCase():'';var count=0;
+  document.querySelectorAll('.work[data-cat]').forEach(function(card){
+    var price=card.querySelector('.price-line'),match=f==='unknown'?price&&/未確認|未登録/.test(price.textContent):f==='all'||card.getAttribute('data-cat')===f;
+    var publicText=Array.from(card.querySelectorAll('h3,dl,.memo,.price-line')).map(function(n){return n.textContent;}).join(' ').normalize('NFKC').toLocaleLowerCase();
+    card.hidden=!(match&&(!q||publicText.includes(q)));if(!card.hidden)count++;
+  });
+  var output=document.getElementById('work-result-count');if(output)output.textContent=count+'作品を表示'+(count?'':' ・ 条件を変えて探す');
 }
-});
-});
-});
+document.querySelectorAll('[data-filter]').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('[data-filter]').forEach(function(b){b.setAttribute('aria-pressed',String(b===btn));});filterWorks();});});
+if(workQuery)workQuery.addEventListener('input',filterWorks);filterWorks();
 /* ---- copy ---- */
 document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
 btn.addEventListener('click', function () {
@@ -1978,6 +1977,7 @@ list.replaceChildren();
 comments.filter(function (c) { return c.target === list.getAttribute('data-comment-target'); })
 .slice().sort(function (a, b) { return b.stamp.localeCompare(a.stamp) || b.id.localeCompare(a.id); })
 .forEach(function (c) { list.appendChild(commentCard(c)); });
+var disclosure=list.closest('details.inline-memo');if(disclosure){var summary=disclosure.querySelector('summary');if(summary)summary.textContent='この項目について相談・コメント'+(list.children.length?'（'+list.children.length+'件）':'');}
 });
 rebuildSummary();
 }
@@ -2192,8 +2192,9 @@ document.querySelectorAll('[data-memo-zone]').forEach(setupZone);
 /* ---- inline comments on each work card, pop entry and event card ---- */
 function addInlineComment(container, target, placeholder) {
 if (!container || container.querySelector('.inline-memo')) return;
-var wrap = document.createElement('div');
+var wrap = document.createElement('details');
 wrap.className = 'inline-memo';
+var disclosure=document.createElement('summary');disclosure.textContent='この項目について相談・コメント';wrap.appendChild(disclosure);
 var lab = document.createElement('span');
 lab.textContent = 'コメント';
 wrap.appendChild(lab);
@@ -2231,6 +2232,7 @@ caption.textContent = card.id === 'work-happy-pack' ? 'ポップ画像。セッ�
 body.appendChild(caption);
 }
 addInlineComment(body, '作品：' + (h? h.textContent: '作品'), '価格・在庫・作る数・直すところなど');
+if(h){var inventoryLink=document.createElement('a');inventoryLink.className='text-link';inventoryLink.href='private.html#inventory='+encodeURIComponent(h.textContent);inventoryLink.textContent='この作品の棚卸メモを書く →';body.appendChild(inventoryLink);}
 });
 document.querySelectorAll('.pop-entry .foot').forEach(function (foot) {
 var entry = foot.closest('.pop-entry');

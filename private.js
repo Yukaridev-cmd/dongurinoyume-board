@@ -19,7 +19,7 @@ function number(v) { return v === '' ? null : Number(v); }
 function money(v) { return v === null || v === undefined ? '未入力' : v.toLocaleString('ja-JP')+'円'; }
 function setSaving(value) {
   saving=value;fields.disabled=!ready||saving;form.setAttribute('aria-busy',String(saving));
-  document.querySelectorAll('[data-kind],.record-card button').forEach(function(button){button.disabled=saving;});
+  document.querySelectorAll('[data-kind],.record-card button,.next-action,#new-record').forEach(function(button){button.disabled=saving;});
 }
 function mutationBlocked() { if(!saving)return false;feedback.textContent='保存処理中。結果を確認してから別の記録を開く';return true; }
 function reset() { form.reset(); form.removeAttribute('data-private-dirty'); editing=null; delete form._recordId;document.getElementById('form-title').textContent='記録を追加';document.getElementById('record-cancel').hidden=true; document.getElementById('photo-preview').hidden=true; }
@@ -37,7 +37,7 @@ function protectDraft() {
   document.getElementById('record-search').value='';document.getElementById('open-only').checked=false;
   document.getElementById('copy-requests').disabled=true;document.getElementById('export-records').disabled=true;
   feedback.textContent=drafts.size?'未保存入力をこのページ内で一時保護。同じLINEアカウントを確認後に復元':'';
-  document.getElementById('export-feedback').textContent='';render();
+  document.getElementById('export-feedback').textContent='';document.getElementById('request-preview').textContent='';document.getElementById('request-preview').hidden=true;document.getElementById('preview-requests').disabled=true;render();
 }
 function restoreDraft() {
   var draft=drafts.get(currentViewer);if(!draft)return false;
@@ -67,6 +67,8 @@ function setKind(next) {
   document.getElementById('request-hint').hidden=kind!=='request';
   document.getElementById('notes-label').firstChild.textContent={review:'振り返り・次にやること',task:'やりたいことの詳細',inventory:'数えた条件・照合メモ',photo:'写真と中身の確認メモ',request:'変更内容・確認する根拠'}[kind];
   document.getElementById('open-only').checked=false;
+  document.getElementById('record-sort').value='updated';
+  document.getElementById('record-search').value='';
   render();
   return true;
 }
@@ -88,13 +90,29 @@ function beginEdit(record) {
   previewPhoto();form.scrollIntoView({block:'start',behavior:'smooth'});form.elements.title.focus();
 }
 function done(record) { return ['完了','確認済み','対応済み'].includes(record.data.status); }
+function renderNext() {
+  var panel=document.getElementById('next-actions');panel.replaceChildren();
+  if(!ready){panel.appendChild(el('p','LINE認証後に、未完了の作業を表示','empty'));return;}
+  var pending=records.filter(function(r){return ['task','photo','request'].includes(r.kind)&&!done(r);});
+  pending.sort(function(a,b){return (a.data.dueDate||'9999').localeCompare(b.data.dueDate||'9999')||b.updatedAt.localeCompare(a.updatedAt);});
+  if(!pending.length){panel.appendChild(el('p','いま残っている作業はなし。思いついたことを「やりたいこと」へ。','empty'));return;}
+  pending.slice(0,3).forEach(function(r){var b=el('button',undefined,'next-action');b.type='button';b.disabled=saving;
+    b.append(el('span',labels[r.kind]+(r.data.dueDate?' ・ '+r.data.dueDate:''),'eyebrow'),el('strong',r.data.title),el('span',r.data.status+' →','next-state'));
+    b.addEventListener('click',function(){if(setKind(r.kind)){if(r.canEdit)beginEdit(r);else{document.getElementById('record-search').value=r.data.title;render();document.getElementById('workspace').scrollIntoView({block:'start'});}}});panel.appendChild(b);});
+}
 function render() {
+  renderNext();
+  document.getElementById('visible-count').textContent='';
   ['review','task','waiting'].forEach(function(key){var node=document.getElementById(key+'-count'); if(!ready){node.textContent='—';return;}node.textContent=key==='review'?records.filter(function(r){return r.kind==='review';}).length:key==='task'?records.filter(function(r){return r.kind==='task'&&!done(r);}).length:records.filter(function(r){return (r.kind==='request'||r.kind==='photo')&&!done(r);}).length;});
   list.replaceChildren();
   if(!ready){list.appendChild(el('p','LINE認証後に記録を表示','empty'));return;}
   var query=document.getElementById('record-search').value.trim().toLocaleLowerCase();
   var rows=records.filter(function(r){return r.kind===kind&&(!document.getElementById('open-only').checked||!done(r))&&(!query||(r.data.title+' '+r.data.notes+' '+r.author).toLocaleLowerCase().includes(query));}).sort(function(a,b){return b.updatedAt.localeCompare(a.updatedAt)||a.id.localeCompare(b.id);});
-  if(!rows.length){list.appendChild(el('p','この種類の記録はまだなし。入力欄から追加','empty'));return;}
+  var order=document.getElementById('record-sort').value;
+  if(order==='title')rows.sort(function(a,b){return a.data.title.localeCompare(b.data.title,'ja');});
+  if(order==='due')rows.sort(function(a,b){return (a.data.dueDate||a.data.date||'9999').localeCompare(b.data.dueDate||b.data.date||'9999');});
+  document.getElementById('visible-count').textContent=rows.length+'件を表示';
+  if(!rows.length){list.appendChild(el('p',query||document.getElementById('open-only').checked?'条件に合う記録なし。検索や未完了の条件を変更':'この種類の記録はまだなし。最初の気づきから残す。','empty'));return;}
   rows.forEach(function(record){
     var card=el('article',undefined,'record-card'),meta=el('div',undefined,'record-meta');
     meta.append(el('span',record.author),el('time',new Date(record.updatedAt).toLocaleString('ja-JP')));
@@ -118,6 +136,14 @@ function render() {
         try{await window.DonguriComments.save('/records/'+record.id,'DELETE',{version:record.version});if(epoch!==generation||!ready)return;records=records.filter(function(r){return r.id!==record.id;});if(editing&&editing.id===record.id)reset();render();feedback.textContent='記録を一覧から削除済み';}
         catch(error){if(epoch===generation)feedback.textContent=error.message;}finally{if(epoch===generation)setSaving(false);}
       });actions.append(edit,del);
+      if(record.kind==='task'&&!done(record)){
+        var finish=el('button','完了にする');finish.type='button';finish.addEventListener('click',async function(){
+          if(!ready||mutationBlocked())return;var epoch=generation;setSaving(true);feedback.textContent='保存中';
+          try{var result=await window.DonguriComments.save('/records/'+record.id,'PATCH',{version:record.version,data:Object.assign({},record.data,{status:'完了'})});
+            if(epoch!==generation||!ready)return;records=records.map(function(r){return r.id===result.record.id?result.record:r;});render();feedback.textContent='完了として保存済み';
+          }catch(error){if(epoch===generation)feedback.textContent=error.message;}finally{if(epoch===generation)setSaving(false);}
+        });actions.prepend(finish);
+      }
     }
     if(record.kind!=='request') {
       var request=el('button','この記録から更新依頼');request.type='button';request.addEventListener('click',function(){
@@ -156,6 +182,17 @@ document.querySelectorAll('[data-kind]').forEach(function(button){button.addEven
 document.getElementById('record-cancel').addEventListener('click',function(){if(mutationBlocked())return;drafts.delete(currentViewer);reset();feedback.textContent='';});
 document.getElementById('record-search').addEventListener('input',render);
 document.getElementById('open-only').addEventListener('change',render);
+document.getElementById('record-sort').addEventListener('change',render);
+document.getElementById('new-record').addEventListener('click',function(){
+  if(mutationBlocked())return;
+  if(hasInput()&&!window.confirm('入力を取消して新しく書く'))return;
+  reset();feedback.textContent='';form.scrollIntoView({block:'start',behavior:'smooth'});if(ready)form.elements.title.focus();else form.focus();
+});
+document.getElementById('preview-requests').addEventListener('click',function(){
+  if(!ready)return;var preview=document.getElementById('request-preview');
+  var pending=records.filter(function(r){return r.kind==='request'&&r.data.status==='未対応';});
+  preview.textContent=pending.length?pending.map(function(r){return '■ '+r.data.title+'\n'+r.data.notes;}).join('\n\n'):'未対応の依頼なし';preview.hidden=false;
+});
 function previewPhoto(){var path=form.elements.asset.value,img=document.getElementById('photo-preview');img.hidden=!path;if(path)img.src=path;}
 document.getElementById('photo-asset').addEventListener('change',previewPhoto);
 window.addEventListener('comments-auth',function(event){
@@ -165,7 +202,7 @@ window.addEventListener('comments-auth',function(event){
   if(event.detail.ready && currentViewer && next!==currentViewer)protectDraft();
   ready=event.detail.ready;
   if(ready){currentViewer=next;restoreDraft();}
-  fields.disabled=!ready;document.getElementById('copy-requests').disabled=!ready;document.getElementById('export-records').disabled=!ready;
+  fields.disabled=!ready;document.getElementById('preview-requests').disabled=!ready;document.getElementById('copy-requests').disabled=!ready;document.getElementById('export-records').disabled=!ready;
   if(ready)load();render();
 });
 window.addEventListener('comments-clear',protectDraft);
@@ -184,6 +221,6 @@ document.getElementById('export-records').addEventListener('click',function(){
   var url=URL.createObjectURL(blob),a=el('a');a.href=url;a.download='donguri-private-records.json';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},1000);
   document.getElementById('export-feedback').textContent='金額・個人的な記録を含むファイル。公開場所へ置かず手元で保管';
 });
-fetch('catalog.json',{cache:'no-store'}).then(function(response){if(!response.ok)throw Error();return response.json();}).then(function(data){catalog=data;catalog.forEach(function(item){var o=el('option');o.value=item.title;document.getElementById('product-names').appendChild(o);item.photos.forEach(function(photo){var option=el('option',item.title+' — '+photo.label);option.value=photo.src;document.getElementById('photo-asset').appendChild(option);});});}).catch(function(){document.getElementById('private-notice').textContent='作品候補を読み込めず。名称は手入力し、更新シートと照合';});
+fetch('catalog.json',{cache:'no-store'}).then(function(response){if(!response.ok)throw Error();return response.json();}).then(function(data){catalog=data;var incoming;try{incoming=decodeURIComponent(location.hash.replace(/^#inventory=/,''));}catch{}if(location.hash.startsWith('#inventory=')&&catalog.some(function(item){return item.title===incoming;})&&!hasInput()){setKind('inventory');form.elements.title.value=incoming;markDirty();}catalog.forEach(function(item){var o=el('option');o.value=item.title;document.getElementById('product-names').appendChild(o);item.photos.forEach(function(photo){var option=el('option',item.title+' — '+photo.label);option.value=photo.src;document.getElementById('photo-asset').appendChild(option);});});}).catch(function(){document.getElementById('private-notice').textContent='作品候補を読み込めず。名称は手入力し、更新シートと照合';});
 setKind('review');
 })();

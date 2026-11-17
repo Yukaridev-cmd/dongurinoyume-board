@@ -9,19 +9,21 @@
 <script defer src="private.js"></script>
 <script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script defer src="comments-api.js"></script>
+<link rel="stylesheet" href="studio.css">
 </head>
-<body>
+<body class="journal-page"><a class="skip-link" href="#workspace">記録へ進む</a>
 <header class="site-head"><a href="index.html" class="brand">どんぐりの夢<span>二人の記録</span></a><a class="back" href="index.html">作品ボードへ戻る ↗</a></header>
 <main>
-<section class="intro"><span class="eyebrow">作る、届ける、その次へ</span><h1>二人の「次にやること」を<br>ここに残す。</h1><p>振り返りと売上、やること、棚卸メモを一緒に確認。<br>LINEで確認した二人だけが記録を開く。</p></section>
+<section class="intro"><span class="eyebrow">作る、届ける、その次へ</span><h1>小さな気づきを、<br>次のものづくりへ。</h1><p>作った日も、届けた日も。二人で残す、お店のノート。</p></section>
 <section class="connection" aria-label="共有の接続"><span class="dot" aria-hidden="true"></span><p id="comments-status" role="status">LINE認証を確認中</p><button id="comments-login" type="button">記録を再読込</button></section>
-<p class="notice" id="private-notice">共有設定後にLINEの専用リンクから開く。入力はページ内で一時保護し、同じアカウントを確認して復元。再読込・タブ終了・OSによるページ破棄では失われるため先に保存する。端末へは自動保存しない。</p>
+<details class="storage-help"><summary>下書きと保存について</summary><p class="notice" id="private-notice">共有設定後にLINEの専用リンクから開く。入力はページ内で一時保護し、同じアカウントを確認して復元。再読込・タブ終了・OSによるページ破棄では失われるため先に保存する。端末へは自動保存しない。</p></details>
 <div class="stats" aria-label="記録の件数"><div><span>振り返り</span><strong id="review-count">—</strong></div><div><span>進めること</span><strong id="task-count">—</strong></div><div><span>確認待ち</span><strong id="waiting-count">—</strong></div></div>
+<section class="today-panel" aria-labelledby="today-title"><div class="section-head"><div><span class="eyebrow">二人で少しずつ</span><h2 id="today-title">次に進めること</h2></div><a href="#workspace" class="text-link">記録を開く ↓</a></div><div id="next-actions"><p class="empty">LINE認証後に、未完了の作業を表示</p></div></section>
 <nav class="tabs" aria-label="記録の種類"><button data-kind="review" aria-pressed="true">振り返り・売上</button><button data-kind="task" aria-pressed="false">やりたいこと</button><button data-kind="inventory" aria-pressed="false">棚卸メモ</button><button data-kind="photo" aria-pressed="false">写真の確認</button><button data-kind="request" aria-pressed="false">更新の依頼</button></nav>
-<section class="workspace" aria-labelledby="section-title">
+<section id="workspace" class="workspace" aria-labelledby="section-title">
 <div class="section-head"><div><span class="eyebrow" id="section-kicker">イベントを終えたら</span><h2 id="section-title">振り返り・売上</h2><p id="section-description">気づいたことと金額を残す。空欄は未入力、0円は売上なしとして区別。</p></div><span class="private-label">二人のみ</span></div>
-<div class="two-column">
-<form id="record-form" class="form-card" autocomplete="off" aria-labelledby="form-title"><h3 id="form-title">記録を追加</h3><fieldset id="record-fields" aria-describedby="private-notice" disabled>
+<div class="workspace-actions"><button type="button" id="new-record" class="primary">＋ 新しい記録を書く</button><a class="text-link" href="#record-list">保存した記録を見る ↓</a></div><div class="two-column">
+<form id="record-form" class="form-card" tabindex="-1" autocomplete="off" aria-labelledby="form-title"><h3 id="form-title">記録を追加</h3><fieldset id="record-fields" aria-describedby="private-notice" disabled>
 <label>項目名<input name="title" id="record-title" required maxlength="160" autocomplete="off" placeholder="イベント名・作品名・やること" list="product-names"></label><datalist id="product-names"></datalist>
 <div data-for="review"><label>日付<input name="date" type="date"></label><div class="field-pair"><label>売上（円）<input name="salesYen" type="number" min="0" max="100000000" step="1" inputmode="numeric" placeholder="未入力"></label><label>費用（円）<input name="costsYen" type="number" min="0" max="100000000" step="1" inputmode="numeric" placeholder="未入力"></label></div><p class="hint">未入力の金額を0円として集計しない。振り返りの編集は書いた本人のみ。</p></div>
 <div data-for="task" hidden><label>期限<input name="dueDate" type="date"></label></div>
@@ -32,10 +34,10 @@
 <p class="hint" id="request-hint" hidden>更新したい項目・変更内容・確認した根拠を記入。依頼だけでは公開ページや正本を書き換えない。</p>
 <div class="actions"><button class="primary" type="submit" id="record-save">記録を保存</button><button type="button" id="record-cancel" hidden>入力を取消</button></div>
 </fieldset><p id="record-feedback" role="status"></p></form>
-<div class="records-column"><div class="list-tools"><label class="search-label">記録を絞る<input id="record-search" type="search" autocomplete="off" placeholder="項目名・本文・書いた人"></label><label class="check"><input id="open-only" type="checkbox">未完了のみ</label></div><div id="record-list" aria-live="polite"><p class="empty">LINE認証後に記録を表示</p></div></div>
+<div class="records-column"><div class="list-tools"><label class="search-label">記録を絞る<input id="record-search" type="search" autocomplete="off" placeholder="項目名・本文・書いた人"></label><label class="check"><input id="open-only" type="checkbox">未完了のみ</label></div><div class="list-order"><p id="visible-count" role="status"></p><label>並び順<select id="record-sort"><option value="updated">更新が新しい順</option><option value="due">期限が近い順</option><option value="title">項目名の順</option></select></label></div><div id="record-list" aria-live="polite"><p class="empty">LINE認証後に記録を表示</p></div></div>
 </div>
 </section>
-<section class="handoff"><div><span class="eyebrow">次の更新につなげる</span><h2>依頼をまとめて、見直す。</h2><p>未対応の更新依頼を自分でコピーし、送る前に内容を確認。<br>この画面から外部AIへ自動送信しない。</p></div><div class="actions"><button type="button" id="copy-requests" disabled>未対応の依頼をコピー</button><button type="button" id="export-records" disabled>記録をファイル保存</button></div><p id="export-feedback" role="status"></p></section>
-<footer><p>作品・在庫の正本は更新シート。棚卸メモと照合してから反映。</p><p>相手の新しい記録は「記録を再読込」で確認。編集中の内容を先に保存する。</p></footer>
+<section class="handoff" id="handoff"><div><span class="eyebrow">次の更新につなげる</span><h2>依頼をまとめて、見直す。</h2><p>未対応の更新依頼を自分でコピーし、送る前に内容を確認。<br>この画面から外部AIへ自動送信しない。</p></div><div class="actions"><button type="button" id="preview-requests" disabled>送る内容を確認</button><button type="button" id="copy-requests" disabled>未対応の依頼をコピー</button><button type="button" id="export-records" disabled>記録をファイル保存</button></div><pre id="request-preview" class="request-preview" hidden></pre><p id="export-feedback" role="status"></p></section>
+<nav class="journal-dock" aria-label="よく使う場所"><a href="index.html#home">お店のボード</a><a href="#workspace" aria-current="page">二人の記録</a><a href="#handoff">更新の依頼</a></nav><footer><p>作品・在庫の正本は更新シート。棚卸メモと照合してから反映。</p><p>相手の新しい記録は「記録を再読込」で確認。編集中の内容を先に保存する。</p></footer>
 </main>
 </body></html>
