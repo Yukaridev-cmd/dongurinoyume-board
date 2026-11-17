@@ -175,6 +175,10 @@
     "title": "お寿司のあみぐるみ",
     "photos": [
       {
+        "src": "assets/kiraria8-sushi-wood.jpg",
+        "label": "お寿司のあみぐるみ12貫と手書きのお品書きポップ"
+      },
+      {
         "src": "assets/kiraria8-sushi-close.jpg",
         "label": "トレーに並ぶお寿司のあみぐるみ12貫を斜めから寄って撮った写真"
       }
@@ -195,6 +199,8 @@
   {
     "id": "work-happy-pack",
     "title": "ハッピーパック",
+    "saleStatus": "excluded",
+    "saleNote": "ポップへ統合・実物写真は未確認",
     "photos": [
       {
         "src": "assets/pop-happy-pack.jpg",
@@ -259,13 +265,13 @@
     "id": "work-heart-bear",
     "title": "ハートを持つくまのあみぐるみ",
     "saleStatus": "excluded",
-    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
+    "saleNote": "非売品",
     "photos": [],
     "photoType": "実物写真は未確認"
   },
   {
     "id": "work-cat-burger",
-    "title": "ねこバーガーのキーホルダー",
+    "title": "にゃんバーガー",
     "saleStatus": "excluded",
     "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
     "photos": [
