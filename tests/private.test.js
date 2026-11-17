@@ -62,7 +62,7 @@ test('dashboard prioritizes dated tasks, completes with original version and hid
     assert.equal(b.calls.find(x=>x.method==='PATCH').body.version,3);
     assert.equal(d.getElementById('task-count').textContent,'1');
     assert.ok(!d.getElementById('next-actions').textContent.includes('先の作業'));
-    d.getElementById('preview-requests').click();assert.ok(d.getElementById('request-preview').textContent.includes('架空の本文'));
+    d.querySelector('[data-kind=request]').click();d.querySelector('[data-request-pick]').click();d.getElementById('preview-requests').click();assert.ok(d.getElementById('request-preview').textContent.includes('架空の本文'));
     b.clear();assert.equal(d.getElementById('request-preview').textContent,'');assert.equal(d.getElementById('request-preview').hidden,true);
     assert.ok(!d.getElementById('next-actions').textContent.includes('後の作業'));assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
@@ -87,6 +87,15 @@ test('empty kinds omit list controls but a no-match filter always remains recove
 test('private forms stay locked without LINE identity and contain no seeded financial records',async()=>{
   const b=fixture();try{await tick();assert.equal(b.w.document.getElementById('record-fields').disabled,true);assert.equal(b.calls.length,0);assert.equal(b.form.elements.salesYen.value,'');assert.equal(b.errors.length,0);assert.ok(!b.w.document.body.textContent.includes('1234円'));}finally{b.dom.window.close();}
 });
+test('AI copies only selected pending requests after preview and clears selection on lock',async()=>{
+ const b=fixture('#kind=request');try{const d=b.w.document;for(const [id,status] of [['one','未対応'],['two','未対応'],['done','対応済み']])b.rows.push({id,kind:'request',data:{title:id,notes:'本文'+id,status},author:'本人',version:1,canEdit:true,updatedAt:'2026-11-17'});b.auth(true);await tick();
+ d.getElementById('copy-requests').click();await tick();assert.equal(b.copied.length,0);assert.equal(d.querySelectorAll('[data-request-pick]').length,2);
+ d.querySelector('[data-request-pick=one]').click();d.getElementById('copy-requests').click();await tick();assert.equal(b.copied.length,0);
+ d.getElementById('preview-requests').click();d.getElementById('copy-requests').click();await tick();assert.ok(b.copied[0].includes('本文one'));assert.equal(b.copied[0].includes('本文two'),false);assert.equal(b.copied[0].includes('本文done'),false);
+ d.querySelector('[data-request-pick=two]').click();d.getElementById('copy-requests').click();await tick();assert.equal(b.copied.length,1);
+ b.clear();assert.equal(d.getElementById('request-preview').textContent,'');b.auth(true);await tick();assert.equal(d.querySelectorAll('[data-request-pick]:checked').length,0);assert.equal(b.calls.filter(c=>c.method!=='GET').length,0);
+ }finally{b.dom.window.close();}
+});
 test('reviews preserve zero versus blank and render HTML as text',async()=>{
   const b=fixture();try{b.auth(true);await tick();b.form.elements.title.value='<img src=x onerror=alert(1)>';b.form.elements.salesYen.value='0';b.form.elements.costsYen.value='';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();
     assert.equal(b.rows[0].data.salesYen,0);assert.equal(b.rows[0].data.costsYen,null);const list=b.w.document.getElementById('record-list');assert.ok(list.textContent.includes('売上 0円'));assert.ok(list.textContent.includes('費用 未入力'));assert.equal(list.querySelectorAll('img').length,0);assert.equal(b.form.elements.title.value,'');assert.equal(b.errors.length,0);
@@ -99,7 +108,7 @@ test('shared task editing and search work; copy includes only explicitly pending
   const b=fixture();try{b.auth(true);await tick();b.w.document.querySelector('[data-kind=task]').click();b.form.elements.title.value='テストの作業';b.form.elements.status.value='未着手';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();
     [...b.w.document.querySelectorAll('.record-card button')].find(x=>x.textContent==='編集').click();b.form.elements.status.value='完了';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.equal(b.rows[0].data.status,'完了');
     b.w.document.getElementById('open-only').checked=true;b.w.document.getElementById('open-only').dispatchEvent(new b.w.Event('change'));assert.equal(b.w.document.querySelectorAll('.record-card').length,0);
-    b.w.document.querySelector('[data-kind=request]').click();b.form.elements.title.value='依頼テスト';b.form.elements.notes.value='確認する本文';b.form.elements.status.value='未対応';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();b.w.document.getElementById('copy-requests').click();await tick();assert.ok(b.copied[0].includes('確認する本文'));assert.ok(!b.copied[0].includes('テストの作業'));assert.ok(b.calls.every(c=>c.path.startsWith('/records')||(c.path==='/events'&&c.method==='GET')));assert.equal(b.errors.length,0);
+    b.w.document.querySelector('[data-kind=request]').click();b.form.elements.title.value='依頼テスト';b.form.elements.notes.value='確認する本文';b.form.elements.status.value='未対応';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();b.w.document.querySelector('[data-request-pick]').click();b.w.document.getElementById('preview-requests').click();b.w.document.getElementById('copy-requests').click();await tick();assert.ok(b.copied[0].includes('確認する本文'));assert.ok(!b.copied[0].includes('テストの作業'));assert.ok(b.calls.every(c=>c.path.startsWith('/records')||(c.path==='/events'&&c.method==='GET')));assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });
 test('authentication loss clears visible records, amounts, drafts and late responses',async()=>{
@@ -115,7 +124,7 @@ test('catalog contains 27 unique works and existing photos, without inventory or
 test('pressing the active record kind preserves a draft and generated requests expose a working cancel action',async()=>{
   const b=fixture();try{
     b.auth(true);await tick();b.form.elements.title.value='draft';b.form.dispatchEvent(new b.w.Event('input'));let prompts=0;b.w.confirm=()=>{prompts++;return true;};b.w.document.querySelector('[data-kind=review]').click();assert.equal(b.form.elements.title.value,'draft');assert.equal(prompts,0);
-    b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();[...b.w.document.querySelectorAll('.record-card button')].find(e=>e.textContent==='この記録から更新依頼').click();assert.equal(b.w.document.getElementById('record-cancel').hidden,false);assert.equal(b.w.document.activeElement,b.form.elements.title);assert.ok(b.w.document.getElementById('notes-label').textContent.includes('変更内容'));
+    b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();[...b.w.document.querySelectorAll('.record-card button')].find(e=>e.textContent==='この記録からAIへの依頼').click();assert.equal(b.w.document.getElementById('record-cancel').hidden,false);assert.equal(b.w.document.activeElement,b.form.elements.title);assert.ok(b.w.document.getElementById('notes-label').textContent.includes('変更内容'));
     b.w.document.getElementById('record-cancel').click();assert.equal(b.form.elements.title.value,'');assert.equal(b.form.hasAttribute('data-private-dirty'),false);assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });

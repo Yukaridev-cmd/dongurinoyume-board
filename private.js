@@ -1,6 +1,7 @@
 (function () {
 'use strict';
 var records = [], ready = false, kind = 'review', editing = null, generation = 0, catalog = [];
+var requestSelection=new Set(), reviewedRequestText='';
 var currentViewer = '', drafts = new Map(), saving = false, pendingNew = false;
 var draftFields = ['eventId','title','date','salesYen','costsYen','dueDate','stock','asset','status','notes'];
 var form = document.getElementById('record-form'), fields = document.getElementById('record-fields');
@@ -9,8 +10,8 @@ var eventFilter=document.getElementById('event-filter'),eventChoice=document.get
 var eventNames={};Array.from(eventChoice.options).forEach(function(o){if(o.value)eventNames[o.value]=o.textContent;});
 function addPrivateEvents(items){items.filter(e=>!e.publicReference).forEach(function(e){eventNames[e.id]=e.data.title;[eventChoice,eventFilter].forEach(function(select){var option=Array.from(select.options).find(o=>o.value===e.id);if(!option){option=el('option');option.value=e.id;option.dataset.privateEvent='';select.appendChild(option);}option.textContent=e.data.title;});});}
 function inScope(r){return eventFilter.value==='all'||(eventFilter.value==='unassigned'?!r.data.eventId:r.data.eventId===eventFilter.value);}
-function scope(){var id=eventFilter.value,back=document.getElementById('event-back');back.hidden=!eventNames[id];if(eventNames[id]){back.href=id.startsWith('event-')?'index.html#'+id:'event.html#id='+id;back.textContent='この出店へ戻る';}document.getElementById('request-preview').textContent='';document.getElementById('request-preview').hidden=true;document.getElementById('export-feedback').textContent='';render();}
-var labels = { review:'振り返り・売上',task:'やりたいこと',inventory:'棚卸メモ',photo:'写真の確認',request:'更新の依頼' };
+function scope(){requestSelection.clear();reviewedRequestText='';var id=eventFilter.value,back=document.getElementById('event-back');back.hidden=!eventNames[id];if(eventNames[id]){back.href=id.startsWith('event-')?'index.html#'+id:'event.html#id='+id;back.textContent='この出店へ戻る';}document.getElementById('request-preview').textContent='';document.getElementById('request-preview').hidden=true;document.getElementById('export-feedback').textContent='';render();}
+var labels = { review:'振り返り・売上',task:'やりたいこと',inventory:'棚卸メモ',photo:'写真の確認',request:'AIへの依頼' };
 var descriptions = {
 review:['イベントを終えたら','気づきと金額を記録。空欄と0円を区別。'],
 task:['作業','未着手・進行中・完了を二人で確認。'],
@@ -34,6 +35,7 @@ function hasInput() {
     draftFields.some(function(key){return key !== 'status' && form.elements[key].value !== '';});
 }
 function protectDraft() {
+  requestSelection.clear();reviewedRequestText='';
   var dirty=Boolean(hasInput()),query=document.getElementById('record-search').value;
   if(currentViewer && (dirty || query)) {
     var values={};draftFields.forEach(function(key){values[key]=form.elements[key].value;});
@@ -61,7 +63,9 @@ function restoreDraft() {
 function setKind(next) {
   if(mutationBlocked())return false;
   if(form.hasAttribute('data-private-dirty') && !window.confirm('入力を取消して切り替える'))return false;
-  kind=next;pendingNew=false;reset(); feedback.textContent='';document.querySelector('.inventory-tools').hidden=!['inventory','photo'].includes(kind);
+  document.getElementById('context-comment-entry').replaceChildren();if(window.DonguriContextComments)document.getElementById('context-comment-entry').appendChild(window.DonguriContextComments.button('記録ページ：'+next,labels[next]+'全体'));
+  document.getElementById('context-comments').hidden=true;
+  kind=next;requestSelection.clear();reviewedRequestText='';pendingNew=false;reset();document.getElementById('new-record').textContent=kind==='request'?'依頼を書く':'記録を追加'; feedback.textContent='';document.querySelector('.inventory-tools').hidden=!['inventory','photo'].includes(kind);
   document.querySelectorAll('[data-kind]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.kind===kind||(kind==='photo'&&b.dataset.kind==='inventory')));});
   document.querySelectorAll('.private-primary a').forEach(function(a){var target=kind==='task'?'private.html#kind=task':['inventory','photo'].includes(kind)?'index.html#works':kind==='review'?'index.html#events':'';if(a.getAttribute('href')===target)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});
   document.querySelectorAll('[data-for]').forEach(function(block){block.hidden=block.dataset.for!==kind;block.querySelectorAll('input,select').forEach(function(input){input.disabled=block.hidden;});});
@@ -112,7 +116,7 @@ function render() {
   renderNext();
   document.getElementById('visible-count').textContent='';
   ['review','task','waiting'].forEach(function(key){var node=document.getElementById(key+'-count'); if(!ready){node.textContent='—';return;}node.textContent=key==='review'?records.filter(function(r){return r.kind==='review';}).length:key==='task'?records.filter(function(r){return r.kind==='task'&&!done(r);}).length:records.filter(function(r){return (r.kind==='request'||r.kind==='photo')&&!done(r);}).length;});
-  list.replaceChildren();
+  list.replaceChildren();reviewedRequestText='';document.getElementById('request-preview').hidden=true;
   var hasKind=ready&&records.some(function(r){return r.kind===kind;});
   document.querySelector('.event-scope').hidden=!hasKind&&eventFilter.value==='all';
   document.querySelector('.list-tools').hidden=!hasKind;document.querySelector('.list-order').hidden=!hasKind;
@@ -129,6 +133,7 @@ function render() {
     meta.append(el('span',record.author),el('time',new Date(record.updatedAt).toLocaleString('ja-JP')));
     if(record.data.status)meta.appendChild(el('span',record.data.status,'badge'));
     card.append(meta,el('h3',record.data.title));
+    if(record.kind==='request'&&record.data.status==='未対応'){var pickLabel=el('label',undefined,'request-pick'),pick=el('input');pick.type='checkbox';pick.checked=requestSelection.has(record.id);pick.dataset.requestPick=record.id;pick.addEventListener('change',function(){if(pick.checked)requestSelection.add(record.id);else requestSelection.delete(record.id);reviewedRequestText='';document.getElementById('request-preview').hidden=true;document.getElementById('export-feedback').textContent=requestSelection.size+'件を選択。内容を確認してからコピー';});pickLabel.append(pick,el('span','AIに渡す'));card.appendChild(pickLabel);}
     card.appendChild(el('p',eventNames[record.data.eventId]||'未分類','record-event-label'));
     if(record.kind==='review') {
       var nums=el('div',undefined,'record-numbers');nums.append(el('span','売上 '+money(record.data.salesYen)),el('span','費用 '+money(record.data.costsYen)));card.appendChild(nums);
@@ -157,8 +162,9 @@ function render() {
         });actions.prepend(finish);
       }
     }
+    if(window.DonguriContextComments)actions.appendChild(window.DonguriContextComments.button('記録：'+record.id,labels[record.kind]+'「'+record.data.title+'」',record.data.eventId));
     if(record.kind!=='request') {
-      var request=el('button','この記録から更新依頼');request.type='button';request.addEventListener('click',function(){
+      var request=el('button','この記録からAIへの依頼');request.type='button';request.addEventListener('click',function(){
         if(!setKind('request'))return;form.elements.eventId.value=record.data.eventId||'';form.elements.title.value=record.data.title+'の更新';form.elements.notes.value='対象：'+labels[record.kind]+'「'+record.data.title+'」\n変更したいこと：\n確認した根拠：';markDirty();composer(true);form.scrollIntoView({block:'start',behavior:'smooth'});form.elements.title.focus();
       });actions.appendChild(request);
     }
@@ -205,11 +211,8 @@ document.getElementById('new-record').addEventListener('click',function(){
   if(hasInput()&&!window.confirm('入力を取消して新しく書く'))return;
   reset();if(eventNames[eventFilter.value])form.elements.eventId.value=eventFilter.value;composer(true);feedback.textContent='';form.scrollIntoView({block:'start',behavior:'smooth'});if(ready)form.elements.title.focus();else form.focus();
 });
-document.getElementById('preview-requests').addEventListener('click',function(){
-  if(!ready)return;var preview=document.getElementById('request-preview');
-  var pending=records.filter(function(r){return r.kind==='request'&&inScope(r)&&r.data.status==='未対応';});
-  preview.textContent=pending.length?pending.map(function(r){return '■ '+r.data.title+'\n'+r.data.notes;}).join('\n\n'):'未対応の依頼なし';preview.hidden=false;
-});
+function selectedRequestText(){var selected=records.filter(function(r){return r.kind==='request'&&inScope(r)&&r.data.status==='未対応'&&requestSelection.has(r.id);});return selected.length?['どんぐりの夢 更新依頼','公開前に金額・個人的な記録・コメントを除き、更新シートと根拠を確認する。'].concat(selected.map(function(r){return '■ '+r.data.title+'\n'+r.author+'：'+r.data.notes;})).join('\n\n'):'';}
+document.getElementById('preview-requests').addEventListener('click',function(){if(!ready)return;var preview=document.getElementById('request-preview');reviewedRequestText=selectedRequestText();preview.textContent=reviewedRequestText||'下の依頼からAIに渡すものを選択';preview.hidden=false;});
 function previewPhoto(){var path=form.elements.asset.value,img=document.getElementById('photo-preview');img.hidden=!path;if(path)img.src=path;}
 document.getElementById('photo-asset').addEventListener('change',previewPhoto);
 window.addEventListener('comments-auth',function(event){
@@ -222,14 +225,15 @@ window.addEventListener('comments-auth',function(event){
   fields.disabled=!ready;document.getElementById('preview-requests').disabled=!ready;document.getElementById('copy-requests').disabled=!ready;document.getElementById('export-records').disabled=!ready;
   if(ready)load();render();
 });
+window.addEventListener('open-ai-requests',function(){if(setKind('request')){load();document.getElementById('handoff').scrollIntoView({block:'start'});}});
 window.addEventListener('comments-clear',protectDraft);
 window.addEventListener('comments-suspend',protectDraft);
 window.addEventListener('beforeunload',function(event){if(hasInput()||Array.from(drafts.values()).some(function(draft){return draft.dirty;})){event.preventDefault();event.returnValue='';}});
 document.getElementById('copy-requests').addEventListener('click',async function(){
   var output=document.getElementById('export-feedback');
-  var rows=records.filter(function(r){return r.kind==='request'&&inScope(r)&&r.data.status==='未対応';});
-  if(!rows.length){output.textContent='未対応の依頼なし';return;}
-  var text=['どんぐりの夢 更新依頼','公開前に金額・個人的な記録・コメントを除き、更新シートと根拠を確認する。',''].concat(rows.map(function(r){return '■ '+r.data.title+'\n'+r.author+'：'+r.data.notes;})).join('\n\n');
+  if(!ready)return;var text=selectedRequestText();
+  if(!text){output.textContent='下の依頼からAIに渡すものを選択';return;}
+  if(text!==reviewedRequestText){output.textContent='先に「送る内容を確認」を押す';return;}
   try{await navigator.clipboard.writeText(text);output.textContent='コピー済み。送る内容と送信先を自分で確認';}catch{output.textContent='コピーできず。依頼欄の本文を選択してコピー';}
 });
 document.getElementById('export-records').addEventListener('click',function(){

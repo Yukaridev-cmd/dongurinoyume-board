@@ -14,7 +14,8 @@ function busy(value){saving=value;fields.disabled=!ready||saving;form.setAttribu
 function openEditor(){if(!ready||saving)return;editing=true;fill(saved||{title:reference()?.title||'',products:[],pops:[]});form.elements.title.readOnly=!!reference();document.getElementById('event-private-metadata').hidden=!!reference();document.getElementById('event-public-source').hidden=!reference();detail.hidden=true;form.hidden=false;selectTab('basic');}
 function render(){
  detail.hidden=!ready||editing;form.hidden=!ready||!editing;title.textContent=ready?(saved?.title||reference()?.title||'出店を作成'):'出店の準備';
- if(!ready||editing)return;
+ document.getElementById('event-comment-entry').replaceChildren();if(!ready||editing)return;
+ if(window.DonguriContextComments&&(saved||reference()))document.getElementById('event-comment-entry').appendChild(window.DonguriContextComments.button(reference()?'イベント：'+reference().title:'出店：'+id,title.textContent,id));
  document.querySelectorAll('[data-plan-phase]').forEach(n=>n.setAttribute('aria-pressed',String(n.dataset.planPhase===phase)));
  var context=document.getElementById('event-context');context.replaceChildren();if(saved&&!reference())context.appendChild(node('p',[saved.date,saved.start&&(saved.start+'〜'+saved.end),saved.venue].filter(Boolean).join(' · ')));
  if(reference()){var source=node('a','日時・会場の元資料');source.href='index.html#'+id;context.appendChild(source);}

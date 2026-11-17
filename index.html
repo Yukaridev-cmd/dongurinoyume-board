@@ -533,13 +533,13 @@ footer{margin-top:32px}
 </div>
 <span class="updated">2026年11月16日 更新</span>
 </div>
-<div class="board-utilities"><button type="button" id="quick-memo-btn" data-icon="comment" aria-expanded="false" aria-controls="quick-panel">相談</button><a href="private.html#kind=review">売上・振り返り</a><a href="private.html#kind=request">AI更新依頼</a></div>
+<div class="board-utilities"><button type="button" id="quick-memo-btn" data-icon="comment" aria-expanded="false" aria-controls="quick-panel">コメントを書く</button><a href="private.html#kind=review">売上・振り返り</a><a href="private.html#kind=request">AIへの依頼</a></div>
 <nav class="tabbar primary-nav" role="tablist" aria-label="ボードのメニュー"><button type="button" role="tab" data-view-btn="events" aria-selected="true">出店</button><button type="button" role="tab" data-view-btn="works" aria-selected="false">作品・在庫</button><button type="button" role="tab" data-view-btn="market" data-icon="booth" aria-selected="false">売り場</button><a data-icon="task" href="private.html#kind=task">やること</a></nav>
 </header>
 
 <!-- ================= ホーム ================= -->
 <main class="view active" id="view-home">
-<section class="home-tools" aria-label="よく使う機能"><a data-icon="review" href="private.html#kind=review"><strong>振り返り・売上</strong><span>記録を見る・追加する</span></a><a data-icon="task" href="private.html#kind=task"><strong>やりたいこと</strong><span>追加・進み具合・完了</span></a><a data-icon="inventory" href="private.html#kind=inventory"><strong>棚卸メモ</strong><span>在庫数を確認・記録</span></a><a data-icon="request" href="private.html#kind=request"><strong>AI更新依頼</strong><span>変更したい内容をまとめる</span></a><button type="button" data-icon="comment" id="home-comment"><strong>コメントを書く</strong><span>二人への連絡・相談</span></button><a href="#works" data-icon="works"><strong>作品写真</strong><span>作品・価格を見る</span></a></section><details class="board-reference"><summary>出店予定・資料・これまでのコメント</summary>
+<section class="home-tools" aria-label="よく使う機能"><a data-icon="review" href="private.html#kind=review"><strong>振り返り・売上</strong><span>記録を見る・追加する</span></a><a data-icon="task" href="private.html#kind=task"><strong>やりたいこと</strong><span>追加・進み具合・完了</span></a><a data-icon="inventory" href="private.html#kind=inventory"><strong>棚卸メモ</strong><span>在庫数を確認・記録</span></a><a data-icon="request" href="private.html#kind=request"><strong>AIへの依頼</strong><span>変更したい内容をまとめる</span></a><button type="button" data-icon="comment" id="home-comment"><strong>コメントを書く</strong><span>二人への連絡・相談</span></button><a href="#works" data-icon="works"><strong>作品写真</strong><span>作品・価格を見る</span></a></section><details class="board-reference"><summary>出店予定・資料・これまでのコメント</summary>
 <div class="now">
 <h2>いまの様子</h2>
 <ul class="now-list">
@@ -592,7 +592,7 @@ footer{margin-top:32px}
 <section class="summary-zone" id="comment-summary" aria-label="コメント一覧">
 <h3 class="subhead">コメント一覧<span id="summary-count" class="summary-count"></span></h3>
 <p class="subnote">各場所のコメントを項目ごとに確認。AIへ渡す内容は「更新依頼」にまとめる</p>
-<div class="resource-route"><a data-icon="request" href="private.html#kind=request">AI更新依頼を開く</a></div>
+<div class="resource-route"><a data-icon="request" href="private.html#kind=request">AIへの依頼を開く</a></div>
 <div id="summary-list"></div>
 </section>
 </details>
@@ -1633,7 +1633,7 @@ footer{margin-top:32px}
 <main class="view" id="view-share">
 <div class="view-head"><h2>資料</h2></div>
 <p class="view-lead">以前の文面・作業案を保管。現在の進み具合とは分けて確認</p>
-<div class="resource-route"><a data-icon="task" href="private.html#kind=task">やりたいこと</a><a data-icon="request" href="private.html#kind=request">AI更新依頼</a></div>
+<div class="resource-route"><a data-icon="task" href="private.html#kind=task">やりたいこと</a><a data-icon="request" href="private.html#kind=request">AIへの依頼</a></div>
 <details class="resource-group" id="legacy-templates"><summary>お知らせの文面（4件）</summary><p class="subnote">以前の文面を参考用に保管。日程・在庫・公開範囲は送る前に確認</p>
 
 <div class="msg-grid">
@@ -1755,10 +1755,10 @@ footer{margin-top:32px}
 
 <div class="quick-panel" id="quick-panel" hidden>
 <h3>コメント（今見ているページに追加）</h3>
-<textarea class="free-write" id="quick-text" rows="4" placeholder="気づいたこと・直してほしいところ"></textarea>
+<p class="comment-help">このページへのコメントを保存。各項目へのコメントは項目の欄から記入。</p><textarea class="free-write" id="quick-text" rows="4" placeholder="気づいたこと・直してほしいところ"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" id="quick-add">このページにコメント追加</button>
-<a class="btn ghost small" data-icon="request" href="private.html#kind=request">AI更新依頼</a>
+<a class="btn ghost small" data-icon="request" href="private.html#kind=request">AIへの依頼</a>
 <button type="button" class="btn ghost small" id="quick-close">閉じる</button>
 </div>
 </div>
@@ -1981,7 +1981,7 @@ list.replaceChildren();
 comments.filter(function (c) { return c.target === list.getAttribute('data-comment-target'); })
 .slice().sort(function (a, b) { return b.stamp.localeCompare(a.stamp) || b.id.localeCompare(a.id); })
 .forEach(function (c) { list.appendChild(commentCard(c)); });
-var disclosure=list.closest('details.inline-memo');if(disclosure){var summary=disclosure.querySelector('summary');if(summary)summary.textContent='この項目について相談・コメント'+(list.children.length?'（'+list.children.length+'件）':'');}
+var disclosure=list.closest('details.inline-memo');if(disclosure){var summary=disclosure.querySelector('summary');if(summary)summary.textContent='コメントを書く'+(list.children.length?'（'+list.children.length+'件）':'');}
 });
 rebuildSummary();
 }
@@ -2027,12 +2027,12 @@ meta.append(who, time);
 var body = document.createElement('div');
 body.className = 'memo-text'; body.textContent = c.text;
 card.append(meta, body);
-var request = document.createElement('button'); request.type = 'button'; request.className = 'btn small'; request.textContent = '更新依頼にする';
+var request = document.createElement('button'); request.type = 'button'; request.className = 'btn small'; request.textContent = 'AIへの依頼に追加';
 request.addEventListener('click', async function () {
 request.disabled = true;
 try {
 await window.DonguriComments.save('/records', 'POST', { id: c.id, kind: 'request', data: { title: c.target.slice(0,160), notes: c.text, status: '未対応' } });
-showToast('更新依頼に保存済み。「二人の記録」で確認');
+request.textContent='依頼に追加済み';var go=document.createElement('a');go.href='private.html#kind=request';go.className='text-link';go.textContent='依頼を選ぶ・コピー →';request.after(go);showToast('AIへの依頼に追加。依頼画面で選んでコピー');
 } catch (error) { showToast(error.message); request.disabled = false; }
 });
 card.appendChild(request);
@@ -2153,6 +2153,7 @@ var al = zone.getAttribute('aria-label') || '';
 return 'ページ：' + al.replace(/の(メモ|コメント)$/, '');
 }
 function setupZone(zone) {
+var help=document.createElement('p');help.className='comment-help';help.textContent='保存 → AIへの依頼に追加 → 依頼画面で選択・コピー。AIへ自動送信なし。';zone.appendChild(help);
 var input=zone.querySelector('.free-write');if(input)input.setAttribute('aria-label',zone.getAttribute('aria-label')||'このページのコメント');
 var head = zone.querySelector('.memo-head h3');
 if (head) head.textContent = 'コメント';
@@ -2177,7 +2178,7 @@ function addInlineComment(container, target, placeholder) {
 if (!container || container.querySelector('.inline-memo')) return;
 var wrap = document.createElement('details');
 wrap.className = 'inline-memo';
-var disclosure=document.createElement('summary');disclosure.textContent='この項目について相談・コメント';wrap.appendChild(disclosure);
+var disclosure=document.createElement('summary');disclosure.textContent='コメントを書く';wrap.appendChild(disclosure);
 var lab = document.createElement('span');
 lab.textContent = 'コメント';
 wrap.appendChild(lab);
@@ -2186,7 +2187,7 @@ ta.rows = 2;
 ta.placeholder = placeholder;
 ta.setAttribute('data-inline-memo', '');
 ta.setAttribute('aria-label',target+'のコメント');
-wrap.appendChild(ta);
+wrap.appendChild(ta);var help=document.createElement('p');help.className='comment-help';help.textContent='保存後、コメントの「AIへの依頼に追加」からまとめる。AIへ自動送信なし。';wrap.appendChild(help);
 var row = document.createElement('div');
 row.className = 'cmt-row';
 row.appendChild(makeAuthorSelect());
