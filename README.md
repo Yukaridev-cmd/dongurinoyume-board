@@ -17,7 +17,7 @@
 - `backend/`：非公開DBへ接続するWorkerのコードと設定例
 - `docs/comments-setup.md`：共有設定・配備前の確認手順
 - `private.html` / `private.js` / `private.css`：二人の振り返り・売上・やること・棚卸・写真確認・更新依頼
-- `catalog.json`：27作品と登録写真の対応。うち8件は販売候補から除外して参考保管。写真点数や在庫実数を入れない
+- `catalog.json`：27作品と登録写真の対応。うち9件は販売候補から除外・ポップへ統合して参考保管。写真点数や在庫実数を入れない
 - `docs/source-reconciliation.md`：更新シートと既存ページの差分・確認待ち
 
 ## 編集の進め方

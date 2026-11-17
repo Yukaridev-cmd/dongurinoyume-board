@@ -202,7 +202,7 @@ test('work search combines with category filters, ignores confidential comments 
     input.value='ヘアピン';input.dispatchEvent(new b.w.Event('input'));let shown=[...d.querySelectorAll('.work:not([data-sale=excluded])')].filter(x=>!x.hidden);assert.equal(shown.length,1);assert.ok(shown[0].textContent.includes('ヘアピン'));
     const link=shown[0].querySelector('a[href^="private.html#inventory="]');assert.ok(link);assert.ok(decodeURIComponent(link.getAttribute('href')).includes('ヘアピン'));
     d.querySelector('[data-filter=amigurumi]').click();assert.equal([...d.querySelectorAll('.work:not([data-sale=excluded])')].filter(x=>!x.hidden).length,0);
-    input.value='';input.dispatchEvent(new b.w.Event('input'));d.querySelector('[data-filter=all]').click();assert.equal([...d.querySelectorAll('.work:not([data-sale=excluded])')].filter(x=>!x.hidden).length,19);
+    input.value='';input.dispatchEvent(new b.w.Event('input'));d.querySelector('[data-filter=all]').click();assert.equal([...d.querySelectorAll('.work:not([data-sale=excluded])')].filter(x=>!x.hidden).length,18);
     assert.equal(d.querySelector('.inline-memo').tagName,'DETAILS');assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });
@@ -211,7 +211,7 @@ test('existing images, prices, event headings, page navigation, cream background
   try {
     const d = b.w.document;
     // Original facts from 61b822f remain exact when sections move. Navigation labels are separate.
-    const preserved={images:[...d.querySelectorAll('img,[data-reference-src]')].filter(e=>!e.closest('.board-welcome')).map(e=>[e.getAttribute('src')||e.dataset.referenceSrc,e.hasAttribute('alt')?e.getAttribute('alt'):e.dataset.referenceAlt]).sort(),headings:[...d.querySelectorAll('.view-head h2')].map(e=>e.textContent).filter(x=>!['資料','売り場'].includes(x)).sort(),prices:[...d.querySelectorAll('.price')].map(e=>e.textContent).sort(),meta:[...d.querySelectorAll('.meta')].map(e=>e.textContent).sort()};
+    const preserved={images:[...d.querySelectorAll('img,[data-reference-src]')].filter(e=>!e.closest('.board-welcome')).map(e=>[e.dataset.originalSrc||e.getAttribute('src')||e.dataset.referenceSrc,e.dataset.originalAlt||(e.hasAttribute('alt')?e.getAttribute('alt'):e.dataset.referenceAlt)]).sort(),headings:[...d.querySelectorAll('.view-head h2')].map(e=>e.textContent).filter(x=>!['資料','売り場'].includes(x)).sort(),prices:[...d.querySelectorAll('.price')].map(e=>e.textContent).sort(),meta:[...d.querySelectorAll('.meta')].map(e=>e.textContent).sort()};
     assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),'38fc400a017cfaff002f3e053af8c73f46f091bcbd4c43207f5b3fffd8170466');
     assert.ok(html.includes('--paper:#fdf6e0')); assert.ok(html.includes('Meiryo UI'));
     assert.equal(html.includes('26作品'),false);assert.equal(d.querySelectorAll('.work').length,27);
@@ -330,8 +330,8 @@ test('every event opens with its own complete photo list outside disclosures in 
  }assert.equal(b.requests.filter(r=>r.options.method==='POST').length,0);assert.equal(b.errors.length,0);
  }finally{original.defaultView.close();b.dom.window.close();}
 });
-test('eight excluded works stay in separate reference storage, never sale search; portrait photo is not rendered',async()=>{
- const b=browser();try{await tick();const d=b.w.document;assert.equal(d.querySelectorAll('.work:not([data-sale=excluded])').length,19);assert.equal(d.querySelectorAll('#reference-works .work[data-sale=excluded]').length,8);assert.equal(d.querySelector('#reference-works').open,false);assert.equal(d.querySelector('#work-result-count').textContent,'19作品を表示');
+test('nine archived entries stay in separate reference storage, never sale search; portrait photo is not rendered',async()=>{
+ const b=browser();try{await tick();const d=b.w.document;assert.equal(d.querySelectorAll('.work:not([data-sale=excluded])').length,18);assert.equal(d.querySelectorAll('#reference-works .work[data-sale=excluded]').length,9);assert.equal(d.querySelector('#reference-works').open,false);assert.equal(d.querySelector('#work-result-count').textContent,'18作品を表示');
  const q=d.getElementById('work-search');q.value='マグネット';q.dispatchEvent(new b.w.Event('input'));assert.match(d.getElementById('work-result-count').textContent,/^0作品/);assert.equal(d.querySelectorAll('img[src="assets/kiraria5-magnet.jpg"]').length,0);assert.ok(d.querySelector('#work-magnet [data-reference-src]'));assert.equal(d.querySelectorAll('.work').length,27);
  }finally{b.dom.window.close();}
 });
@@ -362,5 +362,10 @@ test('comment save failures remain visible beside the input and preserve Japanes
 
 test('editing an existing comment protects native composition before save or cancel',async()=>{
  const b=browser();try{await tick();const origin=b.zone();origin.ta.value='合成の元コメント';origin.add.click();await tick();const d=b.w.document,edit=origin.zone.querySelector('[data-comment-edit]');edit.click();const ta=d.querySelector('[data-comment-editor]');ta.value='て';ta.dispatchEvent(new b.w.InputEvent('beforeinput',{bubbles:true,inputType:'insertCompositionText',isComposing:true}));const buttons=[...ta.parentElement.querySelectorAll('button')];buttons.find(e=>e.textContent==='変更を保存').click();buttons.find(e=>e.textContent==='取消').click();await tick();assert.equal(ta.isConnected,true);assert.equal(ta.value,'て');assert.equal(b.requests.some(r=>r.options.method==='PATCH'),false);ta.value='テスト';ta.dispatchEvent(new b.w.CompositionEvent('compositionend',{bubbles:true}));await tick();buttons.find(e=>e.textContent==='変更を保存').click();await tick();assert.equal(b.records[0].text,'テスト');assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
+
+test('product corrections retain original comment targets and archive POP-only entries without losing source facts',async()=>{
+ const b=browser();try{await tick();const d=b.w.document,cat=d.getElementById('work-cat-burger');assert.equal(cat.querySelector('h3').textContent,'にゃんバーガー');assert.equal(cat.querySelector('[data-comment-target]').getAttribute('data-comment-target'),'作品：ねこバーガーのキーホルダー');assert.ok(d.getElementById('work-heart-bear').textContent.includes('非売品'));const happy=d.getElementById('work-happy-pack');assert.equal(happy.closest('#reference-works')!==null,true);assert.equal(happy.dataset.sale,'excluded');assert.equal(d.querySelectorAll('#pop-happy').length,1);assert.equal(d.querySelector('#work-sushi>img').getAttribute('src'),'assets/kiraria8-sushi-wood.jpg');assert.ok(d.querySelector('#work-sushi a[href="assets/kiraria8-sushi-close.jpg"]'));assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
 });
