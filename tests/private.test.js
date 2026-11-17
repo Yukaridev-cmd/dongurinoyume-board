@@ -6,10 +6,10 @@ const html=readFileSync(new URL('../private.html',import.meta.url),'utf8');
 const source=readFileSync(new URL('../private.js',import.meta.url),'utf8');
 const catalog=JSON.parse(readFileSync(new URL('../catalog.json',import.meta.url),'utf8'));
 const tick=()=>new Promise(resolve=>setTimeout(resolve,10));
-function fixture(){
+function fixture(hash=''){
   const errors=[],calls=[],rows=[];let fail=false,delay=null,delayWrite=null;
   const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e));
-  const dom=new JSDOM(html,{url:'https://yukaridev-cmd.github.io/dongurinoyume-board/private.html',runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
+  const dom=new JSDOM(html,{url:'https://yukaridev-cmd.github.io/dongurinoyume-board/private.html'+hash,runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
   const w=dom.window;w.HTMLElement.prototype.scrollIntoView=function(){};w.confirm=()=>true;
   w.fetch=async()=>Response.json(catalog);
   const copied=[];Object.defineProperty(w.navigator,'clipboard',{value:{writeText:async text=>copied.push(text)}});
@@ -25,6 +25,23 @@ function fixture(){
   w.eval(source);
   return{dom,w,errors,calls,rows,copied,set fail(v){fail=v;},set delay(v){delay=v;},set delayWrite(v){delayWrite=v;},auth(ready,viewer='a'.repeat(64)){w.dispatchEvent(new w.CustomEvent('comments-auth',{detail:{ready,author:ready?'本人':'',viewer:ready?viewer:''}}));},clear(){w.dispatchEvent(new w.CustomEvent('comments-clear'));},form:w.document.getElementById('record-form')};
 }
+test('compact lists open the requested kind and editor only on demand, preserving drafts through suspension',async()=>{
+ const b=fixture('#kind=inventory');try{b.auth(true);await tick();const d=b.w.document;
+  assert.equal(d.getElementById('section-title').textContent,'棚卸メモ');assert.equal(b.form.hidden,true);assert.equal(d.querySelector('.records-column').hidden,false);
+  d.getElementById('new-record').click();assert.equal(b.form.hidden,false);assert.equal(d.querySelector('.records-column').hidden,true);
+  b.form.elements.title.value='架空の棚卸';b.form.elements.stock.value='0';b.form.dispatchEvent(new b.w.Event('input'));
+  b.w.confirm=()=>false;d.getElementById('close-composer').click();assert.equal(b.form.hidden,false);assert.equal(b.form.elements.title.value,'架空の棚卸');
+  b.clear();assert.equal(b.form.hidden,true);assert.equal(b.form.elements.title.value,'');b.auth(true);await tick();assert.equal(b.form.hidden,false);assert.equal(b.form.elements.stock.value,'0');
+  b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.equal(b.form.hidden,true);assert.equal(d.querySelector('.records-column').hidden,false);assert.ok(d.getElementById('record-list').textContent.includes('在庫 0点'));assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
+test('request handoff is available only in its list and opening editor hides it without sending',async()=>{
+ const b=fixture('#kind=request');try{b.auth(true);await tick();const d=b.w.document;
+  assert.equal(d.getElementById('handoff').hidden,false);d.getElementById('new-record').click();assert.equal(d.getElementById('handoff').hidden,true);
+  d.getElementById('close-composer').click();assert.equal(d.getElementById('handoff').hidden,false);
+  d.querySelector('[data-kind=task]').click();assert.equal(d.getElementById('handoff').hidden,true);assert.equal(b.calls.filter(c=>c.method!=='GET').length,0);
+ }finally{b.dom.window.close();}
+});
 test('dashboard prioritizes dated tasks, completes with original version and hides private previews on suspension',async()=>{
   const b=fixture();try{
     const make=(id,kind,title,data)=>({id,kind,data:{title,notes:'架空の本文',...data},author:'本人',updatedBy:'本人',version:3,canEdit:true,updatedAt:'2026-11-17T00:00:00Z'});

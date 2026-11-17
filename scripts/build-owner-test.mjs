@@ -6,7 +6,7 @@ for(const name of names){
   let body=readFileSync(new URL(name,root),'utf8');
   if(name.endsWith('.html')){
     for(const img of new JSDOM(body).window.document.querySelectorAll('img[src^="assets/"]'))imagePaths.add('/'+img.getAttribute('src'));
-    body=body.replace(/<body([^>]*)>/,'<body$1><aside role="note" style="padding:14px;background:#fff6d8;border:3px solid #7a4a21;color:#302b23;font-weight:700">本人限定の実機保存テスト環境。架空のテストデータだけを入力。本番の記録・更新シートには反映しない。</aside>');
+    body=body.replace(/<body([^>]*)>/,'<body$1><details class="test-notice"><summary>本人限定テスト · 架空データのみ</summary><p>本人限定の実機保存テスト環境。本番の記録・更新シートには反映しない。</p></details>');
     body=body.replace(/<title>/,'<title>【実機テスト】');
     body=body.replace('<link rel="icon" href="data:," />','<link rel="icon" href="data:," />\n<meta name="robots" content="noindex,nofollow" />');
   }

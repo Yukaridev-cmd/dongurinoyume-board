@@ -545,7 +545,7 @@ footer{margin-top:32px}
 
 <!-- ================= ホーム ================= -->
 <main class="view active" id="view-home">
-<section class="board-welcome"><div><span class="eyebrow">手づくりの日々を、二人で。</span><h2>作る楽しみ。<br>届けるよろこび。</h2><p>作品と出店の準備を、ひとつのボードに。</p><a class="studio-cta" href="private.html">二人の記録を開く <span>振り返り・売上・やりたいこと →</span></a></div><img src="assets/product-pouches.jpg" alt="既存の作品写真：手づくりのポーチ" width="480" height="480"></section>
+<section class="home-tools" aria-label="よく使う機能"><a href="private.html#kind=review"><strong>振り返り・売上</strong><span>記録を見る・追加する</span></a><a href="private.html#kind=task"><strong>やりたいこと</strong><span>追加・進み具合・完了</span></a><a href="private.html#kind=inventory"><strong>棚卸メモ</strong><span>在庫数を確認・記録</span></a><a href="private.html#kind=request"><strong>AI更新依頼</strong><span>変更したい内容をまとめる</span></a><button type="button" id="home-comment"><strong>コメントを書く</strong><span>二人への連絡・相談</span></button><a href="private.html#kind=photo"><strong>写真の確認</strong><span>作品と写真を照合</span></a></section><details class="board-reference"><summary>出店予定・資料・これまでのコメント</summary>
 <div class="now">
 <h2>いまの様子</h2>
 <ul class="now-list">
@@ -620,6 +620,7 @@ footer{margin-top:32px}
 <button type="button" class="btn" id="summary-copy">指摘事項をまとめてコピー</button>
 </div>
 </section>
+</details>
 </main>
 
 <!-- ================= イベント一覧 ================= -->
@@ -2272,6 +2273,8 @@ var qBtn = document.getElementById('quick-memo-btn');
 var qPanel = document.getElementById('quick-panel');
 var qText = document.getElementById('quick-text');
 if(qText)qText.setAttribute('aria-label','表示中のページへのコメント');
+var homeComment=document.getElementById('home-comment');if(homeComment)homeComment.addEventListener('click',function(){if(qPanel){qPanel.hidden=false;qBtn.setAttribute('aria-expanded','true');qText.focus();}});
+if(location.hash==='#comments'&&qPanel){qPanel.hidden=false;qBtn.setAttribute('aria-expanded','true');}
 function closeQuick() { if (qPanel) qPanel.hidden = true; if (qBtn){qBtn.setAttribute('aria-expanded', 'false');qBtn.focus();}}
 if (qBtn && qPanel) {
 qBtn.addEventListener('click', function () {
