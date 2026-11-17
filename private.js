@@ -112,8 +112,18 @@ function renderNext() {
     b.append(el('span',labels[r.kind]+(r.data.dueDate?' ・ '+r.data.dueDate:''),'eyebrow'),el('strong',r.data.title),el('span',r.data.status+' →','next-state'));
     b.addEventListener('click',function(){if(setKind(r.kind)){if(r.canEdit)beginEdit(r);else{document.getElementById('record-search').value=r.data.title;render();document.getElementById('workspace').scrollIntoView({block:'start'});}}});panel.appendChild(b);});
 }
+function renderEventTotals(){
+ var panel=document.getElementById('event-totals');panel.replaceChildren();panel.hidden=!ready||kind!=='review';if(panel.hidden)return;
+ panel.append(el('h3','出店別の合計'),el('p','入力済みの金額を合計。現金の未記録・日次と月次の重複は自動補正しない。','hint'));
+ var reviews=records.filter(function(r){return r.kind==='review';}),groups=new Map();
+ reviews.forEach(function(r){var key=r.data.eventId||'unassigned';if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r);});
+ if(!reviews.length){panel.appendChild(el('p','記録の「関連する出店」を選んで保存すると、ここに合計を表示。','hint'));return;}
+ var grid=el('div',undefined,'event-total-grid');groups.forEach(function(rows,id){if(eventFilter.value!=='all'&&eventFilter.value!==id)return;var card=el('article',undefined,'event-total-card');card.appendChild(el('h4',eventNames[id]||'未分類'));
+ ['salesYen','costsYen'].forEach(function(field){var entered=rows.filter(function(r){return Number.isSafeInteger(r.data[field]);}),sum=entered.reduce(function(total,r){return total+BigInt(r.data[field]);},0n);card.appendChild(el('p',(field==='salesYen'?'売上 ':'費用 ')+(entered.length?sum.toLocaleString('ja-JP')+'円':'未入力')));card.appendChild(el('span','入力済み '+entered.length+'件 / 未入力 '+(rows.length-entered.length)+'件','hint'));});
+ var action=el('button',id==='unassigned'?'未分類を紐付ける':'この出店の記録');action.type='button';action.addEventListener('click',function(){if(mutationBlocked())return;eventFilter.value=id;scope();});card.appendChild(action);grid.appendChild(card);});panel.appendChild(grid);if(groups.has('unassigned'))panel.appendChild(el('p','未分類は別集計。各記録の「編集」から出店を選んで保存。自動では紐付けない。','hint'));
+}
 function render() {
-  renderNext();
+  renderNext();renderEventTotals();
   document.getElementById('visible-count').textContent='';
   ['review','task','waiting'].forEach(function(key){var node=document.getElementById(key+'-count'); if(!ready){node.textContent='—';return;}node.textContent=key==='review'?records.filter(function(r){return r.kind==='review';}).length:key==='task'?records.filter(function(r){return r.kind==='task'&&!done(r);}).length:records.filter(function(r){return (r.kind==='request'||r.kind==='photo')&&!done(r);}).length;});
   list.replaceChildren();reviewedRequestText='';document.getElementById('request-preview').hidden=true;
@@ -152,7 +162,7 @@ function render() {
         var epoch=generation;setSaving(true);feedback.textContent='削除処理中';
         try{await window.DonguriComments.save('/records/'+record.id,'DELETE',{version:record.version});if(epoch!==generation||!ready)return;records=records.filter(function(r){return r.id!==record.id;});if(editing&&editing.id===record.id)reset();render();feedback.textContent='記録を一覧から削除済み';}
         catch(error){if(epoch===generation)feedback.textContent=error.message;}finally{if(epoch===generation)setSaving(false);}
-      });actions.append(edit,del);
+      });actions.append(edit,del);if(record.kind==='review'){var associate=el('button',record.data.eventId?'出店を変更':'出店を紐付け');associate.type='button';associate.addEventListener('click',function(){beginEdit(record);if(editing===record)eventChoice.focus();});actions.appendChild(associate);}
       if(record.kind==='task'&&!done(record)){
         var finish=el('button','完了にする');finish.type='button';finish.addEventListener('click',async function(){
           if(!ready||mutationBlocked())return;var epoch=generation;setSaving(true);feedback.textContent='保存中';

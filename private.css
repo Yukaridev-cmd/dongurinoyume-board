@@ -8,3 +8,5 @@
 footer{padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
 @media(max-width:720px){input,textarea,select,.search-label input{font-size:16px}.brand{display:block}.field-pair{gap:10px}.connection p{overflow-wrap:anywhere}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*{scroll-behavior:auto!important}}
+
+.event-totals{margin:8px 0 12px}.event-totals h3{font-size:15px;margin:0 0 6px}.event-total-grid{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(160px,220px);gap:8px;overflow-x:auto;padding-bottom:4px;scroll-snap-type:x proximity}.event-total-card{scroll-snap-align:start}.event-total-card{border:1px solid #c9bda4;border-radius:12px;background:#fffdf4;padding:10px;min-width:0}.event-total-card h4{font-size:13px;margin:0 0 8px;overflow-wrap:anywhere}.event-total-card p{font-size:14px;margin:6px 0 0}.event-total-card .hint{display:block;font-size:11px}.event-total-card button{width:100%;margin-top:8px;min-height:44px;font-size:12px}
