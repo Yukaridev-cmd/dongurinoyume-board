@@ -221,7 +221,7 @@ test('four destinations, event phases and shared market keep one copy of every c
     d.querySelector('[data-market=booth]').click();
     assert.equal(d.querySelector('[data-market-panel=booth]').hidden, false);
     assert.equal(d.querySelector('[data-market-panel=pops]').hidden, true);
-    assert.equal(d.querySelectorAll('.pop-entry').length, 12);
+    assert.equal(d.querySelectorAll('.pop-entry').length, 14);
     assert.equal(
       d.querySelectorAll('#view-market [data-memo-zone][aria-label="ブースのメモ"]').length,
       1
@@ -512,7 +512,12 @@ test('existing images, prices, event headings, page navigation, cream background
     // Original facts from 61b822f remain exact when sections move. Navigation labels are separate.
     const preserved = {
       images: [...d.querySelectorAll('img,[data-reference-src]')]
-        .filter((e) => !e.closest('.board-welcome') && !e.hasAttribute('data-shared-photo'))
+        .filter(
+          (e) =>
+            !e.closest('.board-welcome') &&
+            !e.hasAttribute('data-shared-photo') &&
+            !e.closest('[data-reference-only]')
+        )
         .map((e) => [
           e.dataset.originalSrc || e.getAttribute('src') || e.dataset.referenceSrc,
           e.dataset.originalAlt ||
@@ -873,7 +878,9 @@ test('POP choices match existing source cards exactly and introduce no new image
   const dom = new JSDOM(html);
   try {
     const choices = JSON.parse(readFileSync(new URL('../pops.json', import.meta.url), 'utf8')),
-      cards = [...dom.window.document.querySelectorAll('.pop-entry')].map((e) => ({
+      cards = [
+        ...dom.window.document.querySelectorAll('.pop-entry:not([data-reference-only])'),
+      ].map((e) => ({
         id: e.id,
         title: e.querySelector('h3').textContent.trim(),
       }));
@@ -973,7 +980,7 @@ test('all POP previews start visible in image-first work-style cards and preserv
     const d = b.w.document,
       original = [...source.querySelectorAll('.pop-entry')],
       cards = [...d.querySelectorAll('.pop-grid>.pop-entry')];
-    assert.equal(cards.length, 12);
+    assert.equal(cards.length, 14);
     for (const old of original) {
       const card = d.getElementById(old.id);
       assert.equal(card.parentElement.classList.contains('work-grid'), true);
@@ -1304,4 +1311,25 @@ test('preparation summaries keep zero distinct, private previews clear, and refr
   } finally {
     b.dom.window.close();
   }
+});
+
+test('two imported POP references preserve original bytes, PDF link and the existing selection catalog', () => {
+  const d = new JSDOM(html).window.document;
+  assert.equal(
+    createHash('sha256')
+      .update(readFileSync(new URL('../assets/pop-omikuji-artwork.png', import.meta.url)))
+      .digest('hex'),
+    '8fd441aa6e80b41008cb62dbfe6844ea0649fc841e7c7adb8c4854e0e360f698'
+  );
+  assert.equal(
+    createHash('sha256')
+      .update(readFileSync(new URL('../assets/pop-instagram-qr.pdf', import.meta.url)))
+      .digest('hex'),
+    '3930e74e24326a77b43b52cbf409388c5e7b22ff9e7b7c66362474412a338763'
+  );
+  assert.ok(d.querySelector('#pop-instagram-qr a[href="assets/pop-instagram-qr.pdf"]'));
+  assert.ok(d.querySelector('#pop-omikuji img[src="assets/heart-omikuji.jpg"]'));
+  assert.match(d.querySelector('#pop-omikuji-artwork').textContent, /マグネット2個600円/);
+  assert.match(d.querySelector('#pop-omikuji').textContent, /ヘアピン2個600円/);
+  assert.equal(d.querySelectorAll('.pop-entry[data-reference-only]').length, 2);
 });
