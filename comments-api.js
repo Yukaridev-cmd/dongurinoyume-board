@@ -4,6 +4,14 @@ var config = window.DONGURI_COMMENTS_CONFIG || {};
 var ready = false, author = '', viewer = '', sessionToken = '', flight = null, generation = 0, reconnectQueued = false;
 var status = document.getElementById('comments-status');
 var login = document.getElementById('comments-login');
+var pausedMessage = '非公開の保存・閲覧は停止中（二人の設定待ち）。コメント・売上・在庫メモはまだ利用不可。';
+if (config.paused === true) {
+  if (login) { login.disabled = true; login.textContent = '二人の設定待ち'; }
+  if (document.getElementById('quick-memo-btn')) {
+    var pausedNotice = document.createElement('p'); pausedNotice.className = 'sharing-paused';
+    pausedNotice.textContent = pausedMessage; document.querySelector('header').after(pausedNotice);
+  }
+}
 function announce(message) { if (status) status.textContent = message; }
 function publish(message) {
   announce(message);
@@ -56,6 +64,7 @@ function hasDraft() {
 }
 async function establish(started) {
   try {
+    if (config.paused === true) { lock(pausedMessage); return; }
     if (!config.liffId || !config.apiBase) { lock('コメント共有の設定待ち。設定後にLINEから開く'); return; }
     var api = new URL(config.apiBase);
     if (api.protocol !== 'https:' || api.origin !== config.apiBase) throw failure('コメント共有の接続設定を確認');
