@@ -2,6 +2,8 @@
 <html lang="ja" style="background:#fdf6e0;color-scheme:light only">
 <head>
 <meta charset="utf-8" />
+<meta name="referrer" content="no-referrer" />
+<link rel="stylesheet" href="board-additions.css" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta http-equiv="Cache-Control" content="no-cache" />
 <meta http-equiv="Pragma" content="no-cache" />
@@ -515,9 +517,12 @@ footer{margin-top:32px}
 @media print{.summary-zone .pop-actions{display:none!important}}
 
 </style>
+<link rel="stylesheet" href="accessibility.css" />
+<link rel="stylesheet" href="studio.css"><link rel="stylesheet" href="event.css">
+<script defer src="ui-icons.js"></script>
 </head>
 <body style="background:#fdf6e0;color-scheme:light only">
-<div class="wrap">
+<a class="skip-link" href="#view-events">本文へ進む</a><div class="wrap">
 
 <header class="top">
 <div class="top-inner">
@@ -528,38 +533,31 @@ footer{margin-top:32px}
 </div>
 <span class="updated">2026年11月16日 更新</span>
 </div>
-<nav class="tabbar" role="tablist" aria-label="ボードのメニュー">
-<button type="button" role="tab" data-view-btn="home" aria-selected="true">ホーム</button>
-<button type="button" role="tab" data-view-btn="events" aria-selected="false">イベント</button>
-<button type="button" role="tab" data-view-btn="works" aria-selected="false">作品・在庫</button>
-<button type="button" role="tab" data-view-btn="booth" aria-selected="false">ブース</button>
-<button type="button" role="tab" data-view-btn="pops" aria-selected="false">ポップ置き場</button>
-<button type="button" role="tab" data-view-btn="share" aria-selected="false">LINE用文面</button>
-</nav>
+<div class="board-utilities"><button type="button" id="quick-memo-btn" data-icon="comment" aria-expanded="false" aria-controls="quick-panel">相談</button><a href="private.html#kind=review">売上・振り返り</a><a href="private.html#kind=request">AI更新依頼</a></div>
+<nav class="tabbar primary-nav" role="tablist" aria-label="ボードのメニュー"><button type="button" role="tab" data-view-btn="events" aria-selected="true">出店</button><button type="button" role="tab" data-view-btn="works" aria-selected="false">作品・在庫</button><button type="button" role="tab" data-view-btn="market" data-icon="booth" aria-selected="false">売り場</button><a data-icon="task" href="private.html#kind=task">やること</a></nav>
 </header>
 
 <!-- ================= ホーム ================= -->
 <main class="view active" id="view-home">
-<p class="home-lead">次のイベントと在庫のまとめ</p>
+<section class="home-tools" aria-label="よく使う機能"><a data-icon="review" href="private.html#kind=review"><strong>振り返り・売上</strong><span>記録を見る・追加する</span></a><a data-icon="task" href="private.html#kind=task"><strong>やりたいこと</strong><span>追加・進み具合・完了</span></a><a data-icon="inventory" href="private.html#kind=inventory"><strong>棚卸メモ</strong><span>在庫数を確認・記録</span></a><a data-icon="request" href="private.html#kind=request"><strong>AI更新依頼</strong><span>変更したい内容をまとめる</span></a><button type="button" data-icon="comment" id="home-comment"><strong>コメントを書く</strong><span>二人への連絡・相談</span></button><a href="#works" data-icon="works"><strong>作品写真</strong><span>作品・価格を見る</span></a></section><details class="board-reference"><summary>出店予定・資料・これまでのコメント</summary>
 <div class="now">
 <h2>いまの様子</h2>
 <ul class="now-list">
 <li><span class="k">次のイベント</span><span><button type="button" class="linklike" data-goto="event-tabashita">タバシタ あったか祭り（2026年12月）</button><br /><span class="dt">12/12（土）9:00〜17:00</span><span class="cd" data-until="2026-12-12"></span></span></li>
 <li><span class="k">その次</span><span><button type="button" class="linklike" data-goto="event-xmas">クリスマスマルシェ（2026年12月）</button><br /><span class="dt">12/19（土）10:00〜17:00</span><span class="cd" data-until="2026-12-19"></span></span></li>
-<li><span class="k">作品・在庫</span><span><button type="button" class="linklike" data-goto="works">26作品を登録</button>（価格確認済み 19作品）</span></li>
+<li><span class="k">作品・在庫</span><span><button type="button" class="linklike" data-goto="works">27作品を登録</button>（価格確認済み 19作品）</span></li>
 <li><span class="k">ポップ</span><span><button type="button" class="linklike" data-goto="pops">12点を登録（お支払い方法を追加）</button></span></li>
 <li><span class="k">ウォンバット</span><span><button type="button" class="linklike" data-goto="event-wombat">当日の写真 20枚を登録</button></span></li>
-<li><span class="k">やること</span><span><button type="button" class="linklike" data-goto="booth" data-goto-anchor="booth-tasks">5件</button>（印刷確認・価格と在庫の確認）</span></li>
+<li><span class="k">やりたいこと</span><span><a href="private.html#kind=task">現在の記録を開く</a></span></li>
 </ul>
 </div>
 
 <section class="memo-zone" data-memo-zone aria-label="ホームのメモ">
-<div class="memo-head"><h3>コメント</h3><span class="memo-hint">名前を選んで記入し「コメントを追加」。まとめは下の「指摘事項まとめ」からコピー可能</span></div>
+<div class="memo-head"><h3>コメント</h3><span class="memo-hint">LINEで確認した名前で投稿。ボードの変更は保存後の「更新依頼にする」から</span></div>
 <textarea class="free-write" rows="3" placeholder="気づいたこと、やること、連絡したいこと"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" data-memo-add>メモとして残す</button>
 <button type="button" class="btn ghost small" data-memo-copy>この場所のメモをコピー</button>
-<button type="button" class="btn ghost small" id="memo-download">全部のメモをファイルで保存</button>
 </div>
 <div class="memo-list"></div>
 </section>
@@ -575,13 +573,13 @@ footer{margin-top:32px}
 <img class="thumb" src="assets/product-pouches.jpg" alt="" />
 <span><h3>作品・在庫</h3>
 <p>写真・価格・在庫の一覧</p>
-<span class="count">登録 26作品</span></span>
+<span class="count">登録 27作品</span></span>
 </button>
 <button type="button" class="area" data-goto="booth">
 <img class="thumb" src="assets/pop-haniwa.jpg" alt="" />
 <span><h3>ブースの工夫</h3>
-<p>並べ方の工夫とやることリスト</p>
-<span class="count">工夫の記録 4件 ・ やりたいこと 4件</span></span>
+<p>並べ方の工夫と展示の資料</p>
+<span class="count">工夫の記録 4件</span></span>
 </button>
 <button type="button" class="area" data-goto="pops">
 <img class="thumb" src="assets/pop-strap.jpg" alt="" />
@@ -591,38 +589,22 @@ footer{margin-top:32px}
 </button>
 </div>
 
-<h3 class="subhead">いま進めていること</h3>
-<ul class="task-list">
-<li class="task"><span class="tno">1</span><div>
-<h3>現品限りポップの印刷確認</h3>
-<p>実物サイズで印刷して確認<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p>
-<span class="pill">文案完成 ・ 確認中</span></div></li>
-<li class="task"><span class="tno">2</span><div>
-<h3>クリスマスマルシェ（2026年12月）の準備</h3>
-<p>12月19日（土）10:00〜17:00。<button type="button" class="linklike" data-goto="event-xmas">準備ページを開く</button></p>
-<span class="pill">準備中</span></div></li>
-<li class="task"><span class="tno">3</span><div>
-<h3>作品の価格と在庫数を確認する</h3>
-<p>分かった価格と在庫数は更新シートへ記入<button type="button" class="linklike" data-goto="works">「作品・在庫」を見る</button></p>
-<span class="pill">確認待ち</span></div></li>
-</ul>
-
-<section class="summary-zone" id="comment-summary" aria-label="指摘事項まとめ">
-<h3 class="subhead">指摘事項まとめ<span id="summary-count" class="summary-count"></span></h3>
-<p class="subnote">各作品・ポップ・イベント・ページに入れたコメントを、項目ごとにまとめた一覧。まとめてコピーしてLINEへ貼る形</p>
+<section class="summary-zone" id="comment-summary" aria-label="コメント一覧">
+<h3 class="subhead">コメント一覧<span id="summary-count" class="summary-count"></span></h3>
+<p class="subnote">各場所のコメントを項目ごとに確認。AIへ渡す内容は「更新依頼」にまとめる</p>
+<div class="resource-route"><a data-icon="request" href="private.html#kind=request">AI更新依頼を開く</a></div>
 <div id="summary-list"></div>
-<div class="pop-actions">
-<button type="button" class="btn" id="summary-copy">指摘事項をまとめてコピー</button>
-</div>
 </section>
+</details>
 </main>
 
 <!-- ================= イベント一覧 ================= -->
+<main class="view" id="view-market"><div class="view-head"><h2>売り場</h2></div><div class="market-tabs" role="group" aria-label="売り場の内容"><button type="button" data-market="pops" data-icon="pops" aria-pressed="true">ポップ</button><button type="button" data-market="booth" data-icon="booth" aria-pressed="false">ブース・道具</button><button type="button" data-goto="share" data-icon="archive">資料</button></div><section data-market-panel="pops" aria-label="ポップ"></section><section data-market-panel="booth" aria-label="ブース・道具" hidden></section></main>
 <main class="view" id="view-events">
-<div class="view-head"><h2>イベント</h2></div>
+<div class="view-head event-list-heading"><h2>イベント</h2></div>
 <p class="view-lead">タップで各イベントのページへ移動</p>
 
-<h3 class="subhead">これからのイベント</h3>
+<div class="event-create-row"><h3 class="subhead">これからの出店</h3><a class="btn small" data-icon="add" href="event.html#new">出店を追加</a></div>
 <div class="event-list">
 <article class="event-card">
 <div class="body">
@@ -638,6 +620,7 @@ footer{margin-top:32px}
 <div class="body">
 <h3>クリスマスマルシェ（2026年12月）</h3>
 <p class="meta"><span class="m-line">2026年12月19日（土）10:00〜17:00</span><span class="m-line">豊島五丁目団地（6号棟109号室前パークカミング）</span></p>
+<p class="source-note">豊島五丁目団地は本人指定。括弧内の詳細地点は昨年情報で、今年も同じ地点かは未確認</p>
 <p>ポップ案の作成済み</p>
 <div class="row"><span class="badge warn">今後の予定 ・ 準備中</span><span class="badge">ポップ案あり</span></div>
 <div class="pop-actions"><button type="button" class="btn" data-goto="event-xmas">準備ページを開く</button></div>
@@ -645,7 +628,7 @@ footer{margin-top:32px}
 </article>
 </div>
 
-<h3 class="subhead">終わったイベント</h3>
+<details class="private-events-group"><summary>二人で追加した出店</summary><div id="private-events-list"></div></details><h3 class="subhead">終わったイベント</h3>
 <div class="event-list">
 <article class="event-card">
 <img src="assets/heart-ichigo.jpg" alt="ハートまつりのいちご狩りの陳列" />
@@ -740,7 +723,7 @@ footer{margin-top:32px}
 <dl class="facts">
 <div><dt>日程</dt><dd>2026年12月19日（土）10:00〜17:00</dd></div>
 <div><dt>場所</dt><dd>豊島五丁目団地（6号棟109号室前パークカミング）</dd></div>
-<div><dt>メモ</dt><dd>昨年の開催情報で確認</dd></div>
+<div><dt>メモ</dt><dd>豊島五丁目団地は本人指定。6号棟109号室前パークカミングは昨年情報で、今年も同じ詳細地点かは未確認</dd></div>
 <div><dt>使うポップ</dt><dd><button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">クリスマスマーケット用ポップ</button>（案・確認中）／<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">現品限りポップ</button>（使用中）</dd></div>
 <div><dt>テーマ</dt><dd>深緑×白×赤</dd></div>
 </dl>
@@ -1011,16 +994,8 @@ footer{margin-top:32px}
 <!-- ================= 作品・在庫 ================= -->
 <main class="view" id="view-works">
 <div class="view-head"><h2>作品・在庫</h2></div>
-<p class="view-lead">写真・価格・在庫の一覧</p>
-
-<div class="stock-summary" aria-label="在庫の概要">
-<div class="stat"><div class="num">26</div><div class="lbl">登録作品</div></div>
-<div class="stat"><div class="num">19</div><div class="lbl">価格確認済み</div></div>
-<div class="stat"><div class="num">7</div><div class="lbl">価格 未確認</div></div>
-<div class="stat"><div class="num">26</div><div class="lbl">在庫数 未登録</div></div>
-</div>
-
-<div class="filters" role="group" aria-label="種類でしぼりこむ">
+<div class="work-search"><label class="sr-only" for="work-search">作品を探す</label><input id="work-search" type="search" placeholder="作品を検索" autocomplete="off"><p id="work-result-count" role="status"></p></div>
+<details class="work-filter-menu"><summary>種類で絞る</summary><div class="filters" role="group" aria-label="種類でしぼりこむ">
 <button type="button" data-filter="all" aria-pressed="true">すべて</button>
 <button type="button" data-filter="amigurumi" aria-pressed="false">あみぐるみ</button>
 <button type="button" data-filter="strap" aria-pressed="false">キーホルダー・ストラップ</button>
@@ -1029,6 +1004,7 @@ footer{margin-top:32px}
 <button type="button" data-filter="unknown" aria-pressed="false">価格 未確認</button>
 </div>
 
+</details>
 <div class="work-grid">
 <article class="work jump" id="work-haniwa" data-cat="strap">
 <img src="assets/kiraria-haniwa.jpg" alt="はにわのポップと、ボードに並ぶはにわキーホルダー4点" />
@@ -1280,6 +1256,15 @@ footer{margin-top:32px}
 <p class="memo"><b>メモ：</b>単品購入用に価格表へ掲載。写真なし（本体の写真は未登録）</p>
 </div>
 </article>
+<article class="work jump" id="work-heart-bear" data-cat="amigurumi">
+<div class="work-photo-pending">実物写真を確認する</div>
+<div class="body">
+<h3>ハートを持つくまのあみぐるみ</h3>
+<div class="price-line"><span class="badge tbd">価格 未確認</span></div>
+<dl><div><dt>種類</dt><dd>あみぐるみ</dd></div><div><dt>在庫</dt><dd><span class="badge tbd">在庫数 未登録</span></dd></div><div><dt>状態</dt><dd>未確認</dd></div></dl>
+<p class="memo"><b>メモ：</b>ハートはピンク。更新シートに登録済み。対応する実物写真を確認する</p>
+</div>
+</article>
 
 <article class="work jump" id="work-kuma-pouch" data-cat="pouch">
 <img src="assets/kiraria8-kuma-pouch.jpg" alt="おしゃぶりと哺乳瓶の飾りが付いた、ふわふわ素材のくまのポーチ2点" loading="lazy" />
@@ -1405,12 +1390,24 @@ footer{margin-top:32px}
 <div class="memo-list"></div>
 </section>
 
+<details class="work-reference"><summary>価格・在庫の登録状況</summary><p class="source-note">在庫数の空欄は未登録。写真に写る点数は現在の在庫を示さない。棚卸の結果は「二人の記録」に残し、更新シートと照合する</p>
+
+<p class="view-lead">写真・価格・在庫の一覧</p>
+
+<div class="stock-summary" aria-label="在庫の概要">
+<div class="stat"><div class="num">27</div><div class="lbl">登録作品</div></div>
+<div class="stat"><div class="num">19</div><div class="lbl">価格確認済み</div></div>
+<div class="stat"><div class="num">8</div><div class="lbl">価格 未確認</div></div>
+<div class="stat"><div class="num">27</div><div class="lbl">在庫数 未登録</div></div>
+</div>
+
+</details>
 </main>
 
 <!-- ================= ブース ================= -->
 <main class="view" id="view-booth">
 <div class="view-head"><h2>ブースの工夫</h2></div>
-<p class="view-lead">並べ方の工夫とやりたいこと・やること</p>
+<p class="view-lead">並べ方の工夫と展示の資料</p>
 
 <figure class="booth-photo">
 <img src="assets/display-straps.jpg" alt="ペグボードを使ったストラップの売り場全体" />
@@ -1425,37 +1422,7 @@ footer{margin-top:32px}
 <div class="idea"><h3>大きな作品はテーブルの真ん中に座らせた</h3><p>姿がよく見えるよう座らせた配置</p><span class="badge on from">実践中</span></div>
 </div>
 
-<h3 class="subhead jump" id="booth-ideas">やりたいこと</h3>
-<div class="idea-grid">
-<div class="idea"><h3>値札の横に小さい現品限りポップ</h3><p>現品限りポップは卓上の大きい版と値札横の小さい版の2サイズ展開<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p><span class="badge warn from">アイデア</span></div>
-<div class="idea"><h3>クリスマスは深緑の布で季節感を</h3><p>布や飾りを緑系に寄せた統一感の出し方<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">クリスマスポップを見る</button></p><span class="badge warn from">アイデア</span></div>
-<div class="idea"><h3>高さの違う台で奥行きを作る</h3><p>小さな台で後ろの作品も見える高さ出し</p><span class="badge warn from">アイデア</span></div>
-<div class="idea"><h3>3Dプリンターで展示用品を作る</h3><p>フックやスタンド制作の試行</p><span class="badge warn from">アイデア</span></div>
-</div>
-
-<h3 class="subhead jump" id="booth-tasks">やることリスト</h3>
-<ul class="task-list">
-<li class="task"><span class="tno">1</span><div>
-<h3>現品限りのポップを作る</h3>
-<p><button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場の案</button>を、実物サイズで印刷して確認</p>
-<span class="pill">文案完成 ・ 確認中</span></div></li>
-<li class="task"><span class="tno">2</span><div>
-<h3>クリスマスマーケット用のポップを作る</h3>
-<p>文字だけの版を作成済み<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">ポップ置き場で見る</button></p>
-<span class="pill">文案完成 ・ 確認中</span></div></li>
-<li class="task"><span class="tno">3</span><div>
-<h3>作品の価格と在庫数を登録する</h3>
-<p><button type="button" class="linklike" data-goto="works">「作品・在庫」</button>に26作品を登録済み。残りは価格と在庫数の入力</p>
-<span class="pill">あと価格と在庫数</span></div></li>
-<li class="task"><span class="tno">4</span><div>
-<h3>クリスマスマルシェ（2026年12月）の日程を登録する</h3>
-<p><button type="button" class="linklike" data-goto="event-xmas">準備ページ</button>に登録済み（12月19日 10:00〜17:00）。</p>
-<span class="pill done">日程登録済み</span></div></li>
-<li class="task"><span class="tno">5</span><div>
-<h3>ブースの工夫をイベントごとに記録する</h3>
-<p>出店のたびに写真撮影と気づきの記録</p>
-<span class="pill">継続中</span></div></li>
-</ul>
+<p class="resource-route"><a data-icon="task" href="private.html#kind=task">現在のやりたいことを開く</a><button type="button" class="linklike" data-goto="share" data-goto-anchor="legacy-booth">以前のアイデア・作業を見る</button></p>
 
 <h3 class="subhead">展示用に買ったもの</h3>
 <p class="subnote">ハンドメイドの展示用にAmazonで購入したもの</p>
@@ -1664,56 +1631,103 @@ footer{margin-top:32px}
 
 <!-- ================= LINE用文面 ================= -->
 <main class="view" id="view-share">
-<div class="view-head"><h2>LINE用文面</h2></div>
-<p class="view-lead">文面はそのまま書き換え可能。直してからコピーして送信</p>
+<div class="view-head"><h2>資料</h2></div>
+<p class="view-lead">以前の文面・作業案を保管。現在の進み具合とは分けて確認</p>
+<div class="resource-route"><a data-icon="task" href="private.html#kind=task">やりたいこと</a><a data-icon="request" href="private.html#kind=request">AI更新依頼</a></div>
+<details class="resource-group" id="legacy-templates"><summary>お知らせの文面（4件）</summary><p class="subnote">以前の文面を参考用に保管。日程・在庫・公開範囲は送る前に確認</p>
 
 <div class="msg-grid">
 <div class="msg">
 <h3>更新のお知らせ</h3>
-<textarea class="template template-edit" id="tpl-update" rows="5" aria-label="更新のお知らせの文面（書き換え可能）">・（変わったことを書く）
+<pre class="template archived-template" id="tpl-update">・（変わったことを書く）
 ・（変わったことを書く）
 在庫とポップはこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-update">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 <div class="msg">
 <h3>イベントのお知らせ</h3>
-<textarea class="template template-edit" id="tpl-eventmsg" rows="6" aria-label="イベントのお知らせの文面（書き換え可能）">（イベント名）に出店
+<pre class="template archived-template" id="tpl-eventmsg">（イベント名）に出店
 日程：（　）
 会場：（　）
 持っていく作品と準備の様子はこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-eventmsg">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 <div class="msg">
 <h3>完売のお知らせ</h3>
-<textarea class="template template-edit" id="tpl-soldout" rows="6" aria-label="完売のお知らせの文面（書き換え可能）">（作品名）完売。
+<pre class="template archived-template" id="tpl-soldout">（作品名）完売。
 現品限りのため、同じものは作れない。
 気にかけてくれた方へ感謝。
 今の在庫はこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-soldout">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 <div class="msg">
 <h3>イベントの振り返り</h3>
-<textarea class="template template-edit" id="tpl-after" rows="5" aria-label="イベントの振り返りの文面（書き換え可能）">（イベント名）終了。
+<pre class="template archived-template" id="tpl-after">（イベント名）終了。
 来てくれた方へ感謝。
 当日の様子と気づきはこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-after">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 </div>
 
+
+</details>
+<details class="resource-group" id="legacy-home"><summary>以前のホームにあった作業（3件）</summary><p class="subnote">公開ボードから移した元の記載。状態は当時の表示のまま。現在の進捗は「やりたいこと」で確認</p><h3 class="subhead">いま進めていること</h3>
+<ul class="task-list">
+<li class="task"><span class="tno">1</span><div>
+<h3>現品限りポップの印刷確認</h3>
+<p>実物サイズで印刷して確認<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p>
+<span class="pill">文案完成 ・ 確認中</span></div></li>
+<li class="task"><span class="tno">2</span><div>
+<h3>クリスマスマルシェ（2026年12月）の準備</h3>
+<p>12月19日（土）10:00〜17:00。<button type="button" class="linklike" data-goto="event-xmas">準備ページを開く</button></p>
+<span class="pill">準備中</span></div></li>
+<li class="task"><span class="tno">3</span><div>
+<h3>作品の価格と在庫数を確認する</h3>
+<p>分かった価格と在庫数は更新シートへ記入<button type="button" class="linklike" data-goto="works">「作品・在庫」を見る</button></p>
+<span class="pill">確認待ち</span></div></li>
+</ul>
+
+</details>
+<details class="resource-group" id="legacy-booth"><summary>以前のブースのアイデア・作業（9件）</summary><p class="subnote">公開ボード由来のアイデア4件・作業5件。更新シートや現在の私的な記録へ自動転記せず、元の記載を保管</p><h3 class="subhead jump" id="booth-ideas">やりたいこと</h3>
+<div class="idea-grid">
+<div class="idea"><h3>値札の横に小さい現品限りポップ</h3><p>現品限りポップは卓上の大きい版と値札横の小さい版の2サイズ展開<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p><span class="badge warn from">アイデア</span></div>
+<div class="idea"><h3>クリスマスは深緑の布で季節感を</h3><p>布や飾りを緑系に寄せた統一感の出し方<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">クリスマスポップを見る</button></p><span class="badge warn from">アイデア</span></div>
+<div class="idea"><h3>高さの違う台で奥行きを作る</h3><p>小さな台で後ろの作品も見える高さ出し</p><span class="badge warn from">アイデア</span></div>
+<div class="idea"><h3>3Dプリンターで展示用品を作る</h3><p>フックやスタンド制作の試行</p><span class="badge warn from">アイデア</span></div>
+</div>
+
+<h3 class="subhead jump" id="booth-tasks">やることリスト</h3>
+<ul class="task-list">
+<li class="task"><span class="tno">1</span><div>
+<h3>現品限りのポップを作る</h3>
+<p><button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場の案</button>を、実物サイズで印刷して確認</p>
+<span class="pill">文案完成 ・ 確認中</span></div></li>
+<li class="task"><span class="tno">2</span><div>
+<h3>クリスマスマーケット用のポップを作る</h3>
+<p>文字だけの版を作成済み<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">ポップ置き場で見る</button></p>
+<span class="pill">文案完成 ・ 確認中</span></div></li>
+<li class="task"><span class="tno">3</span><div>
+<h3>作品の価格と在庫数を登録する</h3>
+<p><button type="button" class="linklike" data-goto="works">「作品・在庫」</button>に27作品を登録済み。残りは価格と在庫数の入力</p>
+<span class="pill">あと価格と在庫数</span></div></li>
+<li class="task"><span class="tno">4</span><div>
+<h3>クリスマスマルシェ（2026年12月）の日程を登録する</h3>
+<p><button type="button" class="linklike" data-goto="event-xmas">準備ページ</button>に登録済み（12月19日 10:00〜17:00）。</p>
+<span class="pill done">日程登録済み</span></div></li>
+<li class="task"><span class="tno">5</span><div>
+<h3>ブースの工夫をイベントごとに記録する</h3>
+<p>出店のたびに写真撮影と気づきの記録</p>
+<span class="pill">継続中</span></div></li>
+</ul>
+
+</details>
+<details class="resource-group" id="legacy-comments"><summary>文面についてのコメント</summary>
 <section class="memo-zone" data-memo-zone aria-label="LINE用文面のメモ">
-<div class="memo-head"><h3>メモ</h3><span class="memo-hint">送りたい文面の下書き用自由記入欄</span></div>
+<div class="memo-head"><h3>メモ</h3><span class="memo-hint">以前の文面へのコメントを同じ場所に保持</span></div>
 <textarea class="free-write" rows="3" placeholder="新しいお知らせ文の下書き"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" data-memo-add>メモとして残す</button>
@@ -1721,29 +1735,30 @@ footer{margin-top:32px}
 </div>
 <div class="memo-list"></div>
 </section>
+</details>
 </main>
 
 <footer>
 <p class="fname">どんぐりの夢</p>
 <nav class="foot-nav" aria-label="ページ下部のメニュー">
-<button type="button" data-goto="home">ホーム</button>
+<button type="button" data-goto="events">出店</button>
 <button type="button" data-goto="events">イベント</button>
 <button type="button" data-goto="works">作品・在庫</button>
-<button type="button" data-goto="booth">ブース</button>
-<button type="button" data-goto="pops">ポップ置き場</button>
-<button type="button" data-goto="share">LINE用文面</button>
+<button type="button" data-goto="market">売り場</button>
+<a href="private.html#kind=task">やること</a>
+<button type="button" data-goto="share">資料</button>
 </nav>
 <p>最終更新：2026年11月16日</p>
 </footer>
 </div>
 
-<button type="button" class="quick-memo-btn" id="quick-memo-btn" aria-expanded="false" aria-controls="quick-panel">コメントを書く</button>
+
 <div class="quick-panel" id="quick-panel" hidden>
 <h3>コメント（今見ているページに追加）</h3>
 <textarea class="free-write" id="quick-text" rows="4" placeholder="気づいたこと・直してほしいところ"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" id="quick-add">このページにコメント追加</button>
-<button type="button" class="btn ghost small" id="quick-copy">指摘事項をまとめてコピー</button>
+<a class="btn ghost small" data-icon="request" href="private.html#kind=request">AI更新依頼</a>
 <button type="button" class="btn ghost small" id="quick-close">閉じる</button>
 </div>
 </div>
@@ -1764,6 +1779,12 @@ footer{margin-top:32px}
 あみぐるみストラップ 300円
 ― どんぐりの夢</template>
 
+<section class="memo-zone" aria-label="コメント共有の接続" style="margin:12px">
+<p id="comments-status" role="status">コメント共有の設定を確認中</p>
+<p class="hint">未保存の入力はページ内で一時保護し、同じLINEアカウントの確認後に復元。再読込・タブ終了・OSによるページ破棄の前に保存する。</p>
+<button type="button" class="btn small" id="comments-login">共有コメントを再読込</button>
+</section>
+<script src="comments-config.js"></script>
 <script>
 (function () {
 /* アプリ内ブラウザの自動ダーク化対策：配色方式をライト専用で固定 */
@@ -1800,10 +1821,28 @@ document.body.removeChild(ta);
 });
 }
 /* ---- view switching ---- */
-var viewIds = ['home','events','event-xmas','event-tabashita','event-wombat','event-kiraria-1107','event-kiraria-0829','event-kiraria-0516','event-kiraria-0228','event-toyoshima','event-heart','works','booth','pops','share'];
+var viewIds = ['home','events','event-xmas','event-tabashita','event-wombat','event-kiraria-1107','event-kiraria-0829','event-kiraria-0516','event-kiraria-0228','event-toyoshima','event-heart','works','booth','pops','share','market'];
 var parentTab = { 'event-xmas': 'events', 'event-tabashita': 'events', 'event-wombat': 'events', 'event-kiraria-1107': 'events', 'event-kiraria-0829': 'events', 'event-kiraria-0516': 'events', 'event-kiraria-0228': 'events', 'event-toyoshima': 'events', 'event-heart': 'events'};
-var settingHash = false;
+parentTab.booth='market';parentTab.pops='market';parentTab.share='market';parentTab.home='events';
+var settingHash = false,viewScroll={};
+var menuButtons=Array.from(document.querySelectorAll('[data-view-btn]'));
+menuButtons.forEach(function(b){
+  b.id='tab-'+b.getAttribute('data-view-btn');
+  b.setAttribute('tabindex',b.getAttribute('aria-selected')==='true'?'0':'-1');
+  b.setAttribute('aria-controls','view-'+b.getAttribute('data-view-btn'));
+  b.addEventListener('keydown',function(event){
+    var index=menuButtons.indexOf(b),next;
+    if(event.key==='ArrowRight')next=(index+1)%menuButtons.length;
+    else if(event.key==='ArrowLeft')next=(index+menuButtons.length-1)%menuButtons.length;
+    else if(event.key==='Home')next=0;else if(event.key==='End')next=menuButtons.length-1;else return;
+    event.preventDefault();menuButtons[next].click();menuButtons[next].focus({preventScroll:true});
+  });
+});
+viewIds.forEach(function(id){var panel=document.getElementById('view-'+id);if(panel){panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby','tab-'+(parentTab[id]||id));}});
 function showView(id, anchor) {
+var previousView=document.querySelector('.view.active');if(previousView)viewScroll[previousView.id.replace('view-','')]=window.scrollY;
+var requested=id;if(window.DonguriMarket&&['booth','pops'].includes(id)){window.DonguriMarket(id);id='market';}
+if(anchor){var anchored=document.getElementById(anchor),anchoredView=anchored&&anchored.closest('.view');if(anchoredView)id=anchoredView.id.replace(/^view-/,'');var marketPanel=anchored&&anchored.closest('[data-market-panel]');if(marketPanel&&window.DonguriMarket)window.DonguriMarket(marketPanel.dataset.marketPanel);}
 if (viewIds.indexOf(id) === -1) id = 'home';
 viewIds.forEach(function (v) {
 var el = document.getElementById('view-' + v);
@@ -1812,20 +1851,24 @@ if (el) el.classList.toggle('active', v === id);
 var tab = parentTab[id] || id;
 document.querySelectorAll('[data-view-btn]').forEach(function (b) {
 b.setAttribute('aria-selected', b.getAttribute('data-view-btn') === tab? 'true': 'false');
+b.setAttribute('tabindex',b.getAttribute('data-view-btn')===tab?'0':'-1');
+b.setAttribute('aria-controls','view-'+(b.getAttribute('data-view-btn')===tab?id:b.getAttribute('data-view-btn')));
 });
 var target = anchor? document.getElementById(anchor): null;
-if (target) { target.scrollIntoView({ block: 'start' }); }
-else { window.scrollTo(0, 0); }
+window.dispatchEvent(new CustomEvent('board-view',{detail:{id:id,requested:requested}}));
+if (target) { var disclosure=target; while(disclosure){if(disclosure.tagName==='DETAILS')disclosure.open=true;disclosure=disclosure.parentElement;} target.scrollIntoView({ block: 'start' }); }
+else { window.scrollTo({top:viewScroll[id]||0,behavior:'instant'}); }
 try {
 settingHash = true;
 history.replaceState(null, '', '#' + (anchor || id));
 settingHash = false;
 } catch (e) { settingHash = false; }
 }
+window.DonguriBoard={showView:showView};
 function applyHash() {
 if (settingHash) return;
 var h = (location.hash || '').replace(/^#/, '');
-if (!h) return;
+if (!h) {showView('events');return;}
 if (viewIds.indexOf(h) !== -1) { showView(h); return; }
 var el = document.getElementById(h);
 if (!el) return;
@@ -1838,7 +1881,7 @@ document.querySelectorAll('[data-view-btn]').forEach(function (b) {
 b.addEventListener('click', function () { showView(b.getAttribute('data-view-btn'));});
 });
 document.querySelectorAll('[data-goto]').forEach(function (b) {
-b.addEventListener('click', function () { showView(b.getAttribute('data-goto'), b.getAttribute('data-goto-anchor'));});
+b.addEventListener('click', function () { showView(b.getAttribute('data-goto'), b.getAttribute('data-goto-anchor'));var heading=document.querySelector('.view.active h2');if(heading){heading.setAttribute('tabindex','-1');heading.focus({preventScroll:true});}});
 });
 applyHash();
 /* ---- next event countdown ---- */
@@ -1848,23 +1891,20 @@ var now = new Date(); now.setHours(0, 0, 0, 0);
 var d = Math.round((t - now) / 86400000);
 el.textContent = d > 0? 'あと' + d + '日': (d === 0? '当日': '終了');
 });
-/* ---- works filter ---- */
-document.querySelectorAll('[data-filter]').forEach(function (btn) {
-btn.addEventListener('click', function () {
-var f = btn.getAttribute('data-filter');
-document.querySelectorAll('[data-filter]').forEach(function (b) {
-b.setAttribute('aria-pressed', b === btn? 'true': 'false');
-});
-document.querySelectorAll('.work[data-cat]').forEach(function (card) {
-if (f === 'unknown') {
-var pl = card.querySelector('.price-line');
-card.hidden =!(pl && /未確認|未登録/.test(pl.textContent));
-} else {
-card.hidden =!(f === 'all' || card.getAttribute('data-cat') === f);
+/* ---- works filter and search ---- */
+var workQuery=document.getElementById('work-search');
+function filterWorks(){
+  var selected=document.querySelector('[data-filter][aria-pressed="true"]'),f=selected?selected.getAttribute('data-filter'):'all';
+  var q=workQuery?workQuery.value.trim().normalize('NFKC').toLocaleLowerCase():'';var count=0;
+  document.querySelectorAll('.work[data-cat]').forEach(function(card){
+    var price=card.querySelector('.price-line'),match=f==='unknown'?price&&/未確認|未登録/.test(price.textContent):f==='all'||card.getAttribute('data-cat')===f;
+    var publicText=Array.from(card.querySelectorAll('h3,dl,.memo,.price-line')).map(function(n){return n.textContent;}).join(' ').normalize('NFKC').toLocaleLowerCase();
+    card.hidden=!(match&&(!q||publicText.includes(q)));if(!card.hidden)count++;
+  });
+  var output=document.getElementById('work-result-count');if(output)output.textContent=count+'作品を表示'+(count?'':' ・ 条件を変えて探す');
 }
-});
-});
-});
+document.querySelectorAll('[data-filter]').forEach(function(btn){btn.addEventListener('click',function(){document.querySelectorAll('[data-filter]').forEach(function(b){b.setAttribute('aria-pressed',String(b===btn));});filterWorks();});});
+if(workQuery)workQuery.addEventListener('input',filterWorks);filterWorks();
 /* ---- copy ---- */
 document.querySelectorAll('[data-copy-target]').forEach(function (btn) {
 btn.addEventListener('click', function () {
@@ -1887,86 +1927,162 @@ showToast('ポップの文面をコピー済み');
 });
 /* ---- comments: name-tagged, per item, with a summary copy ---- */
 var comments = [];
-var cSeq = 0;
-var currentAuthor = '知久';
+var currentAuthor = '';
+var commentsReady = false;
+var currentViewer = '', boardDrafts = new Map();
+function commentInputs() { return Array.from(document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text')); }
+function protectCommentDrafts() {
+var inputs=commentInputs().filter(function(ta){return ta.value!=='';}).map(function(ta){return {element:ta,text:ta.value,id:ta._commentId};});
+var edits=Array.from(document.querySelectorAll('[data-comment-editor]')).map(function(ta){return {id:ta.getAttribute('data-comment-id'),version:Number(ta.getAttribute('data-comment-version')),text:ta.value};});
+if(currentViewer&&(inputs.length||edits.length))boardDrafts.set(currentViewer,{inputs:inputs,edits:edits});
+commentInputs().forEach(function(ta){ta.value='';delete ta._commentId;});
+comments=[];
+document.querySelectorAll('[data-comment-editor]').forEach(function(ta){ta.removeAttribute('data-comment-editor');});
+renderComments();
+}
+function restoreCommentDrafts() {
+var draft=boardDrafts.get(currentViewer);if(!draft)return;
+draft.inputs.forEach(function(input){if(input.element.isConnected){input.element.value=input.text;if(input.id)input.element._commentId=input.id;}});
+draft.edits.forEach(function(edit){
+var card=Array.from(document.querySelectorAll('[data-comment-card]')).find(function(node){return node.getAttribute('data-comment-card')===edit.id;});
+var button=card&&card.querySelector('[data-comment-edit]');
+if(button){button.click();var ta=card.querySelector('[data-comment-editor]');ta.value=edit.text;ta.setAttribute('data-comment-version',String(edit.version));}
+else {var quick=document.getElementById('quick-text');if(quick){quick.value+=(quick.value?'\n\n':'')+edit.text;var panel=document.getElementById('quick-panel');if(panel)panel.hidden=false;var trigger=document.getElementById('quick-memo-btn');if(trigger)trigger.setAttribute('aria-expanded','true');showToast('元コメントが見つからず。未保存の編集をクイック欄へ復元');}}
+});
+boardDrafts.delete(currentViewer);
+}
 function makeAuthorSelect() {
 var sel = document.createElement('select');
 sel.className = 'author-sel';
-sel.setAttribute('aria-label', '書く人');
-['知久', '明日海'].forEach(function (name) {
+sel.setAttribute('aria-label', 'LINEで確認した投稿者');
+sel.disabled = true;
 var o = document.createElement('option');
-o.value = name;
-o.textContent = name;
+o.value = currentAuthor;
+o.textContent = currentAuthor || 'LINE認証を確認';
 sel.appendChild(o);
-});
-sel.value = currentAuthor;
-sel.addEventListener('change', function () {
-currentAuthor = sel.value;
-document.querySelectorAll('.author-sel').forEach(function (s) { s.value = currentAuthor;});
-});
 return sel;
 }
-function stamp() {
-var d = new Date();
-function p(n) { return (n < 10? '0': '') + n;}
-return d.getFullYear() + '/' + p(d.getMonth() + 1) + '/' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+function setCommentAccess() {
+document.querySelectorAll('.author-sel').forEach(function (sel) {
+sel.options[0].value = currentAuthor;
+sel.options[0].textContent = currentAuthor || 'LINE認証を確認';
+});
+document.querySelectorAll('[data-memo-add], .inline-memo .btn, #quick-add').forEach(function (btn) { btn.disabled = !commentsReady; });
+document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text').forEach(function (ta) { ta.disabled = !commentsReady; ta.maxLength = 4000; ta.setAttribute('autocomplete','off'); });
+}
+function renderComments() {
+document.querySelectorAll('[data-memo-zone]').forEach(function (zone) {
+var list = zone.querySelector('.memo-list');
+if (list) list.setAttribute('data-comment-target', zoneTarget(zone));
+});
+document.querySelectorAll('[data-comment-target]').forEach(function (list) {
+if (list.querySelector('[data-comment-editor]')) return;
+list.replaceChildren();
+comments.filter(function (c) { return c.target === list.getAttribute('data-comment-target'); })
+.slice().sort(function (a, b) { return b.stamp.localeCompare(a.stamp) || b.id.localeCompare(a.id); })
+.forEach(function (c) { list.appendChild(commentCard(c)); });
+var disclosure=list.closest('details.inline-memo');if(disclosure){var summary=disclosure.querySelector('summary');if(summary)summary.textContent='この項目について相談・コメント'+(list.children.length?'（'+list.children.length+'件）':'');}
+});
+rebuildSummary();
+}
+window.addEventListener('comments-auth', function (event) {
+if((!event.detail.ready&&commentsReady)||(event.detail.ready&&commentsReady&&currentViewer&&currentViewer!==event.detail.viewer))protectCommentDrafts();
+commentsReady = event.detail.ready; currentAuthor = event.detail.author;
+if(commentsReady)currentViewer=event.detail.viewer;
+setCommentAccess();if(commentsReady)restoreCommentDrafts();rebuildSummary();
+});
+window.addEventListener('comments-clear',protectCommentDrafts);
+window.addEventListener('comments-suspend',protectCommentDrafts);
+window.addEventListener('beforeunload',function(event){if(boardDrafts.size||document.querySelector('[data-comment-editor]')||commentInputs().some(function(ta){return ta.value!=='';})){event.preventDefault();event.returnValue='';}});
+window.addEventListener('comments-loaded', function (event) { comments = event.detail; renderComments(); });
+async function submitComment(target, ta, button) {
+if (!commentsReady || button.disabled) return false;
+var text = ta.value.trim();
+if (!text || text.length > 4000) { showToast('コメントは1〜4000文字で記入'); return false; }
+button.disabled = true;
+if (!ta._commentId) ta._commentId = crypto.randomUUID();
+try {
+var result = await window.DonguriComments.save('/comments', 'POST', { id: ta._commentId, target: target, text: text });
+comments = comments.filter(function (c) { return c.id !== result.comment.id; });
+comments.push(result.comment);
+// Only clear the submitted text; preserve any text typed while saving.
+if (ta.value.trim() === text) ta.value = '';
+ta._commentId = null;
+renderComments(); showToast('コメント保存済み'); return true;
+} catch (error) { showToast(error.message); return false; }
+finally { button.disabled = !commentsReady; }
 }
 function commentCard(c) {
 var card = document.createElement('article');
 card.className = 'memo-card';
+card.setAttribute('data-comment-card',c.id);
 var meta = document.createElement('div');
 meta.className = 'memo-meta';
 var who = document.createElement('span');
-who.className = 'author-badge';
-who.textContent = c.author;
+who.className = 'author-badge'; who.textContent = c.author;
 var time = document.createElement('time');
-time.textContent = c.stamp;
-var del = document.createElement('button');
-del.type = 'button';
-del.className = 'memo-del';
-del.textContent = '消す';
-del.addEventListener('click', function () {
-comments = comments.filter(function (x) { return x.id!== c.id;});
-card.remove();
-rebuildSummary();
-showToast('コメント削除済み');
-});
-meta.appendChild(who);
-meta.appendChild(time);
-meta.appendChild(del);
+time.dateTime = c.stamp;
+time.textContent = new Date(c.stamp).toLocaleString('ja-JP');
+meta.append(who, time);
 var body = document.createElement('div');
-body.className = 'memo-text';
-body.contentEditable = 'true';
-body.textContent = c.text;
-body.addEventListener('input', function () { c.text = body.textContent; rebuildSummary();});
-card.appendChild(meta);
-card.appendChild(body);
-return card;
+body.className = 'memo-text'; body.textContent = c.text;
+card.append(meta, body);
+var request = document.createElement('button'); request.type = 'button'; request.className = 'btn small'; request.textContent = '更新依頼にする';
+request.addEventListener('click', async function () {
+request.disabled = true;
+try {
+await window.DonguriComments.save('/records', 'POST', { id: c.id, kind: 'request', data: { title: c.target.slice(0,160), notes: c.text, status: '未対応' } });
+showToast('更新依頼に保存済み。「二人の記録」で確認');
+} catch (error) { showToast(error.message); request.disabled = false; }
+});
+card.appendChild(request);
+if (c.canEdit) {
+var edit = document.createElement('button'); edit.type = 'button'; edit.className = 'memo-del'; edit.textContent = '編集';
+edit.setAttribute('data-comment-edit','');
+var del = document.createElement('button'); del.type = 'button'; del.className = 'memo-del'; del.textContent = '消す';
+meta.append(edit, del);
+del.addEventListener('click', async function () {
+if (!window.confirm('このコメントを消す')) return;
+del.disabled = true; edit.disabled = true;
+try {
+await window.DonguriComments.save('/comments/' + c.id, 'DELETE', { version: c.version });
+comments = comments.filter(function (x) { return x.id !== c.id; });
+renderComments(); showToast('コメント削除済み');
+} catch (error) { showToast(error.message); }
+finally { del.disabled = false; edit.disabled = false; }
+});
+edit.addEventListener('click', function () {
+edit.disabled = true; del.disabled = true;
+var ta = document.createElement('textarea'); ta.value = c.text; ta.rows = 3; ta.maxLength = 4000;
+ta.setAttribute('aria-label', 'コメントを編集'); ta.setAttribute('data-comment-editor', '');
+ta.setAttribute('autocomplete','off');
+ta.setAttribute('data-comment-id',c.id);ta.setAttribute('data-comment-version',String(c.version));
+var save = document.createElement('button'); save.type = 'button'; save.className = 'btn small'; save.textContent = '変更を保存';
+var cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'btn small'; cancel.textContent = '取消';
+body.replaceChildren(ta, save, cancel); ta.focus();
+cancel.addEventListener('click', function () { body.textContent = c.text; renderComments(); });
+save.addEventListener('click', async function () {
+save.disabled = true; cancel.disabled = true; ta.disabled = true;
+try {
+var result = await window.DonguriComments.save('/comments/' + c.id, 'PATCH', { version: Number(ta.getAttribute('data-comment-version')), text: ta.value });
+comments = comments.map(function (x) { return x.id === c.id ? result.comment : x; });
+ta.removeAttribute('data-comment-editor');
+renderComments(); showToast('変更保存済み');
+} catch (error) { showToast(error.message); }
+finally { save.disabled = false; cancel.disabled = false; ta.disabled = false; }
+});
+});
 }
-function addComment(target, author, text, listEl) {
-var c = { id: ++cSeq, target: target, author: author || currentAuthor, text: text, stamp: stamp()};
-comments.push(c);
-if (listEl) listEl.insertBefore(commentCard(c), listEl.firstChild);
-rebuildSummary();
+return card;
 }
 function groupedComments() {
 var order = [];
-var map = {};
+var map = Object.create(null);
 comments.forEach(function (c) {
 if (!map[c.target]) { map[c.target] = []; order.push(c.target);}
 map[c.target].push(c);
 });
 return order.map(function (t) { return { target: t, items: map[t]};});
-}
-function summaryText() {
-if (!comments.length) return '';
-var lines = ['どんぐりの夢 共有ボード', stamp() + ' 時点・全' + comments.length + '件', ''];
-groupedComments().forEach(function (g) {
-lines.push('■ ' + g.target);
-g.items.forEach(function (c) { lines.push('・' + c.author + '：' + c.text);});
-lines.push('');
-});
-return lines.join('\n').trim();
 }
 function rebuildSummary() {
 var cnt = document.getElementById('summary-count');
@@ -1977,7 +2093,7 @@ box.innerHTML = '';
 if (!comments.length) {
 var p = document.createElement('p');
 p.className = 'summary-empty';
-p.textContent = 'まだコメントなし。各作品・ポップ・イベントのコメント欄から追加可能';
+p.textContent = commentsReady ? 'まだコメントなし。各項目のコメント欄から追加' : 'LINE認証と共有設定を確認してからコメントを表示';
 box.appendChild(p);
 return;
 }
@@ -2003,12 +2119,6 @@ ul.appendChild(li);
 div.appendChild(ul);
 box.appendChild(div);
 });
-}
-function copySummary() {
-if (!comments.length) { showToast('コピーするコメントなし'); return;}
-copyText(summaryText()).then(function () {
-showToast('指摘事項をまとめてコピー済み。LINEに貼れる形');
-}, function () { showToast('コピー失敗');});
 }
 /* ---- comment zones (one per page) ---- */
 function memoZoneHTML(label, hint, placeholder) {
@@ -2043,6 +2153,7 @@ var al = zone.getAttribute('aria-label') || '';
 return 'ページ：' + al.replace(/の(メモ|コメント)$/, '');
 }
 function setupZone(zone) {
+var input=zone.querySelector('.free-write');if(input)input.setAttribute('aria-label',zone.getAttribute('aria-label')||'このページのコメント');
 var head = zone.querySelector('.memo-head h3');
 if (head) head.textContent = 'コメント';
 zone.querySelectorAll('[data-memo-copy]').forEach(function (b) { b.remove();});
@@ -2056,10 +2167,7 @@ addBtn.setAttribute('data-bound', '1');
 addBtn.addEventListener('click', function () {
 var ta = zone.querySelector('.free-write');
 if (!ta ||!ta.value.trim()) { if (ta) ta.focus(); showToast('先にコメント欄への記入が必要'); return;}
-var sel = zone.querySelector('.author-sel');
-addComment(zoneTarget(zone), sel? sel.value: currentAuthor, ta.value.trim(), zone.querySelector('.memo-list'));
-ta.value = '';
-showToast('コメント追加済み。まとめはホーム下部からコピー可能');
+submitComment(zoneTarget(zone), ta, addBtn);
 });
 }
 }
@@ -2067,8 +2175,9 @@ document.querySelectorAll('[data-memo-zone]').forEach(setupZone);
 /* ---- inline comments on each work card, pop entry and event card ---- */
 function addInlineComment(container, target, placeholder) {
 if (!container || container.querySelector('.inline-memo')) return;
-var wrap = document.createElement('div');
+var wrap = document.createElement('details');
 wrap.className = 'inline-memo';
+var disclosure=document.createElement('summary');disclosure.textContent='この項目について相談・コメント';wrap.appendChild(disclosure);
 var lab = document.createElement('span');
 lab.textContent = 'コメント';
 wrap.appendChild(lab);
@@ -2076,6 +2185,7 @@ var ta = document.createElement('textarea');
 ta.rows = 2;
 ta.placeholder = placeholder;
 ta.setAttribute('data-inline-memo', '');
+ta.setAttribute('aria-label',target+'のコメント');
 wrap.appendChild(ta);
 var row = document.createElement('div');
 row.className = 'cmt-row';
@@ -2088,59 +2198,47 @@ row.appendChild(btn);
 wrap.appendChild(row);
 var list = document.createElement('div');
 list.className = 'memo-list';
+list.setAttribute('data-comment-target', target);
 wrap.appendChild(list);
 btn.addEventListener('click', function () {
 if (!ta.value.trim()) { ta.focus(); showToast('先にコメント記入が必要'); return;}
-var sel = row.querySelector('.author-sel');
-addComment(target, sel? sel.value: currentAuthor, ta.value.trim(), list);
-ta.value = '';
-showToast('コメント追加済み');
+submitComment(target, ta, btn);
 });
 container.appendChild(wrap);
 }
-document.querySelectorAll('.work.body').forEach(function (body) {
+document.querySelectorAll('.work .body').forEach(function (body) {
 var card = body.closest('.work');
 var h = card? card.querySelector('h3'): null;
+if (card && !body.querySelector('.photo-caption')) {
+var caption = document.createElement('p'); caption.className = 'photo-caption';
+caption.textContent = card.id === 'work-happy-pack' ? 'ポップ画像。セットの実物写真と中身は確認待ち' : card.querySelector('img') ? '既存の作品・展示写真。現在の在庫と仕様は別途確認' : '対応する実物写真は確認待ち';
+body.appendChild(caption);
+}
 addInlineComment(body, '作品：' + (h? h.textContent: '作品'), '価格・在庫・作る数・直すところなど');
+if(h){var inventoryLink=document.createElement('a');inventoryLink.className='text-link';inventoryLink.href='private.html#inventory='+encodeURIComponent(h.textContent);inventoryLink.textContent='この作品の棚卸メモを書く →';body.appendChild(inventoryLink);}
 });
-document.querySelectorAll('.pop-entry.foot').forEach(function (foot) {
+document.querySelectorAll('.pop-entry .foot').forEach(function (foot) {
 var entry = foot.closest('.pop-entry');
 var h = entry? entry.querySelector('.head h3'): null;
 addInlineComment(foot, 'ポップ：' + (h? h.textContent: 'ポップ'), '直したい文字、印刷サイズ、置く場所');
 });
-document.querySelectorAll('.event-card.body').forEach(function (body) {
+document.querySelectorAll('.event-card .body').forEach(function (body) {
 var card = body.closest('.event-card');
 var h = card? card.querySelector('h3'): null;
-var date = card? card.querySelector('.meta.m-line'): null;
+var date = card? card.querySelector('.meta .m-line'): null;
 var t = 'イベント：' + (h? h.textContent: 'イベント') + (date? '（' + date.textContent + '）': '');
 addInlineComment(body, t, 'このイベントについてのコメント');
 });
-/* ---- summary copy + download ---- */
-var sCopy = document.getElementById('summary-copy');
-if (sCopy) sCopy.addEventListener('click', copySummary);
+/* ---- private comment overview ---- */
 rebuildSummary();
-var dl = document.getElementById('memo-download');
-if (dl) {
-dl.textContent = '指摘事項をファイルで保存';
-dl.addEventListener('click', function () {
-if (!comments.length) { showToast('保存するコメントなし。先にコメント記入'); return;}
-var blob = new Blob([summaryText() + '\n'], { type: 'text/plain;charset=utf-8'});
-var url = URL.createObjectURL(blob);
-var a = document.createElement('a');
-a.href = url;
-a.download = 'donguri-shiteki.txt';
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-setTimeout(function () { URL.revokeObjectURL(url);}, 2000);
-showToast('指摘事項のファイルを保存済み');
-});
-}
 /* ---- quick comment panel: write from any page ---- */
 var qBtn = document.getElementById('quick-memo-btn');
 var qPanel = document.getElementById('quick-panel');
 var qText = document.getElementById('quick-text');
-function closeQuick() { if (qPanel) qPanel.hidden = true; if (qBtn) qBtn.setAttribute('aria-expanded', 'false');}
+if(qText)qText.setAttribute('aria-label','表示中のページへのコメント');
+var homeComment=document.getElementById('home-comment');if(homeComment)homeComment.addEventListener('click',function(){if(qPanel){qPanel.hidden=false;qBtn.setAttribute('aria-expanded','true');qText.focus();}});
+if(location.hash==='#comments'&&qPanel){qPanel.hidden=false;qBtn.setAttribute('aria-expanded','true');}
+function closeQuick() { if (qPanel) qPanel.hidden = true; if (qBtn){qBtn.setAttribute('aria-expanded', 'false');qBtn.focus();}}
 if (qBtn && qPanel) {
 qBtn.addEventListener('click', function () {
 var open = qPanel.hidden;
@@ -2150,29 +2248,30 @@ if (open && qText) qText.focus();
 });
 }
 if (qPanel) {
+qPanel.setAttribute('role','region');qPanel.setAttribute('aria-label','コメントの入力');
+qPanel.addEventListener('keydown',function(event){if(event.key==='Escape'){event.preventDefault();closeQuick();}});
 var qTools = qPanel.querySelector('.memo-tools');
 if (qTools &&!qTools.querySelector('.author-sel')) qTools.insertBefore(makeAuthorSelect(), qTools.firstChild);
 }
 var qClose = document.getElementById('quick-close');
 if (qClose) qClose.addEventListener('click', closeQuick);
-var qCopy = document.getElementById('quick-copy');
-if (qCopy) qCopy.addEventListener('click', copySummary);
 var qAdd = document.getElementById('quick-add');
 if (qAdd) {
 qAdd.addEventListener('click', function () {
 if (!qText ||!qText.value.trim()) { if (qText) qText.focus(); showToast('先にコメント記入が必要'); return;}
 var active = document.querySelector('.view.active');
-var zone = active? active.querySelector('[data-memo-zone]'): null;
-var sel = qPanel? qPanel.querySelector('.author-sel'): null;
-addComment(zone? zoneTarget(zone): 'ページ：その他', sel? sel.value: currentAuthor, qText.value.trim(), zone? zone.querySelector('.memo-list'): null);
-qText.value = '';
-closeQuick();
-if (zone) zone.scrollIntoView({ block: 'center'});
-showToast('今見ているページにコメント追加済み');
+var zone = active? (active.querySelector('[data-market-panel]:not([hidden]) [data-memo-zone]')||active.querySelector('[data-memo-zone]')): null;
+submitComment(zone? zoneTarget(zone): 'ページ：その他', qText, qAdd).then(function (saved) {
+if (saved) { closeQuick(); if (zone) zone.scrollIntoView({ block: 'center'}); }
+});
 });
 }
+setCommentAccess();
 })();
 
 </script>
+<script src="workflow.js"></script><script src="event-board.js"></script>
+<script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script defer src="comments-api.js"></script>
 </body>
 </html>

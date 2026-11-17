@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ja" style="background:#fdf6e0;color-scheme:light only">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="referrer" content="no-referrer"><meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#fdf6e0"><title>二人の記録｜どんぐりの夢</title>
+<link rel="stylesheet" href="private.css">
+<script src="comments-config.js"></script>
+<script defer src="ui-icons.js"></script>
+<script defer src="private.js"></script>
+<script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script defer src="comments-api.js"></script>
+<link rel="stylesheet" href="studio.css">
+</head>
+<body class="journal-page"><a class="skip-link" href="#workspace">記録へ進む</a>
+<header class="site-head"><a href="index.html" class="brand">どんぐりの夢</a><a class="back" data-icon="comment" href="index.html#comments">相談</a></header><nav class="primary-nav private-primary" aria-label="主な機能"><a data-icon="events" href="index.html#events">出店</a><a data-icon="works" href="index.html#works">作品・在庫</a><a data-icon="booth" href="index.html#market">売り場</a><a data-icon="task" href="private.html#kind=task">やること</a></nav>
+<main>
+<h1 class="journal-title">二人の記録</h1>
+<section class="connection" aria-label="共有の接続"><span class="dot" aria-hidden="true"></span><p id="comments-status" role="status">LINE認証を確認中</p><button data-icon="refresh" id="comments-login" type="button">記録を再読込</button></section>
+
+
+
+<nav class="tabs" aria-label="記録の種類"><button data-kind="review" aria-pressed="true">振り返り・売上</button><button data-kind="task" aria-pressed="false">やりたいこと</button><button data-kind="inventory" aria-pressed="false">棚卸メモ</button><button data-kind="request" aria-pressed="false">更新の依頼</button></nav>
+<div class="event-scope"><label>出店で絞る<select id="event-filter"><option value="all">すべての出店・未分類</option><option value="unassigned">未分類のみ</option><option value="event-xmas">クリスマスマルシェ（2026年12月）</option><option value="event-tabashita">タバシタ あったか祭り（2026年12月）</option><option value="event-wombat">ウォンバットマルシェ（2026年10月）</option><option value="event-kiraria-1107">きらりあマルシェ（2026年11月）</option><option value="event-kiraria-0829">きらりあマルシェ（2026年8月）</option><option value="event-kiraria-0516">きらりあマルシェ（2026年5月）</option><option value="event-kiraria-0228">きらりあマルシェ（2026年2月）</option><option value="event-toyoshima">隅田川オープンテラス 豊島5丁目団地（2026年10月）</option><option value="event-heart">ハートまつり（2026年11月）</option></select></label><a id="event-back" hidden>出店へ戻る</a></div><section id="workspace" class="workspace" aria-labelledby="section-title">
+<div class="section-head"><div><span class="eyebrow" id="section-kicker">イベントを終えたら</span><h2 id="section-title">振り返り・売上</h2><p id="section-description">気づいたことと金額を残す。空欄は未入力、0円は売上なしとして区別。</p></div><span class="private-label">二人のみ</span></div>
+<div class="workspace-actions"><button type="button" data-icon="add" id="new-record" class="primary">記録を追加</button><button type="button" id="close-composer" hidden>← 一覧に戻る</button></div><p id="record-feedback" role="status"></p><section hidden class="handoff" id="handoff"><div><h2>AIに渡す依頼</h2><p>内容を確認してコピーし、使うAIに貼り付ける。自動送信なし。</p></div><div class="actions"><button type="button" data-icon="inspect" id="preview-requests" disabled>送る内容を確認</button><button type="button" data-icon="copy" id="copy-requests" disabled>未対応の依頼をコピー</button></div><pre id="request-preview" class="request-preview" hidden></pre><p id="export-feedback" role="status"></p></section><div class="inventory-tools" hidden><button type="button" data-kind="photo" aria-pressed="false">写真と作品の照合</button><span>作品名・色・値札を確かめるときに</span></div><div class="two-column">
+<form hidden id="record-form" class="form-card" tabindex="-1" autocomplete="off" aria-labelledby="form-title"><h3 id="form-title">記録を追加</h3><fieldset id="record-fields" aria-describedby="private-notice" disabled>
+<label>関連する出店<select name="eventId" id="record-event"><option value="">未分類（出店を指定しない）</option><option value="event-xmas">クリスマスマルシェ（2026年12月）</option><option value="event-tabashita">タバシタ あったか祭り（2026年12月）</option><option value="event-wombat">ウォンバットマルシェ（2026年10月）</option><option value="event-kiraria-1107">きらりあマルシェ（2026年11月）</option><option value="event-kiraria-0829">きらりあマルシェ（2026年8月）</option><option value="event-kiraria-0516">きらりあマルシェ（2026年5月）</option><option value="event-kiraria-0228">きらりあマルシェ（2026年2月）</option><option value="event-toyoshima">隅田川オープンテラス 豊島5丁目団地（2026年10月）</option><option value="event-heart">ハートまつり（2026年11月）</option></select></label><label>項目名<input name="title" id="record-title" required maxlength="160" autocomplete="off" placeholder="イベント名・作品名・やること" list="product-names"></label><datalist id="product-names"></datalist>
+<div data-for="review"><label>日付<input name="date" type="date"></label><div class="field-pair"><label>売上（円）<input name="salesYen" type="number" min="0" max="100000000" step="1" inputmode="numeric" placeholder="未入力"></label><label>費用（円）<input name="costsYen" type="number" min="0" max="100000000" step="1" inputmode="numeric" placeholder="未入力"></label></div><p class="hint">未入力の金額を0円として集計しない。振り返りの編集は書いた本人のみ。</p></div>
+<div data-for="task" hidden><label>期限<input name="dueDate" type="date"></label></div>
+<div data-for="inventory" hidden><label>確認した在庫数<input name="stock" type="number" min="0" max="1000000" step="1" inputmode="numeric" placeholder="未入力"></label><p class="hint">棚卸で数えた数を記入。写真の点数を在庫数にしない。更新シートへは自動反映しない。</p></div>
+<div data-for="photo" hidden><label>照合する写真<select name="asset" id="photo-asset"><option value="">写真は未選択</option></select></label><img id="photo-preview" alt="選択した既存写真" hidden><p class="hint">写真と作品名・色・値札を見比べる。写真は現在の在庫を示さない。ポップの絵と実物写真を区別。</p></div>
+<div id="state-field" hidden><label>状態<select name="status" id="record-state"></select></label></div>
+<label id="notes-label">振り返り・次にやること<textarea name="notes" rows="3" maxlength="4000" placeholder="よかったこと、気になったこと、次に試すこと"></textarea></label>
+<p class="hint" id="request-hint" hidden>更新したい項目・変更内容・確認した根拠を記入。依頼だけでは公開ページや正本を書き換えない。</p>
+<div class="actions"><button class="primary" type="submit" data-icon="save" id="record-save">記録を保存</button><button type="button" id="record-cancel" hidden>入力を取消</button></div>
+</fieldset></form>
+<div class="records-column"><div class="list-tools"><label class="search-label">記録を絞る<input id="record-search" type="search" autocomplete="off" placeholder="項目名・本文・書いた人"></label><label class="check"><input id="open-only" type="checkbox">未完了のみ</label></div><div class="list-order"><p id="visible-count" role="status"></p><label>並び順<select id="record-sort"><option value="updated">更新が新しい順</option><option value="due">期限が近い順</option><option value="title">項目名の順</option></select></label></div><div id="record-list" aria-live="polite"><p class="empty">LINE認証後に記録を表示</p></div></div>
+</div>
+</section>
+
+<details class="journal-tools"><summary>補助メニュー：件数・保存・バックアップ</summary><div class="stats" aria-label="記録の件数"><div><span>振り返り</span><strong id="review-count">—</strong></div><div><span>進めること</span><strong id="task-count">—</strong></div><div><span>確認待ち</span><strong id="waiting-count">—</strong></div></div><section class="today-panel" aria-labelledby="today-title"><div class="section-head"><div><h2 id="today-title">次に進めること</h2></div><a href="#workspace" class="text-link">記録を開く ↓</a></div><div id="next-actions"><p class="empty">LINE認証後に、未完了の作業を表示</p></div></section><details class="storage-help"><summary>下書きと保存について</summary><p class="notice" id="private-notice">共有設定後にLINEの専用リンクから開く。入力はページ内で一時保護し、同じアカウントを確認して復元。再読込・タブ終了・OSによるページ破棄では失われるため先に保存する。端末へは自動保存しない。</p></details><button type="button" data-icon="save" id="export-records" disabled>記録をファイル保存</button></details><footer><p>作品・在庫の正本は更新シート。棚卸メモと照合してから反映。</p><p>相手の新しい記録は「記録を再読込」で確認。編集中の内容を先に保存する。</p></footer>
+</main>
+</body></html>

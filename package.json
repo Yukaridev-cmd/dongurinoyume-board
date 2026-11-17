@@ -1,0 +1,17 @@
+{
+  "name": "dongurinoyume-board",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check backend/worker.js && node --check backend/records.js && node --check backend/owner-test.js && node --check scripts/build-owner-test.mjs && node --check comments-api.js && node --check private.js && node --check ui-icons.js && node --check workflow.js && node --check event.js && node --check event-board.js && node --check backend/events.js",
+    "build:owner-test": "node scripts/build-owner-test.mjs",
+    "catalog": "node scripts/build-catalog.mjs",
+    "smoke:deployed": "node scripts/check-deployed.mjs",
+    "privacy": "node scripts/privacy-check.mjs"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.1",
+    "wrangler": "^4.163.0"
+  }
+}
