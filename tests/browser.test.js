@@ -68,6 +68,7 @@ function browser({
       if (!records.some((row) => row.id === c.id)) records.push(c);
       return Response.json({ comment: c }, { status: 201 });
     }
+    if (url.endsWith('/records')) return Response.json({ records: [], next: null });
     if (url.endsWith('/events')) return Response.json({ events, next: null });
     if (options.method === 'PATCH') {
       const body = JSON.parse(options.body),
@@ -1237,6 +1238,67 @@ test('booth distinguishes a labeled concept from photograph-backed practice with
     assert.match(
       booth.querySelectorAll('.practice-photo figcaption')[3].textContent,
       /テーブル中央の配置写真は確認待ち/
+    );
+    assert.equal(b.errors.length, 0);
+  } finally {
+    b.dom.window.close();
+  }
+});
+
+test('preparation summaries keep zero distinct, private previews clear, and refreshed data never replaces an editor', async () => {
+  const b = browser({ configured: false });
+  try {
+    await tick();
+    const w = b.w,
+      d = w.document;
+    w.eval(readFileSync(new URL('../preparation.js', import.meta.url), 'utf8'));
+    assert.ok(d.querySelector('.next-preparation .event-card h3'));
+    assert.ok(d.querySelector('#work-bigamigurumi .body>.price-line'));
+    assert.match(d.querySelector('#work-bigamigurumi [data-product-facts]').textContent, /未登録/);
+    w.DonguriComments.save = async () => ({
+      records: [
+        {
+          kind: 'inventory',
+          data: { title: '大きいあみぐるみ', stock: 0 },
+          updatedAt: '2026-11-17',
+        },
+      ],
+      next: null,
+    });
+    const rows = [
+      {
+        id: 'example',
+        target: '作品：大きいあみぐるみ',
+        text: '架空の相談',
+        stamp: '2026-11-17',
+        resolved: false,
+      },
+    ];
+    w.dispatchEvent(new w.CustomEvent('board-comments-rendered', { detail: rows }));
+    assert.equal(d.querySelectorAll('.comment-peek').length, 0);
+    w.dispatchEvent(
+      new w.CustomEvent('comments-auth', {
+        detail: { ready: true, viewer: 'a'.repeat(64), author: '架空' },
+      })
+    );
+    await tick();
+    assert.match(
+      d.querySelector('#work-bigamigurumi .comment-peek').textContent,
+      /未対応 1件.*架空の相談/
+    );
+    assert.match(d.querySelector('#work-bigamigurumi [data-product-facts]').textContent, /在庫：0/);
+    const ta = d.querySelector('#quick-text');
+    ta.value = 'て';
+    ta.dispatchEvent(new w.CompositionEvent('compositionstart', { bubbles: true }));
+    ta.dispatchEvent(new w.Event('input'));
+    w.dispatchEvent(new w.CustomEvent('board-comments-rendered', { detail: rows }));
+    assert.equal(ta.value, 'て');
+    w.dispatchEvent(new w.Event('comments-clear'));
+    assert.equal(d.querySelectorAll('.comment-peek').length, 0);
+    assert.ok(!d.querySelector('.preparation-progress').textContent.includes('架空'));
+    assert.match(
+      d.querySelector('#work-bigamigurumi [data-product-facts]').textContent,
+      /在庫：未登録/
     );
     assert.equal(b.errors.length, 0);
   } finally {

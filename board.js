@@ -388,6 +388,7 @@
       }
     });
     rebuildSummary();
+    window.dispatchEvent(new CustomEvent('board-comments-rendered', { detail: comments }));
   }
   window.addEventListener('comments-auth', function (event) {
     if (

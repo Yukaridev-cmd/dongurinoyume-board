@@ -23,7 +23,8 @@
     "board.js",
     "board.css",
     "typography.css",
-    "comment-state.js"
+    "comment-state.js",
+    "preparation.js"
   ],
   "fonts": [
     "assets/fonts/ZenMaruGothic-Medium.woff2",
