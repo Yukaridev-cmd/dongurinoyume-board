@@ -66,50 +66,6 @@
     "photoType": "既存写真・現物との照合待ち"
   },
   {
-    "id": "work-wombat-badge",
-    "title": "缶バッジ（ウォンバット）",
-    "photos": [
-      {
-        "src": "assets/wombat-badges-indoor.jpg",
-        "label": "ウォンバットの缶バッジがボードに並ぶ写真。全点300円"
-      }
-    ],
-    "photoType": "既存写真・現物との照合待ち"
-  },
-  {
-    "id": "work-wombat-gamaguchi",
-    "title": "がまぐち（ウォンバット柄）",
-    "photos": [
-      {
-        "src": "assets/wombat-booth-indoor.jpg",
-        "label": "ウォンバット柄のがまぐちとバッグを並べた室内ブースの写真"
-      }
-    ],
-    "photoType": "既存写真・現物との照合待ち"
-  },
-  {
-    "id": "work-gamaguchi-cloth",
-    "title": "がま口（布製）",
-    "photos": [
-      {
-        "src": "assets/product-gamaguchi-cloth.jpg",
-        "label": "布製のがま口を白いカゴに並べた写真。「がま口 1コ700円」の看板つき"
-      }
-    ],
-    "photoType": "既存写真・現物との照合待ち"
-  },
-  {
-    "id": "work-wombat-flatpouch",
-    "title": "フラットポーチ（ウォンバット柄）",
-    "photos": [
-      {
-        "src": "assets/wombat-pouches-display.jpg",
-        "label": "ウォンバット柄のフラットポーチを並べた写真"
-      }
-    ],
-    "photoType": "既存写真・現物との照合待ち"
-  },
-  {
     "id": "work-wombat-amipouch",
     "title": "編みポーチ（ウォンバット付き）",
     "photos": [
@@ -193,12 +149,6 @@
     "photoType": "実物写真は未確認"
   },
   {
-    "id": "work-heart-bear",
-    "title": "ハートを持つくまのあみぐるみ",
-    "photos": [],
-    "photoType": "実物写真は未確認"
-  },
-  {
     "id": "work-kuma-pouch",
     "title": "くまのポーチ（おしゃぶり付き）",
     "photos": [
@@ -243,19 +193,81 @@
     "photoType": "既存写真・現物との照合待ち"
   },
   {
-    "id": "work-magnet",
-    "title": "マグネット",
+    "id": "work-happy-pack",
+    "title": "ハッピーパック",
     "photos": [
       {
-        "src": "assets/kiraria5-magnet.jpg",
-        "label": "絵柄入りのマグネットがボードに並ぶ写真。「マグネット 1コ100円」の価格看板つき"
+        "src": "assets/pop-happy-pack.jpg",
+        "label": "ハッピーパックのイラスト。猫の巾着袋とシュシュ・猫ポーチ、「あみもの いろいろ 入ってます」「1,200円分以上入り → 500円」の表示"
+      }
+    ],
+    "photoType": "ポップ画像・実物写真は未確認"
+  },
+  {
+    "id": "work-wombat-badge",
+    "title": "缶バッジ（ウォンバット）",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
+    "photos": [
+      {
+        "src": "assets/wombat-badges-indoor.jpg",
+        "label": "ウォンバットの缶バッジがボードに並ぶ写真。全点300円"
       }
     ],
     "photoType": "既存写真・現物との照合待ち"
   },
   {
+    "id": "work-wombat-gamaguchi",
+    "title": "がまぐち（ウォンバット柄）",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
+    "photos": [
+      {
+        "src": "assets/wombat-booth-indoor.jpg",
+        "label": "ウォンバット柄のがまぐちとバッグを並べた室内ブースの写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-gamaguchi-cloth",
+    "title": "がま口（布製）",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
+    "photos": [
+      {
+        "src": "assets/product-gamaguchi-cloth.jpg",
+        "label": "布製のがま口を白いカゴに並べた写真。「がま口 1コ700円」の看板つき"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-wombat-flatpouch",
+    "title": "フラットポーチ（ウォンバット柄）",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
+    "photos": [
+      {
+        "src": "assets/wombat-pouches-display.jpg",
+        "label": "ウォンバット柄のフラットポーチを並べた写真"
+      }
+    ],
+    "photoType": "既存写真・現物との照合待ち"
+  },
+  {
+    "id": "work-heart-bear",
+    "title": "ハートを持つくまのあみぐるみ",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
+    "photos": [],
+    "photoType": "実物写真は未確認"
+  },
+  {
     "id": "work-cat-burger",
     "title": "ねこバーガーのキーホルダー",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
     "photos": [
       {
         "src": "assets/product-cat-burger.jpg",
@@ -267,6 +279,8 @@
   {
     "id": "work-blue-dog",
     "title": "水色の犬のあみぐるみ",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
     "photos": [
       {
         "src": "assets/product-blue-dog.jpg",
@@ -276,14 +290,17 @@
     "photoType": "既存写真・現物との照合待ち"
   },
   {
-    "id": "work-happy-pack",
-    "title": "ハッピーパック",
+    "id": "work-magnet",
+    "title": "マグネット",
+    "saleStatus": "excluded",
+    "saleNote": "別家族の出品・非売品として確認待ち（個別区分は未確定）",
     "photos": [
       {
-        "src": "assets/pop-happy-pack.jpg",
-        "label": "ハッピーパックのイラスト。猫の巾着袋とシュシュ・猫ポーチ、「あみもの いろいろ 入ってます」「1,200円分以上入り → 500円」の表示"
+        "src": "assets/kiraria5-magnet.jpg",
+        "label": "絵柄入りのマグネットがボードに並ぶ写真。「マグネット 1コ100円」の価格看板つき",
+        "display": "hidden"
       }
     ],
-    "photoType": "ポップ画像・実物写真は未確認"
+    "photoType": "既存写真は人物が写るため非表示"
   }
 ]

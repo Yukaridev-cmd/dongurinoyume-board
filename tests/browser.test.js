@@ -198,10 +198,10 @@ test('comments become pending private update requests only through an explicit c
 });
 test('work search combines with category filters, ignores confidential comments and links to public-name inventory context',async()=>{
   const b=browser();try{await tick();const d=b.w.document,input=d.getElementById('work-search');
-    input.value='マグネット';input.dispatchEvent(new b.w.Event('input'));let shown=[...d.querySelectorAll('.work')].filter(x=>!x.hidden);assert.equal(shown.length,1);assert.ok(shown[0].textContent.includes('マグネット'));
-    const link=shown[0].querySelector('a[href^="private.html#inventory="]');assert.ok(link);assert.ok(decodeURIComponent(link.getAttribute('href')).includes('マグネット'));
-    d.querySelector('[data-filter=amigurumi]').click();assert.equal([...d.querySelectorAll('.work')].filter(x=>!x.hidden).length,0);
-    input.value='';input.dispatchEvent(new b.w.Event('input'));d.querySelector('[data-filter=all]').click();assert.equal([...d.querySelectorAll('.work')].filter(x=>!x.hidden).length,27);
+    input.value='ヘアピン';input.dispatchEvent(new b.w.Event('input'));let shown=[...d.querySelectorAll('.work:not([data-sale=excluded])')].filter(x=>!x.hidden);assert.equal(shown.length,1);assert.ok(shown[0].textContent.includes('ヘアピン'));
+    const link=shown[0].querySelector('a[href^="private.html#inventory="]');assert.ok(link);assert.ok(decodeURIComponent(link.getAttribute('href')).includes('ヘアピン'));
+    d.querySelector('[data-filter=amigurumi]').click();assert.equal([...d.querySelectorAll('.work:not([data-sale=excluded])')].filter(x=>!x.hidden).length,0);
+    input.value='';input.dispatchEvent(new b.w.Event('input'));d.querySelector('[data-filter=all]').click();assert.equal([...d.querySelectorAll('.work:not([data-sale=excluded])')].filter(x=>!x.hidden).length,19);
     assert.equal(d.querySelector('.inline-memo').tagName,'DETAILS');assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });
@@ -210,7 +210,7 @@ test('existing images, prices, event headings, page navigation, cream background
   try {
     const d = b.w.document;
     // Original facts from 61b822f remain exact when sections move. Navigation labels are separate.
-    const preserved={images:[...d.querySelectorAll('img')].filter(e=>!e.closest('.board-welcome')).map(e=>[e.getAttribute('src'),e.getAttribute('alt')]).sort(),headings:[...d.querySelectorAll('.view-head h2')].map(e=>e.textContent).filter(x=>!['資料','売り場'].includes(x)).sort(),prices:[...d.querySelectorAll('.price')].map(e=>e.textContent).sort(),meta:[...d.querySelectorAll('.meta')].map(e=>e.textContent).sort()};
+    const preserved={images:[...d.querySelectorAll('img,[data-reference-src]')].filter(e=>!e.closest('.board-welcome')).map(e=>[e.getAttribute('src')||e.dataset.referenceSrc,e.hasAttribute('alt')?e.getAttribute('alt'):e.dataset.referenceAlt]).sort(),headings:[...d.querySelectorAll('.view-head h2')].map(e=>e.textContent).filter(x=>!['資料','売り場'].includes(x)).sort(),prices:[...d.querySelectorAll('.price')].map(e=>e.textContent).sort(),meta:[...d.querySelectorAll('.meta')].map(e=>e.textContent).sort()};
     assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),'38fc400a017cfaff002f3e053af8c73f46f091bcbd4c43207f5b3fffd8170466');
     assert.ok(html.includes('--paper:#fdf6e0')); assert.ok(html.includes('Meiryo UI'));
     assert.equal(html.includes('26作品'),false);assert.equal(d.querySelectorAll('.work').length,27);
@@ -220,13 +220,13 @@ test('existing images, prices, event headings, page navigation, cream background
   } finally { b.dom.window.close(); }
 });
 
-test('archived templates and tasks retain exact source text while bulk comment exports are replaced by request navigation',async()=>{
+test('notice templates are removed while archived tasks and comment targets stay intact',async()=>{
  const b=browser();try{await tick();const d=b.w.document;
-  const preserved={templates:['tpl-update','tpl-eventmsg','tpl-soldout','tpl-after'].map(id=>d.getElementById(id).textContent),home:d.querySelector('#legacy-home .task-list').textContent,ideas:d.querySelector('#legacy-booth .idea-grid').textContent,tasks:d.querySelector('#legacy-booth .task-list').textContent};
-  assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),'b3d662bf6f036449d17079f5c475ff2e58c2e80e7ef611379f36dc281fe11ddc');
+  const preserved={home:d.querySelector('#legacy-home .task-list').textContent,ideas:d.querySelector('#legacy-booth .idea-grid').textContent,tasks:d.querySelector('#legacy-booth .task-list').textContent};
+  assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),'2fb0aeeaba01eec8922b88111117229f5a2b5dd1e67067e83a29cc092e126369');
   assert.equal(d.querySelectorAll('#view-home .task-list,#view-booth .task-list').length,0);
   assert.equal(d.querySelectorAll('#summary-copy,#quick-copy,#memo-download,.template-edit').length,0);
-  assert.equal(d.querySelectorAll('#legacy-templates pre').length,4);
+  assert.equal(d.querySelectorAll('#legacy-templates,[id^=tpl-]').length,0);
   assert.ok(d.querySelector('#quick-panel a[href="private.html#kind=request"]'));assert.ok(d.querySelector('#comment-summary a[href="private.html#kind=request"]'));
   const zone=d.querySelector('#legacy-comments [data-memo-zone]');assert.equal(zone.getAttribute('aria-label'),'LINE用文面のメモ');
   assert.equal(zone.querySelector('.memo-list').getAttribute('data-comment-target'),'ページ：LINE用文面');
@@ -280,7 +280,7 @@ test('keyboard tabs select visible panels and quick panel Escape restores trigge
 test('work filters retain source catalog categories and navigation exposes the destination heading',async()=>{
   const b=browser({configured:false});try{
     const d=b.w.document;d.querySelector('[data-goto=works]').click();assert.equal(d.activeElement,d.querySelector('#view-works h2'));
-    for(const btn of d.querySelectorAll('[data-filter]')){btn.click();const f=btn.dataset.filter;for(const card of d.querySelectorAll('.work[data-cat]')){
+    for(const btn of d.querySelectorAll('[data-filter]')){btn.click();const f=btn.dataset.filter;for(const card of d.querySelectorAll('.work[data-cat]:not([data-sale=excluded])')){
       const expected=f==='all'||(f==='unknown'?/未確認|未登録/.test(card.querySelector('.price-line')?.textContent||''):card.dataset.cat===f);assert.equal(card.hidden,!expected);
     }}assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
@@ -317,4 +317,20 @@ test('same verified identity refreshes private event cards without clearing or r
 });
 test('POP choices match existing source cards exactly and introduce no new images',()=>{
  const dom=new JSDOM(html);try{const choices=JSON.parse(readFileSync(new URL('../pops.json',import.meta.url),'utf8')),cards=[...dom.window.document.querySelectorAll('.pop-entry')].map(e=>({id:e.id,title:e.querySelector('h3').textContent.trim()}));assert.deepEqual(choices,cards);assert.equal(new Set(choices.map(c=>c.id)).size,12);}finally{dom.window.close();}
+});
+
+test('every event opens with its own complete photo list outside disclosures in every phase',async()=>{
+ const original=new JSDOM(html).window.document,b=browser();try{await tick();const d=b.w.document;
+ for(const before of original.querySelectorAll('main[id^="view-event-"]')){const view=d.getElementById(before.id),gallery=view.querySelector('.event-photo-gallery');assert.ok(gallery);
+ const images=n=>[...n.querySelectorAll('img')].map(i=>[i.getAttribute('src'),i.alt,i.closest('figure')?.querySelector('figcaption')?.textContent]);assert.deepEqual(images(gallery),images(before));assert.equal(gallery.closest('details'),null);
+ for(const button of view.querySelectorAll('[data-phase]')){button.click();assert.equal(gallery.hidden,false);assert.equal(gallery.closest('[hidden]'),null);}
+ for(const a of gallery.querySelectorAll('a'))assert.equal(a.href,a.querySelector('img').src);
+ if(!before.querySelector('img'))assert.match(gallery.textContent,/写真はまだ未登録/);
+ }assert.equal(b.requests.filter(r=>r.options.method==='POST').length,0);assert.equal(b.errors.length,0);
+ }finally{original.defaultView.close();b.dom.window.close();}
+});
+test('eight excluded works stay in separate reference storage, never sale search; portrait photo is not rendered',async()=>{
+ const b=browser();try{await tick();const d=b.w.document;assert.equal(d.querySelectorAll('.work:not([data-sale=excluded])').length,19);assert.equal(d.querySelectorAll('#reference-works .work[data-sale=excluded]').length,8);assert.equal(d.querySelector('#reference-works').open,false);assert.equal(d.querySelector('#work-result-count').textContent,'19作品を表示');
+ const q=d.getElementById('work-search');q.value='マグネット';q.dispatchEvent(new b.w.Event('input'));assert.match(d.getElementById('work-result-count').textContent,/^0作品/);assert.equal(d.querySelectorAll('img[src="assets/kiraria5-magnet.jpg"]').length,0);assert.ok(d.querySelector('#work-magnet [data-reference-src]'));assert.equal(d.querySelectorAll('.work').length,27);
+ }finally{b.dom.window.close();}
 });

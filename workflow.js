@@ -14,6 +14,9 @@ document.querySelectorAll('.work').forEach(function(card){var body=card.querySel
 document.querySelectorAll('main[id^="view-event-"]').forEach(function(view){
  var id=view.id.replace('view-',''),head=view.querySelector('.view-head'),facts=view.querySelector(':scope > .facts'),memo=view.querySelector('[data-memo-zone]');
  var original=Array.from(view.children).filter(function(n){return n!==head&&n!==facts&&n!==memo&&!n.matches('.backlink,.view-lead');});
+ var gallery=el('section',null,'event-photo-gallery');gallery.setAttribute('aria-label','この出店の写真');var photoGroups=Array.from(view.querySelectorAll(':scope > .photo-grid'));var photoCount=photoGroups.reduce(function(total,g){return total+g.querySelectorAll('img').length;},0);gallery.appendChild(el('h3','写真'+(photoCount?'（'+photoCount+'枚）':''),'subhead'));var photoGrid=el('div',null,'event-photo-grid');
+ photoGroups.forEach(function(group){var groupHead=group.previousElementSibling;if(groupHead&&groupHead.matches('h3')){original=original.filter(n=>n!==groupHead);var label=el('h4',groupHead.textContent,'photo-group-label');photoGrid.appendChild(label);groupHead.remove();}Array.from(group.children).forEach(function(figure){var img=figure.querySelector('img');if(img){var a=el('a');a.href=img.getAttribute('src');a.target='_blank';a.rel='noopener noreferrer';a.setAttribute('aria-label',(figure.querySelector('figcaption')?.textContent||img.alt)+'を大きく見る');img.before(a);a.appendChild(img);}photoGrid.appendChild(figure);});original=original.filter(n=>n!==group);group.remove();});
+ if(photoCount){gallery.appendChild(el('p','出店当時の記録。現在の販売候補は「作品・在庫」で確認。','workflow-note'));gallery.appendChild(photoGrid);}else gallery.appendChild(el('p','写真はまだ未登録','workflow-note'));
  var tabs=el('div',null,'event-phases');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','出店で行うこと');
  var panels=el('div',null,'event-phase-content'),names={prepare:'準備',day:'当日',review:'振り返り'},icons={prepare:'task',day:'events',review:'review'};
  function select(phase){tabs.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.phase===phase));});panels.querySelectorAll('[data-phase-panel]').forEach(function(p){p.hidden=p.dataset.phasePanel!==phase;});}
@@ -23,9 +26,9 @@ document.querySelectorAll('main[id^="view-event-"]').forEach(function(view){
   if(phase==='review'){actions.append(link('振り返り・売上を見る',recordLink('review',id),'review'),link('次にやること',recordLink('task',id),'task'));p.appendChild(el('p','金額・振り返りはLINE認証後に表示。未分類の記録は自動で紐付けない。','workflow-note'));}
   panels.appendChild(p);
  });
- head.after(tabs,panels);if(memo){var commentBox=el('details',null,'context-comment-box');commentBox.appendChild(el('summary','この出店にコメントを書く'));commentBox.appendChild(memo);panels.after(commentBox);}
- if(facts){var info=el('details',null,'event-info');info.appendChild(el('summary','日時・会場・確認事項'));info.appendChild(facts);panels.after(info);}
- var archive=el('details',null,'event-source');archive.append(el('summary','既存の準備資料・出店写真'),el('p','以前の記載と写真を保管。私的な作業の進み具合とは別に確認。','workflow-note'));original.forEach(function(n){archive.appendChild(n);});view.appendChild(archive);
+ head.after(tabs,panels,gallery);if(memo){var commentBox=el('details',null,'context-comment-box');commentBox.appendChild(el('summary','この出店にコメントを書く'));commentBox.appendChild(memo);gallery.after(commentBox);}
+ if(facts){var info=el('details',null,'event-info');info.appendChild(el('summary','日時・会場・確認事項'));info.appendChild(facts);gallery.after(info);}
+ var archive=el('details',null,'event-source');archive.append(el('summary','既存の準備資料'),el('p','以前の記載を保管。私的な作業の進み具合とは別に確認。','workflow-note'));original.forEach(function(n){archive.appendChild(n);});view.appendChild(archive);
  var lead=view.querySelector(':scope > .view-lead');if(lead)lead.hidden=true;
  select(['event-xmas','event-tabashita'].includes(id)?'prepare':'review');
 });
