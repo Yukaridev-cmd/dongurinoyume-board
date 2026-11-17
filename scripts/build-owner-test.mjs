@@ -1,7 +1,7 @@
 import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
 import {JSDOM} from 'jsdom';
 const root=new URL('../',import.meta.url),assets={},imagePaths=new Set();
-const names=['index.html','private.html','private.js','private.css','comments-api.js','board-additions.css','accessibility.css','catalog.json','studio.css','ui-icons.js','workflow.js','events.json'];
+const names=['index.html','private.html','private.js','private.css','comments-api.js','board-additions.css','accessibility.css','catalog.json','studio.css','ui-icons.js','workflow.js','events.json','pops.json','event.html','event.js','event.css','event-board.js'];
 for(const name of names){
   let body=readFileSync(new URL(name,root),'utf8');
   if(name.endsWith('.html')){
@@ -16,5 +16,5 @@ for(const name of names){
 for(const row of JSON.parse(assets['/catalog.json'].body))for(const photo of row.photos)imagePaths.add('/'+photo.src);
 mkdirSync(new URL('.wrangler/owner-test/',root),{recursive:true});
 writeFileSync(new URL('.wrangler/owner-test-entry.js',root),'import {createOwnerTestHandler} from "../backend/owner-test.js";\nexport default {fetch:createOwnerTestHandler('+JSON.stringify({assets,imagePaths:[...imagePaths]})+')};\n');
-writeFileSync(new URL('.wrangler/owner-test/init.sql',root),['schema.sql','records-schema.sql','owner-test-marker.sql'].map(p=>readFileSync(new URL('backend/'+p,root),'utf8')).join('\n'));
+writeFileSync(new URL('.wrangler/owner-test/init.sql',root),['schema.sql','records-schema.sql','events-schema.sql','owner-test-marker.sql'].map(p=>readFileSync(new URL('backend/'+p,root),'utf8')).join('\n'));
 console.log('Prepared isolated test entry: '+names.length+' public source files; '+imagePaths.size+' existing-public image paths. No private/new photos included.');

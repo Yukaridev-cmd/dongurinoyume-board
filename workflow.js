@@ -1,12 +1,13 @@
 (function(){
 'use strict';
 function el(tag,text,className){var n=document.createElement(tag);if(text)n.textContent=text;if(className)n.className=className;return n;}
+function keepControl(control,change){var top=control.getBoundingClientRect().top;change();var delta=control.getBoundingClientRect().top-top;if(delta)window.scrollTo({top:window.scrollY+delta,behavior:'instant'});}
 function link(label,href,icon){var a=el('a',label,'workflow-action');a.href=href;a.dataset.icon=icon;return a;}
 function recordLink(kind,id){return 'private.html#kind='+kind+'&event='+encodeURIComponent(id);}
 var market=document.getElementById('view-market');
 ['pops','booth'].forEach(function(name){var source=document.getElementById('view-'+name),panel=market.querySelector('[data-market-panel='+name+']');Array.from(source.children).forEach(function(n){panel.appendChild(n);});});
 window.DonguriMarket=function(name){market.querySelectorAll('[data-market-panel]').forEach(function(p){p.hidden=p.dataset.marketPanel!==name;});market.querySelectorAll('[data-market]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.market===name));});};
-market.querySelectorAll('[data-market]').forEach(function(b){b.addEventListener('click',function(){window.DonguriMarket(b.dataset.market);});});
+market.querySelectorAll('[data-market]').forEach(function(b){b.addEventListener('click',function(){keepControl(b,function(){window.DonguriMarket(b.dataset.market);});});});
 // Move existing nodes, including comments; never duplicate their targets or contents.
 document.querySelectorAll('.pop-entry').forEach(function(card){var head=card.querySelector('.head'),body=el('details',null,'compact-detail'),summary=el('summary','画像・価格・印刷内容を開く');body.appendChild(summary);Array.from(card.children).filter(function(n){return n!==head;}).forEach(function(n){body.appendChild(n);});card.appendChild(body);});
 document.querySelectorAll('.work').forEach(function(card){var body=card.querySelector('.body');if(!body)return;var more=el('details',null,'work-more'),summary=el('summary','詳細・棚卸・相談');more.appendChild(summary);Array.from(body.children).filter(function(n){return !n.matches('h3,.price');}).forEach(function(n){more.appendChild(n);});body.appendChild(more);});
@@ -16,8 +17,8 @@ document.querySelectorAll('main[id^="view-event-"]').forEach(function(view){
  var tabs=el('div',null,'event-phases');tabs.setAttribute('role','group');tabs.setAttribute('aria-label','出店で行うこと');
  var panels=el('div',null,'event-phase-content'),names={prepare:'準備',day:'当日',review:'振り返り'},icons={prepare:'task',day:'events',review:'review'};
  function select(phase){tabs.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.phase===phase));});panels.querySelectorAll('[data-phase-panel]').forEach(function(p){p.hidden=p.dataset.phasePanel!==phase;});}
- Object.keys(names).forEach(function(phase){var b=el('button',names[phase]);b.type='button';b.dataset.phase=phase;b.dataset.icon=icons[phase];b.addEventListener('click',function(){select(phase);});tabs.appendChild(b);var p=el('section',null,'phase-panel');p.dataset.phasePanel=phase;p.setAttribute('aria-label',names[phase]);var actions=el('div',null,'workflow-actions');p.appendChild(actions);
-  if(phase==='prepare'){actions.append(link('準備すること',recordLink('task',id),'task'),link('作品・在庫を見る','#works','works'),link('ポップ・ブースを見る','#market','booth'));p.appendChild(el('p','この出店の作業を確認。作品・売り場は共通の資料。','workflow-note'));}
+ Object.keys(names).forEach(function(phase){var b=el('button',names[phase]);b.type='button';b.dataset.phase=phase;b.dataset.icon=icons[phase];b.addEventListener('click',function(){keepControl(b,function(){select(phase);});});tabs.appendChild(b);var p=el('section',null,'phase-panel');p.dataset.phasePanel=phase;p.setAttribute('aria-label',names[phase]);var actions=el('div',null,'workflow-actions');p.appendChild(actions);
+  if(phase==='prepare'){actions.append(link('持参作品・使用ポップ','event.html#id='+id,'inventory'),link('準備すること',recordLink('task',id),'task'),link('作品・在庫を見る','#works','works'),link('ポップ・ブースを見る','#market','booth'));p.appendChild(el('p','この出店の作業を確認。作品・売り場は共通の資料。','workflow-note'));}
   if(phase==='day'){actions.append(link('売上・費用を記録',recordLink('review',id)+'&new=1','review'),link('在庫を確認・記録',recordLink('inventory',id),'inventory'));if(memo)p.appendChild(memo);}
   if(phase==='review'){actions.append(link('振り返り・売上を見る',recordLink('review',id),'review'),link('次にやること',recordLink('task',id),'task'));p.appendChild(el('p','金額・振り返りはLINE認証後に表示。未分類の記録は自動で紐付けない。','workflow-note'));}
   panels.appendChild(p);

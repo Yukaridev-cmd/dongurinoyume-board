@@ -1,4 +1,5 @@
 import { recordsApi } from './records.js';
+import { eventsApi } from './events.js';
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 class HttpError extends Error {
   constructor(status, message) { super(message); this.status = status; }
@@ -68,6 +69,7 @@ function present(row, user, members) {
     stamp: row.created_at, version: row.version, canEdit: row.owner === user.id };
 }
 const routeRecords = recordsApi({ HttpError, UUID, readBody, field });
+const routeEvents = eventsApi({ HttpError, UUID, readBody, field });
 // The production entry below always requires two members. Only the separate,
 // attested owner-test entry opts into a one-member policy at build time.
 export function createHandler(fetcher = fetch, { memberCount = 2 } = {}) {
@@ -88,8 +90,10 @@ export function createHandler(fetcher = fetch, { memberCount = 2 } = {}) {
       const url = new URL(request.url);
       const match = url.pathname.match(/^\/comments\/([0-9a-f-]+)$/i);
       const isRecord = url.pathname === '/records' || /^\/records\/[0-9a-f-]+$/i.test(url.pathname);
-      if (url.pathname !== '/session' && url.pathname !== '/comments' && !match && !isRecord) throw new HttpError(404, '対象なし');
+      const isEvent = url.pathname==='/events'||url.pathname.startsWith('/events/');
+      if (!isEvent && url.pathname !== '/session' && url.pathname !== '/comments' && !match && !isRecord) throw new HttpError(404, '対象なし');
       const user = await authenticate(request, env, members, fetcher);
+      if (isEvent) return await routeEvents(request,url,env,user,members,json);
       if (isRecord) return await routeRecords(request, url, env, user, members, json);
       if (url.pathname === '/session' && request.method === 'GET') {
         const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(env.LINE_CHANNEL_ID + ':' + user.id));

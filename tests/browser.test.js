@@ -7,7 +7,7 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../comments-api.js', import.meta.url), 'utf8');
 const tick = () => new Promise(resolve => setTimeout(resolve, 10));
-function browser({ configured = true, inLine = true, loggedIn = true, records = [] } = {}) {
+function browser({ configured = true, inLine = true, loggedIn = true, records = [], events = [] } = {}) {
   const errors = [], requests = [];
   const virtualConsole = new VirtualConsole();
   virtualConsole.on('jsdomError', error => errors.push(error));
@@ -35,6 +35,7 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
       if (!records.some(row => row.id === c.id)) records.push(c);
       return Response.json({ comment: c }, { status: 201 });
     }
+    if(url.endsWith('/events'))return Response.json({events,next:null});
     if (options.method === 'PATCH') {
       const body = JSON.parse(options.body), id = url.split('/').at(-1);
       const c = records.find(row => row.id === id); Object.assign(c, { text: body.text, version: c.version + 1 });
@@ -45,6 +46,7 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
   };
   for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
   w.eval(readFileSync(new URL('../workflow.js',import.meta.url),'utf8'));
+  w.eval(readFileSync(new URL('../event-board.js',import.meta.url),'utf8'));
   w.eval(client);
   return { dom, w, requests, errors, records,
     set failure(v) { failure = v; }, set deferPost(v) { deferPost = v; }, set viewer(v){viewer=v;}, intervals,
@@ -72,6 +74,9 @@ test('four destinations, event phases and shared market keep one copy of every c
   assert.equal(d.querySelectorAll('.pop-entry').length,12);assert.equal(d.querySelectorAll('#view-market [data-memo-zone][aria-label="ブースのメモ"]').length,1);assert.equal(d.querySelector('#view-booth').children.length,0);
   assert.equal(b.requests.length,0);assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
+});
+test('new private event cards appear only after authentication and disappear on background without HTML injection',async()=>{
+ const b=browser({events:[{id:'11111111-1111-4111-8111-111111111111',publicReference:false,data:{title:'<img src=x onerror=alert(1)>',date:'2026-12-20',venue:'架空の非公開会場'}}]});try{await tick();const box=b.w.document.getElementById('private-events-list');assert.ok(box.textContent.includes('架空の非公開会場'));assert.equal(box.querySelectorAll('img').length,0);b.visibility(true);assert.equal(box.textContent.includes('架空の非公開会場'),false);assert.equal(b.requests.some(r=>r.options.method==='POST'),false);}finally{b.dom.window.close();}
 });
 test('server comments restore in their item and summary, and text is rendered safely', async () => {
   const b = browser();
@@ -299,4 +304,17 @@ test('Christmas venue detail is explicitly unconfirmed this year while December 
     assert.ok(detail.querySelector('.facts').textContent.includes('2026年12月19日（土）10:00〜17:00'));
     assert.ok(detail.querySelector('.facts').textContent.includes('豊島五丁目団地は本人指定'));assert.ok(detail.querySelector('.facts').textContent.includes('今年も同じ詳細地点かは未確認'));assert.ok(!detail.textContent.includes('11:00'));
   }finally{dom.window.close();}
+});
+
+test('main tabs restore their own scroll positions while subviews retain the focused control and do not write data',()=>{
+ const b=browser({configured:false});try{const w=b.w,d=w.document;let y=0;const scrolls=[];Object.defineProperty(w,'scrollY',{get:()=>y});w.scrollTo=(options)=>{scrolls.push(options);y=options.top;};
+ y=130;d.querySelector('[data-view-btn=works]').click();assert.equal(y,0);y=840;d.querySelector('[data-view-btn=events]').click();assert.equal(y,130);d.querySelector('[data-view-btn=works]').click();assert.equal(y,840);assert.ok(scrolls.every(s=>s.behavior==='instant'));
+ w.DonguriBoard.showView('event-xmas');const phase=d.querySelector('#view-event-xmas [data-phase=day]');phase.focus();phase.click();assert.equal(d.activeElement,phase);assert.equal(phase.getAttribute('aria-pressed'),'true');assert.equal(b.requests.length,0);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
+test('same verified identity refreshes private event cards without clearing or replacing unchanged content',async()=>{
+ const b=browser({events:[{id:'11111111-1111-4111-8111-111111111111',publicReference:false,data:{title:'架空の非公開出店',date:'2026-12-20',venue:'架空会場'}}]});try{await tick();const d=b.w.document,box=d.getElementById('private-events-list'),card=box.querySelector('article');card.querySelector('a').focus();b.w.dispatchEvent(new b.w.CustomEvent('comments-auth',{detail:{ready:true,viewer:'a'.repeat(64)}}));assert.equal(box.querySelector('article'),card);await tick();assert.equal(box.querySelector('article'),card);assert.equal(d.activeElement,card.querySelector('a'));b.w.dispatchEvent(new b.w.CustomEvent('comments-auth',{detail:{ready:true,viewer:'b'.repeat(64)}}));assert.equal(box.contains(card),false);assert.equal(box.textContent.includes('架空会場'),false);assert.equal(b.errors.length,0);}finally{b.dom.window.close();}
+});
+test('POP choices match existing source cards exactly and introduce no new images',()=>{
+ const dom=new JSDOM(html);try{const choices=JSON.parse(readFileSync(new URL('../pops.json',import.meta.url),'utf8')),cards=[...dom.window.document.querySelectorAll('.pop-entry')].map(e=>({id:e.id,title:e.querySelector('h3').textContent.trim()}));assert.deepEqual(choices,cards);assert.equal(new Set(choices.map(c=>c.id)).size,12);}finally{dom.window.close();}
 });

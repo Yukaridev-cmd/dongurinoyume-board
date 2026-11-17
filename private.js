@@ -7,8 +7,9 @@ var form = document.getElementById('record-form'), fields = document.getElementB
 var feedback = document.getElementById('record-feedback'), list = document.getElementById('record-list');
 var eventFilter=document.getElementById('event-filter'),eventChoice=document.getElementById('record-event');
 var eventNames={};Array.from(eventChoice.options).forEach(function(o){if(o.value)eventNames[o.value]=o.textContent;});
+function addPrivateEvents(items){items.filter(e=>!e.publicReference).forEach(function(e){eventNames[e.id]=e.data.title;[eventChoice,eventFilter].forEach(function(select){var option=Array.from(select.options).find(o=>o.value===e.id);if(!option){option=el('option');option.value=e.id;option.dataset.privateEvent='';select.appendChild(option);}option.textContent=e.data.title;});});}
 function inScope(r){return eventFilter.value==='all'||(eventFilter.value==='unassigned'?!r.data.eventId:r.data.eventId===eventFilter.value);}
-function scope(){var id=eventFilter.value,back=document.getElementById('event-back');back.hidden=!eventNames[id];if(eventNames[id]){back.href='index.html#'+id;back.textContent='この出店へ戻る';}document.getElementById('request-preview').textContent='';document.getElementById('request-preview').hidden=true;document.getElementById('export-feedback').textContent='';render();}
+function scope(){var id=eventFilter.value,back=document.getElementById('event-back');back.hidden=!eventNames[id];if(eventNames[id]){back.href=id.startsWith('event-')?'index.html#'+id:'event.html#id='+id;back.textContent='この出店へ戻る';}document.getElementById('request-preview').textContent='';document.getElementById('request-preview').hidden=true;document.getElementById('export-feedback').textContent='';render();}
 var labels = { review:'振り返り・売上',task:'やりたいこと',inventory:'棚卸メモ',photo:'写真の確認',request:'更新の依頼' };
 var descriptions = {
 review:['イベントを終えたら','気づきと金額を記録。空欄と0円を区別。'],
@@ -36,9 +37,9 @@ function protectDraft() {
   var dirty=Boolean(hasInput()),query=document.getElementById('record-search').value;
   if(currentViewer && (dirty || query)) {
     var values={};draftFields.forEach(function(key){values[key]=form.elements[key].value;});
-    drafts.set(currentViewer,{kind:kind,values:values,id:form._recordId,editing:editing?{id:editing.id,version:editing.version,data:editing.data&&Object.prototype.hasOwnProperty.call(editing.data,'eventId')?{eventId:editing.data.eventId}:{}}:null,dirty:dirty,query:query,eventFilter:eventFilter.value,openOnly:document.getElementById('open-only').checked});
+    drafts.set(currentViewer,{kind:kind,values:values,id:form._recordId,editing:editing?{id:editing.id,version:editing.version,data:editing.data&&Object.prototype.hasOwnProperty.call(editing.data,'eventId')?{eventId:editing.data.eventId}:{}}:null,dirty:dirty,query:query,eventFilter:eventFilter.value,privateEvents:Object.keys(eventNames).filter(id=>!id.startsWith('event-')).map(id=>({id,data:{title:eventNames[id]}})),openOnly:document.getElementById('open-only').checked});
   }
-  ready=false;generation++;records=[];reset();setSaving(false);
+  ready=false;generation++;records=[];reset();setSaving(false);document.querySelectorAll('[data-private-event]').forEach(n=>n.remove());Object.keys(eventNames).filter(id=>!id.startsWith('event-')).forEach(id=>delete eventNames[id]);eventFilter.value='all';scope();
   document.getElementById('record-search').value='';document.getElementById('open-only').checked=false;
   document.getElementById('copy-requests').disabled=true;document.getElementById('export-records').disabled=true;
   feedback.textContent=drafts.size?'未保存入力をこのページ内で一時保護。同じLINEアカウントを確認後に復元':'';
@@ -46,7 +47,7 @@ function protectDraft() {
 }
 function restoreDraft() {
   var draft=drafts.get(currentViewer);if(!draft)return false;
-  setKind(draft.kind);eventFilter.value=draft.eventFilter||'all';scope();
+  addPrivateEvents(draft.privateEvents||[]);setKind(draft.kind);eventFilter.value=draft.eventFilter||'all';scope();
   draftFields.forEach(function(key){form.elements[key].value=draft.values[key];});
   editing=draft.editing;if(draft.id)form._recordId=draft.id;
   if(draft.dirty)form.setAttribute('data-private-dirty','');
@@ -167,6 +168,8 @@ async function load() {
   try{
     do{var data=await window.DonguriComments.save('/records'+(cursor?'?cursor='+encodeURIComponent(cursor):''),'GET');rows=rows.concat(data.records);cursor=data.next;}while(cursor);
     if(epoch!==generation||!ready)return;
+    var eventRows=[],eventCursor='';do{var eventData=await window.DonguriComments.save('/events'+(eventCursor?'?cursor='+encodeURIComponent(eventCursor):''),'GET');eventRows=eventRows.concat(eventData.events||[]);eventCursor=eventData.next;}while(eventCursor);if(epoch!==generation||!ready)return;addPrivateEvents(eventRows);
+    if(initialEvent&&eventNames[initialEvent]){eventFilter.value=initialEvent;if(initialParams.get('new')==='1'&&!form.hasAttribute('data-private-dirty')&&!editing&&!form.hidden)form.elements.eventId.value=initialEvent;initialEvent=null;scope();}
     records=rows;render();if(!hasInput())feedback.textContent='';
   }catch(error){if(epoch===generation)feedback.textContent=error.message;}
   finally{if(epoch===generation)fields.disabled=!ready||saving;}

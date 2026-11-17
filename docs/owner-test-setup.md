@@ -5,7 +5,7 @@
 ## 分離条件
 
 - 本番用`DB`や`LINE_MEMBERS`が存在するテスト設定は拒否する。接続名は`TEST_DB`のみ
-- 新しいD1にだけ`schema.sql`・`records-schema.sql`・`owner-test-marker.sql`を適用する。本番DBへ適用しない
+- 新しいD1にだけ`schema.sql`・`records-schema.sql`・`events-schema.sql`・`owner-test-marker.sql`を適用する。本番DBへ適用しない
 - Workerは専用マーカーを持つDBだけを使い、テーブルやマーカーを自動作成しない
 - 本人の識別子は`TEST_OWNER_LINE_ID`のSecretへ保存し、公開ファイルやGitへ記載しない
 - ログ・トレース・追加プレビューURLを無効にする。認証トークンはURLに追加しない
@@ -30,3 +30,9 @@
 実際の売上・費用・在庫・個人的な振り返りは入力しない。テストデータを削除する場合は画面の確認を経る。本人のスマホ操作、LINE上の同意、認証済みの保存結果は実行前に成功扱いしない。奥様との相互確認はこの単独テストに含めない。
 
 `scripts/check-owner-test.mjs`は`DONGURI_OWNER_TEST_ORIGIN`に指定したテスト専用オリジンへ、外枠の表示と匿名・偽トークンの拒否だけを確認する。有効なトークンや記録本文を送らず、記録を作成しない。
+
+## 既存テスト環境への出店準備機能の追加
+
+既に記録のある本人限定D1には、`backend/events-schema.sql` の CREATE IF NOT EXISTS だけを追加する。新規環境用の `init.sql` を流し直さず、本番D1にも適用しない。追加テーブルは `event_plans` と `event_plan_history`、変更前の版を保つトリガーは `preserve_event_plan_version`。既存の記録・コメントを移行したり出店へ推定分類したりしない。
+
+適用前後で既存テーブルの件数・版合計・履歴件数を比較する。追加テーブルを確認してから新版Workerを配備する。公開外枠から名前・メモを取得できないこと、`/events` と個別出店APIが未認証を拒否することを確認する。架空データの認証済み保存は、配備しただけで検証済みとしない。

@@ -518,7 +518,7 @@ footer{margin-top:32px}
 
 </style>
 <link rel="stylesheet" href="accessibility.css" />
-<link rel="stylesheet" href="studio.css">
+<link rel="stylesheet" href="studio.css"><link rel="stylesheet" href="event.css">
 <script defer src="ui-icons.js"></script>
 </head>
 <body style="background:#fdf6e0;color-scheme:light only">
@@ -604,7 +604,7 @@ footer{margin-top:32px}
 <div class="view-head"><h2>イベント</h2></div>
 <p class="view-lead">タップで各イベントのページへ移動</p>
 
-<h3 class="subhead">これからのイベント</h3>
+<div class="event-create-row"><h3 class="subhead">これからのイベント</h3><a class="btn small" data-icon="add" href="event.html#new">出店を追加</a></div>
 <div class="event-list">
 <article class="event-card">
 <div class="body">
@@ -628,7 +628,7 @@ footer{margin-top:32px}
 </article>
 </div>
 
-<h3 class="subhead">終わったイベント</h3>
+<details class="private-events-group" open><summary>二人で追加した出店</summary><div id="private-events-list"></div></details><h3 class="subhead">終わったイベント</h3>
 <div class="event-list">
 <article class="event-card">
 <img src="assets/heart-ichigo.jpg" alt="ハートまつりのいちご狩りの陳列" />
@@ -1821,7 +1821,7 @@ document.body.removeChild(ta);
 var viewIds = ['home','events','event-xmas','event-tabashita','event-wombat','event-kiraria-1107','event-kiraria-0829','event-kiraria-0516','event-kiraria-0228','event-toyoshima','event-heart','works','booth','pops','share','market'];
 var parentTab = { 'event-xmas': 'events', 'event-tabashita': 'events', 'event-wombat': 'events', 'event-kiraria-1107': 'events', 'event-kiraria-0829': 'events', 'event-kiraria-0516': 'events', 'event-kiraria-0228': 'events', 'event-toyoshima': 'events', 'event-heart': 'events'};
 parentTab.booth='market';parentTab.pops='market';parentTab.share='market';parentTab.home='events';
-var settingHash = false;
+var settingHash = false,viewScroll={};
 var menuButtons=Array.from(document.querySelectorAll('[data-view-btn]'));
 menuButtons.forEach(function(b){
   b.id='tab-'+b.getAttribute('data-view-btn');
@@ -1832,11 +1832,12 @@ menuButtons.forEach(function(b){
     if(event.key==='ArrowRight')next=(index+1)%menuButtons.length;
     else if(event.key==='ArrowLeft')next=(index+menuButtons.length-1)%menuButtons.length;
     else if(event.key==='Home')next=0;else if(event.key==='End')next=menuButtons.length-1;else return;
-    event.preventDefault();menuButtons[next].click();menuButtons[next].focus();
+    event.preventDefault();menuButtons[next].click();menuButtons[next].focus({preventScroll:true});
   });
 });
 viewIds.forEach(function(id){var panel=document.getElementById('view-'+id);if(panel){panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby','tab-'+(parentTab[id]||id));}});
 function showView(id, anchor) {
+var previousView=document.querySelector('.view.active');if(previousView)viewScroll[previousView.id.replace('view-','')]=window.scrollY;
 var requested=id;if(window.DonguriMarket&&['booth','pops'].includes(id)){window.DonguriMarket(id);id='market';}
 if(anchor){var anchored=document.getElementById(anchor),anchoredView=anchored&&anchored.closest('.view');if(anchoredView)id=anchoredView.id.replace(/^view-/,'');var marketPanel=anchored&&anchored.closest('[data-market-panel]');if(marketPanel&&window.DonguriMarket)window.DonguriMarket(marketPanel.dataset.marketPanel);}
 if (viewIds.indexOf(id) === -1) id = 'home';
@@ -1853,7 +1854,7 @@ b.setAttribute('aria-controls','view-'+(b.getAttribute('data-view-btn')===tab?id
 var target = anchor? document.getElementById(anchor): null;
 window.dispatchEvent(new CustomEvent('board-view',{detail:{id:id,requested:requested}}));
 if (target) { var disclosure=target; while(disclosure){if(disclosure.tagName==='DETAILS')disclosure.open=true;disclosure=disclosure.parentElement;} target.scrollIntoView({ block: 'start' }); }
-else { window.scrollTo(0, 0); }
+else { window.scrollTo({top:viewScroll[id]||0,behavior:'instant'}); }
 try {
 settingHash = true;
 history.replaceState(null, '', '#' + (anchor || id));
@@ -2266,7 +2267,7 @@ setCommentAccess();
 })();
 
 </script>
-<script src="workflow.js"></script>
+<script src="workflow.js"></script><script src="event-board.js"></script>
 <script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script defer src="comments-api.js"></script>
 </body>

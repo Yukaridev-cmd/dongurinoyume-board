@@ -7,7 +7,7 @@ const source=readFileSync(new URL('../private.js',import.meta.url),'utf8');
 const catalog=JSON.parse(readFileSync(new URL('../catalog.json',import.meta.url),'utf8'));
 const tick=()=>new Promise(resolve=>setTimeout(resolve,10));
 function fixture(hash=''){
-  const errors=[],calls=[],rows=[];let fail=false,delay=null,delayWrite=null;
+  const errors=[],calls=[],rows=[],events=[];let fail=false,delay=null,delayWrite=null;
   const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e));
   const dom=new JSDOM(html,{url:'https://yukaridev-cmd.github.io/dongurinoyume-board/private.html'+hash,runScripts:'outside-only',pretendToBeVisual:true,virtualConsole});
   const w=dom.window;w.HTMLElement.prototype.scrollIntoView=function(){};w.confirm=()=>true;
@@ -15,7 +15,7 @@ function fixture(hash=''){
   const copied=[];Object.defineProperty(w.navigator,'clipboard',{value:{writeText:async text=>copied.push(text)}});
   w.DonguriComments={save:async(path,method,body)=>{
     calls.push({path,method,body});if(fail)throw Error('テストの通信失敗');
-    if(method==='GET'){if(delay)await delay;return{records:rows,next:null};}
+    if(method==='GET'){if(delay)await delay;return path.startsWith('/events')?{events,next:null}:{records:rows,next:null};}
     if(delayWrite)await delayWrite;
     if(method==='POST'){const record={id:body.id,kind:body.kind,data:body.data,author:'本人',updatedBy:'本人',version:1,canEdit:true,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};rows.push(record);return{record};}
     const record=rows.find(r=>path.endsWith(r.id));
@@ -23,7 +23,7 @@ function fixture(hash=''){
     if(method==='DELETE'){rows.splice(rows.indexOf(record),1);return{deleted:true};}
   }};
   w.eval(source);
-  return{dom,w,errors,calls,rows,copied,set fail(v){fail=v;},set delay(v){delay=v;},set delayWrite(v){delayWrite=v;},auth(ready,viewer='a'.repeat(64)){w.dispatchEvent(new w.CustomEvent('comments-auth',{detail:{ready,author:ready?'本人':'',viewer:ready?viewer:''}}));},clear(){w.dispatchEvent(new w.CustomEvent('comments-clear'));},form:w.document.getElementById('record-form')};
+  return{dom,w,errors,calls,rows,events,copied,set fail(v){fail=v;},set delay(v){delay=v;},set delayWrite(v){delayWrite=v;},auth(ready,viewer='a'.repeat(64)){w.dispatchEvent(new w.CustomEvent('comments-auth',{detail:{ready,author:ready?'本人':'',viewer:ready?viewer:''}}));},clear(){w.dispatchEvent(new w.CustomEvent('comments-clear'));},form:w.document.getElementById('record-form')};
 }
 test('compact lists open the requested kind and editor only on demand, preserving drafts through suspension',async()=>{
  const b=fixture('#kind=inventory');try{b.auth(true);await tick();const d=b.w.document;
@@ -89,7 +89,7 @@ test('shared task editing and search work; copy includes only explicitly pending
   const b=fixture();try{b.auth(true);await tick();b.w.document.querySelector('[data-kind=task]').click();b.form.elements.title.value='テストの作業';b.form.elements.status.value='未着手';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();
     [...b.w.document.querySelectorAll('.record-card button')].find(x=>x.textContent==='編集').click();b.form.elements.status.value='完了';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.equal(b.rows[0].data.status,'完了');
     b.w.document.getElementById('open-only').checked=true;b.w.document.getElementById('open-only').dispatchEvent(new b.w.Event('change'));assert.equal(b.w.document.querySelectorAll('.record-card').length,0);
-    b.w.document.querySelector('[data-kind=request]').click();b.form.elements.title.value='依頼テスト';b.form.elements.notes.value='確認する本文';b.form.elements.status.value='未対応';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();b.w.document.getElementById('copy-requests').click();await tick();assert.ok(b.copied[0].includes('確認する本文'));assert.ok(!b.copied[0].includes('テストの作業'));assert.ok(b.calls.every(c=>c.path.startsWith('/records')));assert.equal(b.errors.length,0);
+    b.w.document.querySelector('[data-kind=request]').click();b.form.elements.title.value='依頼テスト';b.form.elements.notes.value='確認する本文';b.form.elements.status.value='未対応';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();b.w.document.getElementById('copy-requests').click();await tick();assert.ok(b.copied[0].includes('確認する本文'));assert.ok(!b.copied[0].includes('テストの作業'));assert.ok(b.calls.every(c=>c.path.startsWith('/records')||(c.path==='/events'&&c.method==='GET')));assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
 });
 test('authentication loss clears visible records, amounts, drafts and late responses',async()=>{
@@ -128,4 +128,10 @@ test('late delete acknowledgement after background cannot reset a restored form'
     assert.equal(b.form.getAttribute('aria-busy'),'true');b.clear();b.auth(false);b.auth(true);await tick();assert.equal(b.form.elements.notes.value,'preserved edit');assert.equal(b.form.getAttribute('aria-busy'),'false');
     finish();await tick();assert.equal(b.form.elements.notes.value,'preserved edit');assert.equal(b.w.document.getElementById('record-fields').disabled,false);assert.ok(!b.w.document.getElementById('record-feedback').textContent.includes('削除済み'));assert.equal(b.errors.length,0);
   }finally{b.dom.window.close();}
+});
+
+test('private event names and association drafts disappear on lock and restore only for their verified viewer',async()=>{
+ const id='11111111-1111-4111-8111-111111111111',b=fixture('#kind=task&event='+id+'&new=1');try{
+ b.events.push({id,publicReference:false,data:{title:'架空の私的出店'}});b.auth(true);await tick();const d=b.w.document;assert.equal(b.form.elements.eventId.value,id);assert.equal(d.getElementById('event-filter').value,id);assert.ok(d.getElementById('event-back').href.endsWith('event.html#id='+id));b.form.elements.title.value='架空の持参準備';b.form.dispatchEvent(new b.w.Event('input'));b.clear();assert.equal(d.body.textContent.includes('架空の私的出店'),false);assert.equal(d.querySelectorAll('[data-private-event]').length,0);b.auth(true,'b'.repeat(64));await tick();assert.equal(b.form.elements.title.value,'');b.clear();b.auth(true);await tick();assert.equal(b.form.elements.title.value,'架空の持参準備');assert.equal(b.form.elements.eventId.value,id);b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.equal(b.rows[0].data.eventId,id);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
 });

@@ -13,6 +13,7 @@ function database(path = ':memory:') {
   const sqlite = new DatabaseSync(path);
   sqlite.exec(readFileSync(new URL('../backend/schema.sql', import.meta.url), 'utf8'));
   sqlite.exec(readFileSync(new URL('../backend/records-schema.sql', import.meta.url), 'utf8'));
+  sqlite.exec(readFileSync(new URL('../backend/events-schema.sql', import.meta.url), 'utf8'));
   return { sqlite, prepare(sql) {
     return { bind(...args) { const stmt = sqlite.prepare(sql); return {
       async run() { return { meta: { changes: Number(stmt.run(...args).changes) } }; },
@@ -220,4 +221,26 @@ test('event associations are explicit, validated, versioned and removable withou
  const legacy='22222222-2222-4222-8222-222222222222';await f.request('/records','POST',{id:legacy,kind:'review',data:{title:'未分類の記録'}});
  const rows=(await (await f.request('/records')).json()).records;assert.equal(Object.hasOwn(rows.find(r=>r.id===legacy).data,'eventId'),false);
  assert.equal((await (await f.request('/comments')).json()).comments.length,0);
+});
+test('new private events and selections require membership, persist once, and retain shared edit history',async()=>{
+ const f=fixture(),data={title:'架空の出店',date:'2026-12-20',start:'10:00',end:'16:00',venue:'テスト会場',notes:'非公開テスト',products:['work-haniwa'],pops:['pop-haniwa']};
+ f.subject=outsider;assert.equal((await f.request('/events/'+id,'POST',{version:0,data})).status,403);assert.equal((await f.request('/events')).status,403);f.subject=first;
+ assert.equal((await f.request('/events/'+id,'POST',{version:0,data})).status,201);assert.equal((await f.request('/events/'+id,'POST',{version:0,data})).status,201);
+ assert.equal(f.db.sqlite.prepare('SELECT COUNT(*) n FROM event_plans').get().n,1);
+ f.subject=second;let row=(await (await f.request('/events/'+id)).json()).event;assert.equal(row.data.products[0],'work-haniwa');assert.equal('owner' in row,false);
+ const edited={...data,products:[],pops:[]};assert.equal((await f.request('/events/'+id,'POST',{version:1,data:edited})).status,200);assert.equal((await f.request('/events/'+id,'POST',{version:1,data:edited})).status,200);
+ assert.equal((await f.request('/events/'+id,'POST',{version:1,data})).status,409);assert.equal(f.db.sqlite.prepare('SELECT COUNT(*) n FROM event_plan_history').get().n,1);
+ const recordId='22222222-2222-4222-8222-222222222222';assert.equal((await f.request('/records','POST',{id:recordId,kind:'task',data:{title:'テスト準備',status:'未着手',eventId:id}})).status,201);
+ assert.equal((await (await f.request('/comments')).json()).comments.length,0);assert.equal((await (await f.request('/events')).json()).events.length,1);
+});
+test('selection lists reject unknown or duplicate items, dates, and unsaved event associations',async()=>{
+ const f=fixture(),data={title:'架空',products:[],pops:[]};
+ for(const changed of [{products:['not-a-work']},{products:['work-haniwa','work-haniwa']},{pops:['https://attacker.example']},{date:'2026-02-30'},{start:'25:00'},{start:'16:00',end:'10:00'}])assert.equal((await f.request('/events/'+id,'POST',{version:0,data:{...data,...changed}})).status,400);
+ assert.equal((await f.request('/records','POST',{id,kind:'task',data:{title:'架空',status:'未着手',eventId:id}})).status,400);
+ assert.equal((await f.request('/events/event-xmas','POST',{version:0,data:{...data,title:'公開名の書換え',venue:'変更'}})).status,201);
+ const event=(await (await f.request('/events/event-xmas')).json()).event;assert.equal(event.data.title,'クリスマスマルシェ（2026年12月）');assert.equal(event.data.venue,'');assert.equal(event.publicReference,true);
+});
+
+test('event plans and selected items survive database reopen with unclassified records untouched',async()=>{
+ const dir=mkdtempSync(join(tmpdir(),'donguri-event-test-')),path=join(dir,'private.sqlite');let db=database(path);try{let f=fixture(db);await f.request('/records','POST',{id,kind:'review',data:{title:'架空の未分類記録',salesYen:0,costsYen:null}});const data={title:'架空の出店',products:['work-haniwa'],pops:['pop-haniwa']};assert.equal((await f.request('/events/'+id,'POST',{version:0,data})).status,201);db.sqlite.close();db=database(path);f=fixture(db);f.subject=second;const row=(await(await f.request('/events/'+id)).json()).event;assert.deepEqual(row.data.products,data.products);assert.deepEqual(row.data.pops,data.pops);const record=(await(await f.request('/records')).json()).records[0];assert.equal(Object.hasOwn(record.data,'eventId'),false);assert.equal(record.data.salesYen,0);assert.equal(record.data.costsYen,null);}finally{db.sqlite.close();rmSync(path);rmdirSync(dir);}
 });

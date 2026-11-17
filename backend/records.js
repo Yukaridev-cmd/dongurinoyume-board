@@ -22,7 +22,7 @@ export function recordsApi({ HttpError, UUID, readBody, field }) {
     const data = { title: field(input.title, 160), notes: optional(input.notes, 4000) };
     // Missing legacy fields remain absent. No inferred association or migration.
     if (Object.hasOwn(input, 'eventId')) {
-      if (typeof input.eventId !== 'string' || (input.eventId !== '' && !events.some(event => event.id === input.eventId))) throw new HttpError(400, '登録済みの出店を選択');
+      if (typeof input.eventId !== 'string' || (input.eventId !== '' && !UUID.test(input.eventId) && !events.some(event => event.id === input.eventId))) throw new HttpError(400, '登録済みの出店を選択');
       data.eventId = input.eventId;
     }
     if (kind === 'review') Object.assign(data, { date: date(input.date), salesYen: number(input.salesYen, 100000000), costsYen: number(input.costsYen, 100000000) });
@@ -42,6 +42,7 @@ export function recordsApi({ HttpError, UUID, readBody, field }) {
     }
     return data;
   }
+  async function checkEvent(data,env){if(data&&UUID.test(data.eventId||'')){const row=await env.DB.prepare('SELECT id FROM event_plans WHERE id = ?').bind(data.eventId).first();if(!row)throw new HttpError(400,'保存済みの出店を選択');}}
   function present(row, user, members) {
     return { id: row.id, kind: row.kind, data: JSON.parse(row.data), author: members[row.owner] || '共有メンバー',
       updatedBy: members[row.updated_by] || '共有メンバー', createdAt: row.created_at, updatedAt: row.updated_at,
@@ -59,6 +60,7 @@ export function recordsApi({ HttpError, UUID, readBody, field }) {
     if (url.pathname === '/records' && request.method === 'POST') {
       const body = await readBody(request);
       if (!UUID.test(body.id)) throw new HttpError(400, '記録番号を確認');
+      await checkEvent(body.data,env);
       const data = JSON.stringify(validate(body.kind, body.data)), now = new Date().toISOString();
       await env.DB.prepare('INSERT INTO records (id,kind,owner,data,created_at,updated_at,updated_by) VALUES (?,?,?,?,?,?,?) ON CONFLICT(id) DO NOTHING')
         .bind(body.id,body.kind,user.id,data,now,now,user.id).run();
@@ -73,6 +75,7 @@ export function recordsApi({ HttpError, UUID, readBody, field }) {
       if (!row) throw new HttpError(404, '記録なし。再読込して確認');
       if (row.kind === 'review' && row.owner !== user.id) throw new HttpError(403, '振り返りは書いた本人だけ編集可能');
       const now = new Date().toISOString();
+      if(request.method==='PATCH')await checkEvent(body.data,env);
       const statement = request.method === 'PATCH'
         ? env.DB.prepare('UPDATE records SET data = ?, updated_at = ?, updated_by = ?, version = version + 1 WHERE id = ? AND version = ? AND deleted = 0').bind(JSON.stringify(validate(row.kind,body.data)),now,user.id,row.id,body.version)
         : env.DB.prepare('UPDATE records SET deleted = 1, updated_at = ?, updated_by = ?, version = version + 1 WHERE id = ? AND version = ? AND deleted = 0').bind(now,user.id,row.id,body.version);

@@ -15,7 +15,7 @@ export function createOwnerTestHandler({ assets = {}, imagePaths = [], fetcher =
         !env.TEST_DB||!/^U[0-9a-f]{32}$/.test(env.TEST_OWNER_LINE_ID||'')||!/^\d+$/.test(env.LINE_CHANNEL_ID||''))return json('本人用テスト環境の設定待ち',503);
       const marker=await env.TEST_DB.prepare('SELECT purpose FROM owner_test_environment WHERE id = 1').bind().first();
       if(marker?.purpose!==MARKER)return json('テスト専用の保存先を確認',503);
-      if(/^\/(?:session|comments|records)(?:\/|$)/.test(url.pathname)) {
+      if(/^\/(?:session|comments|records|events)(?:\/|$)/.test(url.pathname)) {
         const normalized = new Headers(request.headers);
         // Same-origin browser GETs omit Origin. Never replace a supplied Origin.
         if(!normalized.has('Origin')&&request.method==='GET'&&normalized.get('Sec-Fetch-Site')==='same-origin')normalized.set('Origin',url.origin);

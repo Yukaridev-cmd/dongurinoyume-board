@@ -7,7 +7,7 @@ import {createHandler} from '../backend/worker.js';
 const owner='U'+'1'.repeat(32),other='U'+'2'.repeat(32),origin='https://owner-test.example';
 function fixture(){
  const sqlite=new DatabaseSync(':memory:');
- for(const file of ['schema.sql','records-schema.sql','owner-test-marker.sql'])sqlite.exec(readFileSync(new URL('../backend/'+file,import.meta.url),'utf8'));
+ for(const file of ['schema.sql','records-schema.sql','events-schema.sql','owner-test-marker.sql'])sqlite.exec(readFileSync(new URL('../backend/'+file,import.meta.url),'utf8'));
  const db={prepare(sql){return{bind(...args){const s=sqlite.prepare(sql);return{first:async()=>s.get(...args)||null,all:async()=>({results:s.all(...args)}),run:async()=>({meta:{changes:Number(s.run(...args).changes)}})};}};}};
  const env={TEST_DB:db,OWNER_TEST_ONLY:'true',OWNER_TEST_ORIGIN:origin,TEST_OWNER_LINE_ID:owner,LINE_CHANNEL_ID:'123456',TEST_LIFF_ID:'123456-test'};
  let subject=owner;const external=[];
@@ -56,5 +56,13 @@ test('production entry still rejects one member even with owner-test flags prese
  const f=fixture();try{
   const response=await createHandler(f.fetcher)(new Request(origin+'/session',{headers:{Origin:origin,Authorization:'Bearer signed.id.token'}}),{...f.env,DB:f.db,ALLOWED_ORIGIN:origin,LINE_MEMBERS:JSON.stringify({[owner]:'本人'})});
   assert.equal(response.status,503);assert.equal(f.external.length,0);
+ }finally{f.sqlite.close();}
+});
+
+test('isolated event plans admit only the verified owner and preserve existing comments and records',async()=>{
+ const f=fixture(),id='11111111-1111-4111-8111-111111111111',data={title:'架空の本人テスト',products:['work-haniwa'],pops:['pop-haniwa']},h={'Content-Type':'application/json'};try{
+ for(const path of ['/events','/events/'+id])assert.equal((await f.request(path,'GET',undefined,{Authorization:''})).status,401);
+ f.subject=other;assert.equal((await f.request('/events')).status,403);assert.equal((await f.request('/events/'+id,'POST',{version:0,data},h)).status,403);assert.equal(f.sqlite.prepare('SELECT COUNT(*) n FROM event_plans').get().n,0);
+ f.subject=owner;assert.equal((await f.request('/events/'+id,'POST',{version:0,data},h)).status,201);const result=await(await f.request('/events/'+id)).json();assert.equal(result.event.data.title,data.title);assert.equal(JSON.stringify(result).includes(owner),false);assert.equal(f.sqlite.prepare('SELECT COUNT(*) n FROM comments').get().n,0);assert.equal(f.sqlite.prepare('SELECT COUNT(*) n FROM records').get().n,0);
  }finally{f.sqlite.close();}
 });
