@@ -2807,3 +2807,16 @@ header,
   border: 0 !important;
   margin: 0 !important;
 }
+:root {
+  --paper: #faf8f2;
+  --paper-deep: #f0ece3;
+  --surface: #fff;
+  --studio-white: #fff;
+  --band: #f3f0e9;
+}
+body .primary-nav > a[href] {
+  background: transparent !important;
+  color: #514535 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
