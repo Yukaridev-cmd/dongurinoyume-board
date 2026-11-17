@@ -4,6 +4,36 @@ import { readFileSync } from 'node:fs';
 import { JSDOM, VirtualConsole } from 'jsdom';
 const read = (p) => readFileSync(new URL('../' + p, import.meta.url), 'utf8'),
   tick = () => new Promise((r) => setTimeout(r, 15));
+test('event comments preserve the overall target, add stable phase targets and only open on explicit incoming request', async () => {
+  const b = fixture('#id=event-xmas&comment=1');
+  try {
+    const targets = [],
+      opened = [];
+    b.w.DonguriContextComments = {
+      button: (target, label, eventId) => {
+        const button = b.w.document.createElement('button');
+        button.type = 'button';
+        button.textContent = 'コメントを書く';
+        button.addEventListener('click', () => opened.push(target));
+        targets.push({ target, label, eventId });
+        return button;
+      },
+    };
+    b.auth();
+    await tick();
+    assert.ok(targets.some((t) => t.target === 'イベント：クリスマスマルシェ（2026年12月）'));
+    assert.ok(targets.some((t) => t.target === 'コーナー：phase:event-xmas:prepare'));
+    assert.deepEqual(opened, ['イベント：クリスマスマルシェ（2026年12月）']);
+    b.w.document.querySelector('[data-plan-phase="review"]').click();
+    assert.ok(targets.some((t) => t.target === 'コーナー：phase:event-xmas:review'));
+    assert.equal(opened.length, 1);
+    assert.ok(b.calls.every((c) => c.method === 'GET'));
+    b.suspend();
+    assert.equal(b.w.document.getElementById('event-comment-entry').children.length, 0);
+  } finally {
+    b.dom.window.close();
+  }
+});
 function fixture(hash = '#new') {
   const errors = [],
     calls = [],

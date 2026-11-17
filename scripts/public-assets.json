@@ -28,7 +28,8 @@
     "gallery.html",
     "gallery.js",
     "gallery.css",
-    "gallery.json"
+    "gallery.json",
+    "comment-coverage.js"
   ],
   "fonts": [
     "assets/fonts/ZenMaruGothic-Medium.woff2",

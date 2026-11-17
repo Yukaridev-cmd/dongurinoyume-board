@@ -71,6 +71,15 @@
 .board-photo-card[hidden] {
   display: none;
 }
+.board-photo-card:has(.inline-memo[open]) {
+  grid-column: 1 / -1;
+}
+.board-photo-card > .comment-corner-slot {
+  padding: 0 8px 8px;
+}
+.board-photo-card .inline-memo {
+  margin-top: 0;
+}
 .board-photo-card a {
   display: block;
   background: #f2f0eb;

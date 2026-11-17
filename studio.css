@@ -251,6 +251,18 @@ select {
   min-height: 44px;
   border-width: 1px;
 }
+.comment-corner-slot {
+  min-width: 0;
+}
+.comment-corner-slot .inline-memo[open] textarea {
+  font-size: 16px;
+}
+figure .comment-corner-slot {
+  padding: 0 8px 8px;
+}
+.event-photo-grid figure:has(.inline-memo[open]) {
+  grid-column: 1 / -1;
+}
 .inline-memo summary {
   cursor: pointer;
   min-height: 44px;

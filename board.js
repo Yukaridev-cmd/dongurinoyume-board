@@ -263,6 +263,11 @@
   });
   /* ---- comments: name-tagged, per item, with a summary copy ---- */
   var comments = [];
+  // Only public labels live here. Stored targets remain stable when a heading changes.
+  var commentTargetLabels = Object.create(null);
+  function commentTargetLabel(target) {
+    return commentTargetLabels[target] || target;
+  }
   var currentAuthor = '';
   var commentsReady = false;
   var currentViewer = '',
@@ -525,7 +530,11 @@
         await window.DonguriComments.save('/records', 'POST', {
           id: c.id,
           kind: 'request',
-          data: { title: c.target.slice(0, 160), notes: c.text, status: '未対応' },
+          data: {
+            title: commentTargetLabel(c.target).slice(0, 160),
+            notes: c.text,
+            status: '未対応',
+          },
         });
         request.textContent = '依頼に追加済み';
         var go = document.createElement('a');
@@ -664,7 +673,7 @@
         var div = document.createElement('div');
         div.className = 'sum-group';
         var h = document.createElement('h4');
-        h.textContent = g.target;
+        h.textContent = commentTargetLabel(g.target);
         div.appendChild(h);
         var ul = document.createElement('ul');
         ul.className = 'sum-list';
@@ -779,7 +788,7 @@
   }
   document.querySelectorAll('[data-memo-zone]').forEach(setupZone);
   /* ---- inline comments on each work card, pop entry and event card ---- */
-  function addInlineComment(container, target, placeholder) {
+  function addInlineComment(container, target, placeholder, label) {
     if (!container || container.querySelector('.inline-memo')) return;
     var wrap = document.createElement('details');
     wrap.className = 'inline-memo';
@@ -793,7 +802,7 @@
     ta.rows = 2;
     ta.placeholder = placeholder;
     ta.setAttribute('data-inline-memo', '');
-    ta.setAttribute('aria-label', target + 'のコメント');
+    ta.setAttribute('aria-label', (label || target) + 'のコメント');
     wrap.appendChild(ta);
     var help = document.createElement('p');
     help.className = 'comment-help';
@@ -822,6 +831,24 @@
     });
     container.appendChild(wrap);
   }
+  // New corners use this same editor, submission path, IME guard and viewer-bound
+  // draft protection as existing works and POPs. Registration is idempotent and
+  // refresh never rewrites an active textarea. Existing legacy targets stay exact.
+  window.DonguriBoardComments = {
+    register: function (container, key, label) {
+      if (!container || !/^[a-z0-9][a-z0-9:._/-]{0,240}$/.test(key))
+        throw new Error('コメント対象IDを確認');
+      var target = 'コーナー：' + key;
+      commentTargetLabels[target] = label;
+      addInlineComment(container, target, '気づいたこと・直してほしいこと', label);
+      return target;
+    },
+    refresh: function () {
+      setCommentAccess();
+      renderComments();
+      rebuildSummary();
+    },
+  };
   document.querySelectorAll('.work .body').forEach(function (body) {
     var card = body.closest('.work');
     var h = card ? card.querySelector('h3') : null;

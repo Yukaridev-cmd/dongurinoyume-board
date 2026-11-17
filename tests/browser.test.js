@@ -7,6 +7,110 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../comments-api.js', import.meta.url), 'utf8');
 const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
+test('every content corner has its own editor and new corner omissions fail the coverage audit', async () => {
+  const b = browser({ configured: false });
+  try {
+    const d = b.w.document,
+      audit = b.w.DonguriCommentCoverage.audit();
+    assert.deepEqual(Array.from(audit.uncovered), []);
+    assert.equal(audit.registered, 202);
+    assert.equal(
+      d.querySelectorAll('.board-photo-card .comment-corner-slot [data-inline-memo]').length,
+      44
+    );
+    assert.equal(d.querySelectorAll('figure .comment-corner-slot [data-inline-memo]').length, 66);
+    assert.equal(
+      d.querySelectorAll('[data-phase-panel] > .comment-corner-slot [data-inline-memo]').length,
+      27
+    );
+    const count = d.querySelectorAll('[data-inline-memo]').length;
+    b.w.DonguriCommentCoverage.mount(d);
+    assert.equal(d.querySelectorAll('[data-inline-memo]').length, count);
+    const corner = d.createElement('section');
+    corner.className = 'idea';
+    corner.textContent = '架空の新しい情報';
+    d.getElementById('view-share').appendChild(corner);
+    assert.ok(b.w.DonguriCommentCoverage.audit().uncovered.includes('idea'));
+    corner.dataset.commentKey = 'test:future-corner';
+    corner.dataset.commentLabel = '架空の新しい情報';
+    b.w.DonguriCommentCoverage.mount(corner);
+    assert.deepEqual(Array.from(b.w.DonguriCommentCoverage.audit().uncovered), []);
+    assert.ok(corner.querySelector('[data-inline-memo]').disabled);
+    assert.equal(b.requests.filter((r) => r.options?.method === 'POST').length, 0);
+  } finally {
+    b.dom.window.close();
+  }
+});
+test('individual photo comments save, reload and preserve IME and failed drafts under the shared auth guard', async () => {
+  const records = [],
+    b = browser({ records });
+  try {
+    await tick();
+    const d = b.w.document;
+    const corner = d.querySelector('[data-comment-key="photo:photo-001"]');
+    const input = corner.querySelector('[data-inline-memo]'),
+      button = corner.querySelector('.inline-memo .btn');
+    input.value = '架空の写真コメント';
+    input.dispatchEvent(new b.w.CompositionEvent('compositionstart', { bubbles: true }));
+    button.click();
+    await tick();
+    assert.equal(records.length, 0);
+    input.dispatchEvent(new b.w.CompositionEvent('compositionend', { bubbles: true }));
+    await tick();
+    button.click();
+    await tick();
+    assert.equal(records.length, 1);
+    assert.equal(records[0].target, 'コーナー：photo:photo-001');
+    assert.equal(corner.querySelectorAll('[data-comment-card]').length, 1);
+    input.value = '架空の未送信';
+    input.setSelectionRange(2, 2);
+    input.dispatchEvent(new b.w.Event('input', { bubbles: true }));
+    b.w.DonguriCommentCoverage.mount(d);
+    assert.equal(input.value, '架空の未送信');
+    assert.equal(input.selectionStart, 2);
+    b.failure = 503;
+    button.click();
+    await tick();
+    assert.equal(input.value, '架空の未送信');
+    assert.equal(records.length, 1);
+    b.failure = 0;
+    b.visibility(true);
+    assert.equal(input.value, '');
+    assert.equal(corner.querySelectorAll('[data-comment-card]').length, 0);
+    b.visibility(false);
+    await tick();
+    await tick();
+    assert.equal(input.value, '架空の未送信');
+    const reload = browser({ records });
+    try {
+      await tick();
+      const found = reload.w.document.querySelector('[data-comment-key="photo:photo-001"]');
+      assert.equal(found.querySelectorAll('[data-comment-card]').length, 1);
+      assert.ok(found.textContent.includes('架空の写真コメント'));
+    } finally {
+      reload.dom.window.close();
+    }
+    b.failure = 403;
+    await b.intervals[0]();
+    assert.equal(input.value, '');
+    assert.equal(input.disabled, true);
+    assert.equal(corner.querySelectorAll('[data-comment-card]').length, 0);
+    assert.ok(!d.body.textContent.includes('架空の写真コメント'));
+    b.failure = 0;
+    b.viewer = 'b'.repeat(64);
+    await b.w.DonguriComments.connect();
+    await tick();
+    assert.equal(input.value, '');
+    b.visibility(true);
+    b.viewer = 'a'.repeat(64);
+    b.visibility(false);
+    await tick();
+    await tick();
+    assert.equal(input.value, '架空の未送信');
+  } finally {
+    b.dom.window.close();
+  }
+});
 test('photo entry points stay inside the four-tab board and never write private records', async () => {
   const b = browser({ configured: false });
   try {
@@ -127,6 +231,7 @@ function browser({
   w.eval(readFileSync(new URL('../ime.js', import.meta.url), 'utf8'));
   for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
   w.eval(readFileSync(new URL('../workflow.js', import.meta.url), 'utf8'));
+  w.eval(readFileSync(new URL('../comment-coverage.js', import.meta.url), 'utf8'));
   w.eval(readFileSync(new URL('../event-board.js', import.meta.url), 'utf8'));
   w.eval(client);
   return {
@@ -589,10 +694,15 @@ test('notice templates are removed while archived tasks and comment targets stay
   try {
     await tick();
     const d = b.w.document;
+    function sourceText(selector) {
+      const copy = d.querySelector(selector).cloneNode(true);
+      copy.querySelectorAll('.comment-corner-slot').forEach((n) => n.remove());
+      return copy.textContent;
+    }
     const preserved = {
-      home: d.querySelector('#legacy-home .task-list').textContent,
-      ideas: d.querySelector('#legacy-booth .idea-grid').textContent,
-      tasks: d.querySelector('#legacy-booth .task-list').textContent,
+      home: sourceText('#legacy-home .task-list'),
+      ideas: sourceText('#legacy-booth .idea-grid'),
+      tasks: sourceText('#legacy-booth .task-list'),
     };
     assert.equal(
       createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),
