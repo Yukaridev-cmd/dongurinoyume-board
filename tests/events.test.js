@@ -25,3 +25,10 @@ test('existing choices reload and save empty selections with the original versio
  b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.equal(b.calls.at(-1).body.version,4);assert.deepEqual([...b.rows.get(id).data.products],[]);assert.deepEqual([...b.rows.get(id).data.pops],[]);b.suspend();assert.equal(d.body.textContent.includes('架空の登録済み出店'),false);assert.equal(d.body.textContent.includes('私的な準備メモ'),false);assert.equal(b.form.elements.venue.value,'');assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
 });
+
+test('excluded works are absent from new carry choices but previously saved selections survive edits',async()=>{
+ const b=fixture('#id=event-xmas');try{await tick();assert.equal(b.form.querySelectorAll('[data-product]').length,19);assert.equal(b.form.querySelector('[data-product][value="work-magnet"]'),null);
+ b.rows.set('event-xmas',{id:'event-xmas',version:2,data:{title:'クリスマスマルシェ（2026年12月）',date:'',start:'',end:'',venue:'',notes:'架空の準備',products:['work-magnet','work-haniwa'],pops:[]}});b.auth();await tick();assert.match(b.w.document.getElementById('event-selections').textContent,/販売候補から除外・以前の選択を保管/);
+ [...b.w.document.querySelectorAll('button')].find(n=>n.textContent==='持参品・出店情報を編集').click();b.form.elements.notes.value='架空の編集';b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.deepEqual([...b.rows.get('event-xmas').data.products].sort(),['work-haniwa','work-magnet']);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
