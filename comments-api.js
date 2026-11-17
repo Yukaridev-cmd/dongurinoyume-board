@@ -12,10 +12,10 @@ if (config.paused === true) {
     pausedNotice.textContent = pausedMessage; document.querySelector('header').after(pausedNotice);
   }
 }
-function announce(message) { if (status) status.textContent = message; }
+function announce(message) { if (status) status.textContent = message; var local=document.getElementById('quick-status');if(local)local.textContent=message; }
 function publish(message) {
   announce(message);
-  window.dispatchEvent(new CustomEvent('comments-auth', { detail: { ready: ready, author: ready ? author : '', viewer: ready ? viewer : '' } }));
+  window.dispatchEvent(new CustomEvent('comments-auth', { detail: { ready: ready, author: ready ? author : '', viewer: ready ? viewer : '', message: message } }));
 }
 function protect(message, eventName, reason) {
   generation++;
@@ -95,9 +95,25 @@ async function establish(started) {
     if (started === generation && !document.hidden) lock(error.message + '。未保存入力はこのページ内で保護');
   }
 }
+async function revalidateSession() {
+  if (document.hidden || !ready) return;
+  var started = generation, previous = viewer;
+  try {
+    var session = await request('/session');
+    if (started !== generation || !ready) return;
+    if (session.viewer !== previous) {
+      protect('LINEアカウントを再確認。未保存入力は書いたアカウントで保護', 'comments-clear', 'identity');
+      connect({ revalidate: true });
+    }
+  } catch (error) {
+    if (started === generation && ready) announce('接続を確認できず。入力は保持し、通信回復後に保存');
+  }
+}
 function connect(options) {
   if (document.hidden) return Promise.resolve();
   if (flight) { reconnectQueued = true; return flight; }
+  // A same-session check must not disable or rewrite an active IME editor.
+  if (ready && options && options.revalidate) return revalidateSession();
   if (ready && hasDraft() && !(options && options.revalidate)) {
     announce('入力を保存・取消してから再読込'); return Promise.resolve();
   }
@@ -128,20 +144,6 @@ if (login) login.addEventListener('click', function () { connect(); });
 document.addEventListener('visibilitychange', function () { if (document.hidden) suspend(); else connect({ revalidate: true }); });
 window.addEventListener('pagehide', suspend);
 window.addEventListener('pageshow', function (event) { if (event.persisted) connect({ revalidate: true }); });
-setInterval(async function () {
-  if (document.hidden || !ready) return;
-  var started = generation, previous = viewer;
-  try {
-    var session = await request('/session');
-    if (started !== generation || !ready) return;
-    if (session.viewer !== previous) {
-      protect('LINEアカウントを再確認。未保存入力は書いたアカウントで保護', 'comments-clear', 'identity');
-      connect({ revalidate: true });
-    }
-  } catch (error) {
-    // A temporary connection failure is not evidence of sign-out. Preserve visible editing state.
-    if (started === generation && ready) announce('接続を確認できず。入力は保持し、通信回復後に保存');
-  }
-}, 60000);
+setInterval(revalidateSession, 60000);
 connect();
 })();
