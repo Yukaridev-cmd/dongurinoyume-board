@@ -211,3 +211,13 @@ test('records survive store reopen without being inserted into the public commen
     assert.equal((await (await f.request('/comments')).json()).comments.length,0);
   }finally{db.sqlite.close();rmSync(path);rmdirSync(dir);}
 });
+test('event associations are explicit, validated, versioned and removable without migrating old records',async()=>{
+ const f=fixture(),data={title:'架空の準備',status:'未着手',eventId:'event-xmas'};
+ for(const eventId of ['unknown','https://attacker.example',{},null])assert.equal((await f.request('/records','POST',{id,kind:'task',data:{...data,eventId}})).status,400);
+ let saved=await (await f.request('/records','POST',{id,kind:'task',data})).json();assert.equal(saved.record.data.eventId,'event-xmas');
+ saved=await (await f.request('/records/'+id,'PATCH',{version:1,data:{...data,eventId:''}})).json();assert.equal(saved.record.data.eventId,'');
+ assert.equal(JSON.parse(f.db.sqlite.prepare('SELECT data FROM record_history WHERE record_id=?').get(id).data).eventId,'event-xmas');
+ const legacy='22222222-2222-4222-8222-222222222222';await f.request('/records','POST',{id:legacy,kind:'review',data:{title:'未分類の記録'}});
+ const rows=(await (await f.request('/records')).json()).records;assert.equal(Object.hasOwn(rows.find(r=>r.id===legacy).data,'eventId'),false);
+ assert.equal((await (await f.request('/comments')).json()).comments.length,0);
+});

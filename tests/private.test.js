@@ -35,6 +35,14 @@ test('compact lists open the requested kind and editor only on demand, preservin
   b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.equal(b.form.hidden,true);assert.equal(d.querySelector('.records-column').hidden,false);assert.ok(d.getElementById('record-list').textContent.includes('在庫 0点'));assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
 });
+test('event context filters without migrating legacy records and explicit new records preserve association across suspension',async()=>{
+ const b=fixture('#kind=task&event=event-xmas&new=1');try{const d=b.w.document;assert.equal(b.form.hidden,true);assert.equal(b.calls.length,0);b.clear();
+  b.auth(true);await tick();assert.equal(b.form.hidden,false);assert.equal(b.form.elements.eventId.value,'event-xmas');b.form.elements.title.value='架空の印刷確認';b.form.dispatchEvent(new b.w.Event('input'));b.clear();assert.equal(b.form.elements.eventId.value,'');b.auth(true);await tick();assert.equal(b.form.elements.eventId.value,'event-xmas');
+  b.form.dispatchEvent(new b.w.Event('submit',{cancelable:true}));await tick();assert.equal(b.rows[0].data.eventId,'event-xmas');
+  b.rows.push({...b.rows[0],id:'legacy',data:{title:'未分類の作業',notes:'',status:'未着手'}});b.auth(true);await tick();assert.equal(d.getElementById('record-list').textContent.includes('未分類の作業'),false);
+  d.getElementById('event-filter').value='unassigned';d.getElementById('event-filter').dispatchEvent(new b.w.Event('change'));assert.ok(d.getElementById('record-list').textContent.includes('未分類の作業'));assert.equal(Object.hasOwn(b.rows[1].data,'eventId'),false);assert.equal(b.calls.filter(c=>c.method==='POST').length,1);
+ }finally{b.dom.window.close();}
+});
 test('request handoff is available only in its list and opening editor hides it without sending',async()=>{
  const b=fixture('#kind=request');try{b.auth(true);await tick();const d=b.w.document;
   assert.equal(d.getElementById('handoff').hidden,false);d.getElementById('new-record').click();assert.equal(d.getElementById('handoff').hidden,true);

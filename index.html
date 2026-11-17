@@ -522,7 +522,7 @@ footer{margin-top:32px}
 <script defer src="ui-icons.js"></script>
 </head>
 <body style="background:#fdf6e0;color-scheme:light only">
-<a class="skip-link" href="#view-home">本文へ進む</a><div class="wrap">
+<a class="skip-link" href="#view-events">本文へ進む</a><div class="wrap">
 
 <header class="top">
 <div class="top-inner">
@@ -533,15 +533,8 @@ footer{margin-top:32px}
 </div>
 <span class="updated">2026年11月16日 更新</span>
 </div>
-<a class="private-entry" href="private.html">二人の記録 ↗ <span>振り返り・売上・やりたいこと・棚卸メモ</span></a>
-<nav class="tabbar" role="tablist" aria-label="ボードのメニュー">
-<button type="button" role="tab" data-view-btn="home" aria-selected="true">ホーム</button>
-<button type="button" role="tab" data-view-btn="events" aria-selected="false">イベント</button>
-<button type="button" role="tab" data-view-btn="works" aria-selected="false">作品・在庫</button>
-<button type="button" role="tab" data-view-btn="booth" aria-selected="false">ブース</button>
-<button type="button" role="tab" data-view-btn="pops" aria-selected="false">ポップ置き場</button>
-<button type="button" role="tab" data-view-btn="share" aria-selected="false" data-icon="archive">資料</button>
-</nav>
+<div class="board-utilities"><a href="private.html#kind=review">売上・振り返り</a><a href="private.html#kind=request">AI更新依頼</a></div>
+<nav class="tabbar primary-nav" role="tablist" aria-label="ボードのメニュー"><button type="button" role="tab" data-view-btn="events" aria-selected="true">出店</button><button type="button" role="tab" data-view-btn="works" aria-selected="false">作品・在庫</button><button type="button" role="tab" data-view-btn="market" data-icon="booth" aria-selected="false">売り場</button><a data-icon="task" href="private.html#kind=task">やること</a></nav>
 </header>
 
 <!-- ================= ホーム ================= -->
@@ -606,6 +599,7 @@ footer{margin-top:32px}
 </main>
 
 <!-- ================= イベント一覧 ================= -->
+<main class="view" id="view-market"><div class="view-head"><h2>売り場</h2></div><div class="market-tabs" role="group" aria-label="売り場の内容"><button type="button" data-market="pops" data-icon="pops" aria-pressed="true">ポップ</button><button type="button" data-market="booth" data-icon="booth" aria-pressed="false">ブース・道具</button><button type="button" data-goto="share" data-icon="archive">資料</button></div><section data-market-panel="pops" aria-label="ポップ"></section><section data-market-panel="booth" aria-label="ブース・道具" hidden></section></main>
 <main class="view" id="view-events">
 <div class="view-head"><h2>イベント</h2></div>
 <p class="view-lead">タップで各イベントのページへ移動</p>
@@ -1744,11 +1738,11 @@ footer{margin-top:32px}
 <footer>
 <p class="fname">どんぐりの夢</p>
 <nav class="foot-nav" aria-label="ページ下部のメニュー">
-<button type="button" data-goto="home">ホーム</button>
+<button type="button" data-goto="events">出店</button>
 <button type="button" data-goto="events">イベント</button>
 <button type="button" data-goto="works">作品・在庫</button>
-<button type="button" data-goto="booth">ブース</button>
-<button type="button" data-goto="pops">ポップ置き場</button>
+<button type="button" data-goto="market">売り場</button>
+<a href="private.html#kind=task">やること</a>
 <button type="button" data-goto="share">資料</button>
 </nav>
 <p>最終更新：2026年11月16日</p>
@@ -1824,8 +1818,9 @@ document.body.removeChild(ta);
 });
 }
 /* ---- view switching ---- */
-var viewIds = ['home','events','event-xmas','event-tabashita','event-wombat','event-kiraria-1107','event-kiraria-0829','event-kiraria-0516','event-kiraria-0228','event-toyoshima','event-heart','works','booth','pops','share'];
+var viewIds = ['home','events','event-xmas','event-tabashita','event-wombat','event-kiraria-1107','event-kiraria-0829','event-kiraria-0516','event-kiraria-0228','event-toyoshima','event-heart','works','booth','pops','share','market'];
 var parentTab = { 'event-xmas': 'events', 'event-tabashita': 'events', 'event-wombat': 'events', 'event-kiraria-1107': 'events', 'event-kiraria-0829': 'events', 'event-kiraria-0516': 'events', 'event-kiraria-0228': 'events', 'event-toyoshima': 'events', 'event-heart': 'events'};
+parentTab.booth='market';parentTab.pops='market';parentTab.share='market';parentTab.home='events';
 var settingHash = false;
 var menuButtons=Array.from(document.querySelectorAll('[data-view-btn]'));
 menuButtons.forEach(function(b){
@@ -1842,7 +1837,8 @@ menuButtons.forEach(function(b){
 });
 viewIds.forEach(function(id){var panel=document.getElementById('view-'+id);if(panel){panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby','tab-'+(parentTab[id]||id));}});
 function showView(id, anchor) {
-if(anchor){var anchored=document.getElementById(anchor),anchoredView=anchored&&anchored.closest('.view');if(anchoredView)id=anchoredView.id.replace(/^view-/,'');}
+var requested=id;if(window.DonguriMarket&&['booth','pops'].includes(id)){window.DonguriMarket(id);id='market';}
+if(anchor){var anchored=document.getElementById(anchor),anchoredView=anchored&&anchored.closest('.view');if(anchoredView)id=anchoredView.id.replace(/^view-/,'');var marketPanel=anchored&&anchored.closest('[data-market-panel]');if(marketPanel&&window.DonguriMarket)window.DonguriMarket(marketPanel.dataset.marketPanel);}
 if (viewIds.indexOf(id) === -1) id = 'home';
 viewIds.forEach(function (v) {
 var el = document.getElementById('view-' + v);
@@ -1855,6 +1851,7 @@ b.setAttribute('tabindex',b.getAttribute('data-view-btn')===tab?'0':'-1');
 b.setAttribute('aria-controls','view-'+(b.getAttribute('data-view-btn')===tab?id:b.getAttribute('data-view-btn')));
 });
 var target = anchor? document.getElementById(anchor): null;
+window.dispatchEvent(new CustomEvent('board-view',{detail:{id:id,requested:requested}}));
 if (target) { var disclosure=target; while(disclosure){if(disclosure.tagName==='DETAILS')disclosure.open=true;disclosure=disclosure.parentElement;} target.scrollIntoView({ block: 'start' }); }
 else { window.scrollTo(0, 0); }
 try {
@@ -1863,10 +1860,11 @@ history.replaceState(null, '', '#' + (anchor || id));
 settingHash = false;
 } catch (e) { settingHash = false; }
 }
+window.DonguriBoard={showView:showView};
 function applyHash() {
 if (settingHash) return;
 var h = (location.hash || '').replace(/^#/, '');
-if (!h) return;
+if (!h) {showView('events');return;}
 if (viewIds.indexOf(h) !== -1) { showView(h); return; }
 var el = document.getElementById(h);
 if (!el) return;
@@ -2258,7 +2256,7 @@ if (qAdd) {
 qAdd.addEventListener('click', function () {
 if (!qText ||!qText.value.trim()) { if (qText) qText.focus(); showToast('先にコメント記入が必要'); return;}
 var active = document.querySelector('.view.active');
-var zone = active? active.querySelector('[data-memo-zone]'): null;
+var zone = active? (active.querySelector('[data-market-panel]:not([hidden]) [data-memo-zone]')||active.querySelector('[data-memo-zone]')): null;
 submitComment(zone? zoneTarget(zone): 'ページ：その他', qText, qAdd).then(function (saved) {
 if (saved) { closeQuick(); if (zone) zone.scrollIntoView({ block: 'center'}); }
 });
@@ -2268,6 +2266,7 @@ setCommentAccess();
 })();
 
 </script>
+<script src="workflow.js"></script>
 <script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script defer src="comments-api.js"></script>
 </body>

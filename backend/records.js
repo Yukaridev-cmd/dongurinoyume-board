@@ -1,3 +1,4 @@
+import events from '../events.json' with { type: 'json' };
 const kinds = ['review', 'task', 'inventory', 'photo', 'request'];
 const states = {
   task: ['未着手','進行中','完了'], inventory: ['未確認','販売中','制作中','売切れ'],
@@ -19,6 +20,11 @@ export function recordsApi({ HttpError, UUID, readBody, field }) {
   function validate(kind, input) {
     if (!kinds.includes(kind) || !input || Array.isArray(input) || typeof input !== 'object') throw new HttpError(400, '記録の種類を確認');
     const data = { title: field(input.title, 160), notes: optional(input.notes, 4000) };
+    // Missing legacy fields remain absent. No inferred association or migration.
+    if (Object.hasOwn(input, 'eventId')) {
+      if (typeof input.eventId !== 'string' || (input.eventId !== '' && !events.some(event => event.id === input.eventId))) throw new HttpError(400, '登録済みの出店を選択');
+      data.eventId = input.eventId;
+    }
     if (kind === 'review') Object.assign(data, { date: date(input.date), salesYen: number(input.salesYen, 100000000), costsYen: number(input.costsYen, 100000000) });
     if (states[kind]) {
       if (!states[kind].includes(input.status)) throw new HttpError(400, '状態を確認');

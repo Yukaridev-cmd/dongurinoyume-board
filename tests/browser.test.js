@@ -44,6 +44,7 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
     return Response.json({ comments: records, next: null });
   };
   for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
+  w.eval(readFileSync(new URL('../workflow.js',import.meta.url),'utf8'));
   w.eval(client);
   return { dom, w, requests, errors, records,
     set failure(v) { failure = v; }, set deferPost(v) { deferPost = v; }, set viewer(v){viewer=v;}, intervals,
@@ -63,6 +64,14 @@ test('unconfigured and external-browser views disable every posting path', async
       assert.ok([...b.w.document.querySelectorAll('.inline-memo .btn')].every(btn => btn.disabled));
     } finally { b.dom.window.close(); }
   }
+});
+test('four destinations, event phases and shared market keep one copy of every comment target and use explicit event links',async()=>{
+ const b=browser({configured:false});try{const d=b.w.document;assert.equal(d.querySelectorAll('.primary-nav>*').length,4);assert.ok(d.getElementById('view-events').classList.contains('active'));
+  const event=d.getElementById('view-event-xmas');assert.equal(event.querySelector('[data-phase-panel=prepare]').hidden,false);event.querySelector('[data-phase=day]').click();assert.equal(event.querySelector('[data-phase-panel=prepare]').hidden,true);assert.equal(event.querySelector('[data-phase-panel=day]').hidden,false);assert.ok(event.querySelector('[data-phase-panel=day] a').href.endsWith('#kind=review&event=event-xmas&new=1'));
+  d.querySelector('[data-view-btn=market]').click();d.querySelector('[data-market=booth]').click();assert.equal(d.querySelector('[data-market-panel=booth]').hidden,false);assert.equal(d.querySelector('[data-market-panel=pops]').hidden,true);
+  assert.equal(d.querySelectorAll('.pop-entry').length,12);assert.equal(d.querySelectorAll('#view-market [data-memo-zone][aria-label="ブースのメモ"]').length,1);assert.equal(d.querySelector('#view-booth').children.length,0);
+  assert.equal(b.requests.length,0);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
 });
 test('server comments restore in their item and summary, and text is rendered safely', async () => {
   const b = browser();
@@ -195,14 +204,9 @@ test('existing images, prices, event headings, page navigation, cream background
   const b = browser({ configured: false });
   try {
     const d = b.w.document;
-    // The new welcome section reuses an existing photo; all original image/alt pairs remain intact.
-    const preserved = { images: [...d.querySelectorAll('img')].filter(el=>!el.closest('.board-welcome')).map(el => [el.getAttribute('src'), el.getAttribute('alt')]) };
-    for (const selector of ['.view:not(#view-share) .view-head h2', '.price', '.meta']) {
-      preserved[selector] = [...d.querySelectorAll(selector)].map(el => el.textContent);
-    }
-    // Public facts match ffec150 before authorized navigation consolidation.
-    // Navigation and archived source text are verified separately below.
-    assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'), '69f95c86777f82512cfbabdba4ec1c57d07e50f558dfe42b4e155262018a7520');
+    // Original facts from 61b822f remain exact when sections move. Navigation labels are separate.
+    const preserved={images:[...d.querySelectorAll('img')].filter(e=>!e.closest('.board-welcome')).map(e=>[e.getAttribute('src'),e.getAttribute('alt')]).sort(),headings:[...d.querySelectorAll('.view-head h2')].map(e=>e.textContent).filter(x=>!['資料','売り場'].includes(x)).sort(),prices:[...d.querySelectorAll('.price')].map(e=>e.textContent).sort(),meta:[...d.querySelectorAll('.meta')].map(e=>e.textContent).sort()};
+    assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),'38fc400a017cfaff002f3e053af8c73f46f091bcbd4c43207f5b3fffd8170466');
     assert.ok(html.includes('--paper:#fdf6e0')); assert.ok(html.includes('Meiryo UI'));
     assert.equal(html.includes('26作品'),false);assert.equal(d.querySelectorAll('.work').length,27);
     const nav = d.querySelector('[data-goto="works"]'); nav.click();
@@ -260,8 +264,8 @@ test('periodic network error keeps visible comment drafts and page-cache return 
 test('keyboard tabs select visible panels and quick panel Escape restores trigger focus without losing input',async()=>{
   const b=browser();try{
     await tick();const d=b.w.document,tabs=[...d.querySelectorAll('[data-view-btn]')];tabs[0].focus();tabs[0].dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));
-    assert.equal(d.activeElement,tabs[1]);assert.equal(tabs[1].getAttribute('aria-selected'),'true');assert.equal(d.querySelectorAll('[role=tab][tabindex="0"]').length,1);assert.equal(d.querySelector('#view-events').classList.contains('active'),true);assert.equal(tabs[1].getAttribute('aria-controls'),'view-events');
-    tabs[1].dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'End',bubbles:true,cancelable:true}));assert.equal(d.activeElement,tabs.at(-1));assert.equal(d.querySelector('#view-share').classList.contains('active'),true);
+    assert.equal(d.activeElement,tabs[1]);assert.equal(tabs[1].getAttribute('aria-selected'),'true');assert.equal(d.querySelectorAll('[role=tab][tabindex="0"]').length,1);assert.equal(d.querySelector('#view-works').classList.contains('active'),true);assert.equal(tabs[1].getAttribute('aria-controls'),'view-works');
+    tabs[1].dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'End',bubbles:true,cancelable:true}));assert.equal(d.activeElement,tabs.at(-1));assert.equal(d.querySelector('#view-market').classList.contains('active'),true);
     d.querySelector('#quick-memo-btn').click();d.querySelector('#quick-text').value='unsent keyboard draft';d.querySelector('#quick-text').dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));
     assert.equal(d.querySelector('#quick-panel').hidden,true);assert.equal(d.activeElement,d.querySelector('#quick-memo-btn'));assert.equal(d.querySelector('#quick-text').value,'unsent keyboard draft');assert.equal(d.querySelector('#quick-memo-btn').getAttribute('aria-expanded'),'false');
     assert.ok([...d.querySelectorAll('[data-memo-zone] textarea,[data-inline-memo],#quick-text')].every(e=>e.getAttribute('aria-label')));assert.equal(b.errors.length,0);
