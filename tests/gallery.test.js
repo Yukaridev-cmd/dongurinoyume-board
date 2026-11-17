@@ -2,23 +2,21 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
-
 const read = (name) => readFileSync(new URL('../' + name, import.meta.url), 'utf8');
-function page(category = '') {
-  const dom = new JSDOM(read('gallery.html'), {
+function page() {
+  const dom = new JSDOM(read('index.html'), {
     runScripts: 'outside-only',
-    url: 'https://example.test/gallery.html' + category,
+    url: 'https://example.test/index.html',
   });
   dom.window.eval(read('gallery.js'));
   return dom;
 }
-
-test('gallery publishes the explicit reviewed set without private source metadata', () => {
+test('44 approved photo derivatives contain only public display fields and assets', () => {
   const photos = JSON.parse(read('gallery.json'));
-  assert.equal(photos.length, 40);
-  assert.equal(new Set(photos.map((p) => p.id)).size, 40);
-  for (const photo of photos) {
-    assert.deepEqual(Object.keys(photo), [
+  assert.equal(photos.length, 44);
+  assert.equal(new Set(photos.map((p) => p.id)).size, 44);
+  for (const p of photos) {
+    assert.deepEqual(Object.keys(p), [
       'id',
       'category',
       'title',
@@ -27,67 +25,80 @@ test('gallery publishes the explicit reviewed set without private source metadat
       'width',
       'height',
     ]);
-    assert.ok(existsSync(new URL('../' + photo.src, import.meta.url)));
-    assert.ok(Math.max(photo.width, photo.height) <= 1080);
-    assert.equal(photo.src, 'assets/gallery/' + photo.id + '.jpg');
+    assert.ok(existsSync(new URL('../' + p.src, import.meta.url)));
+    assert.ok(Math.max(p.width, p.height) <= 1080);
+    assert.equal(p.src, 'assets/gallery/' + p.id + '.jpg');
   }
-  for (const id of ['photo-006', 'photo-007', 'photo-008', 'photo-020']) {
-    assert.ok(!photos.some((p) => p.id === id));
-    assert.ok(!existsSync(new URL('../assets/gallery/' + id + '.jpg', import.meta.url)));
-  }
+  for (const id of ['photo-006', 'photo-007', 'photo-008', 'photo-020'])
+    assert.ok(photos.some((p) => p.id === id));
   assert.doesNotMatch(
-    read('gallery.html') + read('gallery.json'),
+    read('gallery.json'),
     /libfile_|Sentinel_|originals\/|sha256|"(?:inventory|customer|caption)"\s*:/
   );
   assert.doesNotMatch(
     read('gallery.js'),
-    /fetch\s*\(|XMLHttpRequest|localStorage|DonguriComments|\.value\s*=/
+    /fetch\s*\(|XMLHttpRequest|localStorage|DonguriComments|\.value\s*=(?!=)/
   );
 });
-
-test('photos start visible and filters, search, empty state and incoming links work', () => {
-  const dom = page();
-  const d = dom.window.document;
-  const visible = () => d.querySelectorAll('.photo-card:not([hidden])').length;
-  assert.equal(visible(), 40);
-  assert.equal(d.querySelectorAll('.photo-card img').length, 40);
-  assert.equal(d.querySelectorAll('.photo-card details').length, 0);
+test('photos are integrated into existing tabs; scoped category and event filters preserve editors', () => {
+  const dom = page(),
+    d = dom.window.document;
+  const works = d.querySelector('#view-works #work-photo-library');
+  const events = d.querySelector('#view-events #event-photo-library');
+  const visible = () => works.querySelectorAll('.board-photo-card:not([hidden])').length;
+  assert.equal(visible(), 16);
+  assert.equal(events.querySelectorAll('.board-photo-card:not([hidden])').length, 28);
+  assert.equal(d.querySelectorAll('.board-photo-card img').length, 44);
+  assert.equal(d.querySelectorAll('.board-photo-card details').length, 0);
   for (const [category, count] of [
     ['works', 1],
     ['commission', 7],
     ['personal', 6],
     ['gift', 2],
-    ['events', 24],
   ]) {
-    d.querySelector(`[data-category-filter="${category}"]`).click();
+    works.querySelector(`[data-category-filter="${category}"]`).click();
     assert.equal(visible(), count);
   }
-  d.querySelector('[data-category-filter="all"]').click();
-  const search = d.getElementById('photo-search');
+  works.querySelector('[data-category-filter="all"]').click();
+  const search = works.querySelector('[data-photo-search]');
   search.value = '犬のスタイ';
   search.dispatchEvent(new dom.window.Event('input'));
   assert.equal(visible(), 1);
   search.value = '存在しない写真';
   search.dispatchEvent(new dom.window.Event('input'));
   assert.equal(visible(), 0);
-  assert.equal(d.getElementById('photo-empty').hidden, false);
+  assert.equal(works.querySelector('[data-photo-empty]').hidden, false);
+  const group = events.querySelector('[data-photo-group]');
+  for (const [label, count] of [
+    ['ネコ市ネコ座 神戸（2025年9月）', 3],
+    ['ネコ市ネコ座 愛知・委託販売（2026年4月）', 1],
+  ]) {
+    group.value = label;
+    group.dispatchEvent(new dom.window.Event('change'));
+    assert.equal(events.querySelectorAll('.board-photo-card:not([hidden])').length, count);
+  }
+  const editor = d.querySelector('textarea');
+  editor.value = '架空の入力途中';
+  editor.setSelectionRange(2, 2);
+  group.value = 'all';
+  group.dispatchEvent(new dom.window.Event('change'));
+  assert.equal(editor.value, '架空の入力途中');
+  assert.equal(editor.selectionStart, 2);
+  assert.ok(d.querySelector('[data-goto-anchor="work-photo-library"]'));
+  assert.ok(d.querySelector('[data-goto-anchor="event-photo-library"]'));
+  assert.ok(read('gallery.html').includes('legacy-photo-link'));
   dom.window.close();
-  const events = page('?category=events');
-  assert.equal(events.window.document.querySelectorAll('.photo-card:not([hidden])').length, 24);
-  assert.ok(events.window.document.getElementById('gallery-back').href.endsWith('#events'));
-  events.window.close();
 });
-
-test('native enlargement closes and restores focus; plain image link remains the fallback', () => {
-  const dom = page();
-  const d = dom.window.document;
-  const dialog = d.getElementById('photo-dialog');
+test('integrated enlargement restores focus and keeps image links as fallback', () => {
+  const dom = page(),
+    d = dom.window.document,
+    dialog = d.getElementById('photo-dialog');
   dialog.showModal = () => dialog.setAttribute('open', '');
   dialog.close = () => {
     dialog.removeAttribute('open');
     dialog.dispatchEvent(new dom.window.Event('close'));
   };
-  const link = d.querySelector('[data-photo]');
+  const link = d.querySelector('#work-photo-library [data-photo]');
   link.click();
   assert.equal(dialog.open, true);
   assert.equal(d.getElementById('photo-large').alt, '犬のスタイ');

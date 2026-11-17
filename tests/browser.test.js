@@ -7,6 +7,35 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../comments-api.js', import.meta.url), 'utf8');
 const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
+test('photo entry points stay inside the four-tab board and never write private records', async () => {
+  const b = browser({ configured: false });
+  try {
+    const d = b.w.document;
+    b.w.eval(readFileSync(new URL('../gallery.js', import.meta.url), 'utf8'));
+    d.querySelector('[data-goto-anchor="work-photo-library"]').click();
+    assert.equal(d.querySelector('.view.active').id, 'view-works');
+    assert.equal(b.w.location.hash, '#work-photo-library');
+    assert.equal(
+      d.querySelectorAll('#work-photo-library .board-photo-card:not([hidden])').length,
+      16
+    );
+    d.querySelector('[data-goto-anchor="event-photo-library"]').click();
+    assert.equal(d.querySelector('.view.active').id, 'view-events');
+    assert.equal(b.w.location.hash, '#event-photo-library');
+    assert.equal(
+      d.querySelectorAll('#event-photo-library .board-photo-card:not([hidden])').length,
+      28
+    );
+    await tick();
+    assert.equal(
+      b.requests.filter((r) => r.options?.method && r.options.method !== 'GET').length,
+      0
+    );
+    assert.equal(d.querySelectorAll('.primary-nav > button, .primary-nav > a').length, 4);
+  } finally {
+    b.dom.window.close();
+  }
+});
 function browser({
   configured = true,
   inLine = true,
@@ -516,7 +545,9 @@ test('existing images, prices, event headings, page navigation, cream background
           (e) =>
             !e.closest('.board-welcome') &&
             !e.hasAttribute('data-shared-photo') &&
-            !e.closest('[data-reference-only]')
+            !e.closest('[data-reference-only]') &&
+            !e.closest('[data-photo-library]') &&
+            e.id !== 'photo-large'
         )
         .map((e) => [
           e.dataset.originalSrc || e.getAttribute('src') || e.dataset.referenceSrc,
