@@ -341,3 +341,10 @@ test('past event list and all seven original photo previews are visible without 
  assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
 });
+
+test('all POP previews start visible in image-first work-style cards and preserve content, actions and comment targets',()=>{
+ const source=new JSDOM(html).window.document,b=browser({configured:false});try{const d=b.w.document,original=[...source.querySelectorAll('.pop-entry')],cards=[...d.querySelectorAll('.pop-grid>.pop-entry')];assert.equal(cards.length,12);
+ for(const old of original){const card=d.getElementById(old.id);assert.equal(card.parentElement.classList.contains('work-grid'),true);assert.equal(card.firstElementChild.className.startsWith('pop-media'),true);assert.equal(card.querySelector('.body>.head h3').textContent,old.querySelector('h3').textContent);assert.deepEqual([...card.querySelectorAll('img')].map(i=>[i.getAttribute('src'),i.alt]),[...old.querySelectorAll('img')].map(i=>[i.getAttribute('src'),i.alt]));assert.equal(card.querySelector('.body>.work-more').open,false);for(const preview of card.querySelectorAll('.pop-media .fig,.pop-media .pop'))assert.equal(preview.closest('details'),null);assert.equal(card.querySelectorAll('.inline-memo').length,1);assert.equal(card.querySelector('.body>.inline-memo')!==null,true);assert.equal(card.querySelectorAll('[data-copy]').length,old.querySelectorAll('[data-copy]').length);assert.equal(card.querySelector('.facts')?.textContent,old.querySelector('.facts')?.textContent);}
+ assert.equal(d.querySelectorAll('.pop-entry .compact-detail').length,0);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});

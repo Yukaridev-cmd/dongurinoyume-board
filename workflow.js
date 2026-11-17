@@ -9,7 +9,12 @@ var market=document.getElementById('view-market');
 window.DonguriMarket=function(name){market.querySelectorAll('[data-market-panel]').forEach(function(p){p.hidden=p.dataset.marketPanel!==name;});market.querySelectorAll('[data-market]').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.market===name));});};
 market.querySelectorAll('[data-market]').forEach(function(b){b.addEventListener('click',function(){keepControl(b,function(){window.DonguriMarket(b.dataset.market);});});});
 // Move existing nodes, including comments; never duplicate their targets or contents.
-document.querySelectorAll('.pop-entry').forEach(function(card){var head=card.querySelector('.head'),body=el('details',null,'compact-detail'),summary=el('summary','画像・詳細');body.appendChild(summary);head.querySelectorAll('p').forEach(function(n){body.appendChild(n);});Array.from(card.children).filter(function(n){return n!==head;}).forEach(function(n){body.appendChild(n);});card.appendChild(body);var comment=body.querySelector('.inline-memo');if(comment)card.appendChild(comment);});
+var popPanel=market.querySelector('[data-market-panel=pops]'),popGrid=el('div',null,'work-grid pop-grid');popPanel.appendChild(popGrid);
+document.querySelectorAll('.pop-entry').forEach(function(card){
+ var head=card.querySelector('.head'),media=el('div',null,'pop-media'),body=el('div',null,'body'),more=el('details',null,'work-more'),comment=card.querySelector('.inline-memo');
+ more.appendChild(el('summary','詳細・文面'));Array.from(card.children).filter(function(n){return n.matches('.fig,.pop');}).forEach(function(n){media.appendChild(n);});
+ if(media.children.length>1)media.classList.add('pop-media-multiple');body.appendChild(head);Array.from(card.children).filter(function(n){return n!==comment;}).forEach(function(n){more.appendChild(n);});body.appendChild(more);if(comment)body.appendChild(comment);card.append(media,body);popGrid.appendChild(card);
+});
 document.querySelectorAll('.work').forEach(function(card){var body=card.querySelector('.body');if(!body)return;var more=el('details',null,'work-more'),summary=el('summary','詳細・棚卸');more.appendChild(summary);Array.from(body.children).filter(function(n){return !n.matches('h3,.price,.inline-memo');}).forEach(function(n){more.appendChild(n);});var comment=body.querySelector('.inline-memo');if(comment)body.insertBefore(more,comment);else body.appendChild(more);});
 document.querySelectorAll('main[id^="view-event-"]').forEach(function(view){
  var id=view.id.replace('view-',''),head=view.querySelector('.view-head'),facts=view.querySelector(':scope > .facts'),memo=view.querySelector('[data-memo-zone]');
