@@ -197,18 +197,33 @@ test('existing images, prices, event headings, page navigation, cream background
     const d = b.w.document;
     // The new welcome section reuses an existing photo; all original image/alt pairs remain intact.
     const preserved = { images: [...d.querySelectorAll('img')].filter(el=>!el.closest('.board-welcome')).map(el => [el.getAttribute('src'), el.getAttribute('alt')]) };
-    for (const selector of ['.view-head h2', '.price', '.meta', '[data-goto]']) {
-      // The one intentional content-count change follows the added source-Sheet work.
-      preserved[selector] = [...d.querySelectorAll(selector)].map(el => selector === '[data-goto]' ? el.textContent.replace(/27作品/g,'26作品') : el.textContent);
+    for (const selector of ['.view:not(#view-share) .view-head h2', '.price', '.meta']) {
+      preserved[selector] = [...d.querySelectorAll(selector)].map(el => el.textContent);
     }
-    // Snapshot of public content from original commit c88b5c1, independent of HEAD.
-    assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'), 'c2851423fae55255eb7eebc5109b95730acd61afe3eb4013959da0afcadc3207');
+    // Public facts match ffec150 before authorized navigation consolidation.
+    // Navigation and archived source text are verified separately below.
+    assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'), '69f95c86777f82512cfbabdba4ec1c57d07e50f558dfe42b4e155262018a7520');
     assert.ok(html.includes('--paper:#fdf6e0')); assert.ok(html.includes('Meiryo UI'));
     assert.equal(html.includes('26作品'),false);assert.equal(d.querySelectorAll('.work').length,27);
     const nav = d.querySelector('[data-goto="works"]'); nav.click();
     assert.equal(d.querySelector('#view-works').classList.contains('active'), true);
     assert.ok(d.querySelectorAll('.work .inline-memo').length > 0);
   } finally { b.dom.window.close(); }
+});
+
+test('archived templates and tasks retain exact source text while bulk comment exports are replaced by request navigation',async()=>{
+ const b=browser();try{await tick();const d=b.w.document;
+  const preserved={templates:['tpl-update','tpl-eventmsg','tpl-soldout','tpl-after'].map(id=>d.getElementById(id).textContent),home:d.querySelector('#legacy-home .task-list').textContent,ideas:d.querySelector('#legacy-booth .idea-grid').textContent,tasks:d.querySelector('#legacy-booth .task-list').textContent};
+  assert.equal(createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),'b3d662bf6f036449d17079f5c475ff2e58c2e80e7ef611379f36dc281fe11ddc');
+  assert.equal(d.querySelectorAll('#view-home .task-list,#view-booth .task-list').length,0);
+  assert.equal(d.querySelectorAll('#summary-copy,#quick-copy,#memo-download,.template-edit').length,0);
+  assert.equal(d.querySelectorAll('#legacy-templates pre').length,4);
+  assert.ok(d.querySelector('#quick-panel a[href="private.html#kind=request"]'));assert.ok(d.querySelector('#comment-summary a[href="private.html#kind=request"]'));
+  const zone=d.querySelector('#legacy-comments [data-memo-zone]');assert.equal(zone.getAttribute('aria-label'),'LINE用文面のメモ');
+  assert.equal(zone.querySelector('.memo-list').getAttribute('data-comment-target'),'ページ：LINE用文面');
+  d.querySelector('[data-goto-anchor="legacy-booth"]').click();assert.ok(d.querySelector('#view-share').classList.contains('active'));assert.ok(d.querySelector('#legacy-booth').open);
+  assert.equal(b.requests.filter(r=>r.options.method==='POST').length,0);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
 });
 
 test('all new comment paths protect unsent text on background or denial and restore only for the verified owner',async()=>{

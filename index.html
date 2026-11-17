@@ -540,7 +540,7 @@ footer{margin-top:32px}
 <button type="button" role="tab" data-view-btn="works" aria-selected="false">作品・在庫</button>
 <button type="button" role="tab" data-view-btn="booth" aria-selected="false">ブース</button>
 <button type="button" role="tab" data-view-btn="pops" aria-selected="false">ポップ置き場</button>
-<button type="button" role="tab" data-view-btn="share" aria-selected="false">LINE用文面</button>
+<button type="button" role="tab" data-view-btn="share" aria-selected="false" data-icon="archive">資料</button>
 </nav>
 </header>
 
@@ -555,17 +555,16 @@ footer{margin-top:32px}
 <li><span class="k">作品・在庫</span><span><button type="button" class="linklike" data-goto="works">27作品を登録</button>（価格確認済み 19作品）</span></li>
 <li><span class="k">ポップ</span><span><button type="button" class="linklike" data-goto="pops">12点を登録（お支払い方法を追加）</button></span></li>
 <li><span class="k">ウォンバット</span><span><button type="button" class="linklike" data-goto="event-wombat">当日の写真 20枚を登録</button></span></li>
-<li><span class="k">やること</span><span><button type="button" class="linklike" data-goto="booth" data-goto-anchor="booth-tasks">5件</button>（印刷確認・価格と在庫の確認）</span></li>
+<li><span class="k">やりたいこと</span><span><a href="private.html#kind=task">現在の記録を開く</a></span></li>
 </ul>
 </div>
 
 <section class="memo-zone" data-memo-zone aria-label="ホームのメモ">
-<div class="memo-head"><h3>コメント</h3><span class="memo-hint">LINEで確認した名前で投稿。記入後に「コメントを追加」。まとめは下の「指摘事項まとめ」からコピー可能</span></div>
+<div class="memo-head"><h3>コメント</h3><span class="memo-hint">LINEで確認した名前で投稿。ボードの変更は保存後の「更新依頼にする」から</span></div>
 <textarea class="free-write" rows="3" placeholder="気づいたこと、やること、連絡したいこと"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" data-memo-add>メモとして残す</button>
 <button type="button" class="btn ghost small" data-memo-copy>この場所のメモをコピー</button>
-<button type="button" class="btn ghost small" id="memo-download">全部のメモをファイルで保存</button>
 </div>
 <div class="memo-list"></div>
 </section>
@@ -586,8 +585,8 @@ footer{margin-top:32px}
 <button type="button" class="area" data-goto="booth">
 <img class="thumb" src="assets/pop-haniwa.jpg" alt="" />
 <span><h3>ブースの工夫</h3>
-<p>並べ方の工夫とやることリスト</p>
-<span class="count">工夫の記録 4件 ・ やりたいこと 4件</span></span>
+<p>並べ方の工夫と展示の資料</p>
+<span class="count">工夫の記録 4件</span></span>
 </button>
 <button type="button" class="area" data-goto="pops">
 <img class="thumb" src="assets/pop-strap.jpg" alt="" />
@@ -597,29 +596,11 @@ footer{margin-top:32px}
 </button>
 </div>
 
-<h3 class="subhead">いま進めていること</h3>
-<ul class="task-list">
-<li class="task"><span class="tno">1</span><div>
-<h3>現品限りポップの印刷確認</h3>
-<p>実物サイズで印刷して確認<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p>
-<span class="pill">文案完成 ・ 確認中</span></div></li>
-<li class="task"><span class="tno">2</span><div>
-<h3>クリスマスマルシェ（2026年12月）の準備</h3>
-<p>12月19日（土）10:00〜17:00。<button type="button" class="linklike" data-goto="event-xmas">準備ページを開く</button></p>
-<span class="pill">準備中</span></div></li>
-<li class="task"><span class="tno">3</span><div>
-<h3>作品の価格と在庫数を確認する</h3>
-<p>分かった価格と在庫数は更新シートへ記入<button type="button" class="linklike" data-goto="works">「作品・在庫」を見る</button></p>
-<span class="pill">確認待ち</span></div></li>
-</ul>
-
-<section class="summary-zone" id="comment-summary" aria-label="指摘事項まとめ">
-<h3 class="subhead">指摘事項まとめ<span id="summary-count" class="summary-count"></span></h3>
-<p class="subnote">各作品・ポップ・イベント・ページに入れたコメントを、項目ごとにまとめた一覧。まとめてコピーしてLINEへ貼る形</p>
+<section class="summary-zone" id="comment-summary" aria-label="コメント一覧">
+<h3 class="subhead">コメント一覧<span id="summary-count" class="summary-count"></span></h3>
+<p class="subnote">各場所のコメントを項目ごとに確認。AIへ渡す内容は「更新依頼」にまとめる</p>
+<div class="resource-route"><a data-icon="request" href="private.html#kind=request">AI更新依頼を開く</a></div>
 <div id="summary-list"></div>
-<div class="pop-actions">
-<button type="button" class="btn" id="summary-copy">指摘事項をまとめてコピー</button>
-</div>
 </section>
 </details>
 </main>
@@ -1429,7 +1410,7 @@ footer{margin-top:32px}
 <!-- ================= ブース ================= -->
 <main class="view" id="view-booth">
 <div class="view-head"><h2>ブースの工夫</h2></div>
-<p class="view-lead">並べ方の工夫とやりたいこと・やること</p>
+<p class="view-lead">並べ方の工夫と展示の資料</p>
 
 <figure class="booth-photo">
 <img src="assets/display-straps.jpg" alt="ペグボードを使ったストラップの売り場全体" />
@@ -1444,37 +1425,7 @@ footer{margin-top:32px}
 <div class="idea"><h3>大きな作品はテーブルの真ん中に座らせた</h3><p>姿がよく見えるよう座らせた配置</p><span class="badge on from">実践中</span></div>
 </div>
 
-<h3 class="subhead jump" id="booth-ideas">やりたいこと</h3>
-<div class="idea-grid">
-<div class="idea"><h3>値札の横に小さい現品限りポップ</h3><p>現品限りポップは卓上の大きい版と値札横の小さい版の2サイズ展開<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p><span class="badge warn from">アイデア</span></div>
-<div class="idea"><h3>クリスマスは深緑の布で季節感を</h3><p>布や飾りを緑系に寄せた統一感の出し方<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">クリスマスポップを見る</button></p><span class="badge warn from">アイデア</span></div>
-<div class="idea"><h3>高さの違う台で奥行きを作る</h3><p>小さな台で後ろの作品も見える高さ出し</p><span class="badge warn from">アイデア</span></div>
-<div class="idea"><h3>3Dプリンターで展示用品を作る</h3><p>フックやスタンド制作の試行</p><span class="badge warn from">アイデア</span></div>
-</div>
-
-<h3 class="subhead jump" id="booth-tasks">やることリスト</h3>
-<ul class="task-list">
-<li class="task"><span class="tno">1</span><div>
-<h3>現品限りのポップを作る</h3>
-<p><button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場の案</button>を、実物サイズで印刷して確認</p>
-<span class="pill">文案完成 ・ 確認中</span></div></li>
-<li class="task"><span class="tno">2</span><div>
-<h3>クリスマスマーケット用のポップを作る</h3>
-<p>文字だけの版を作成済み<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">ポップ置き場で見る</button></p>
-<span class="pill">文案完成 ・ 確認中</span></div></li>
-<li class="task"><span class="tno">3</span><div>
-<h3>作品の価格と在庫数を登録する</h3>
-<p><button type="button" class="linklike" data-goto="works">「作品・在庫」</button>に27作品を登録済み。残りは価格と在庫数の入力</p>
-<span class="pill">あと価格と在庫数</span></div></li>
-<li class="task"><span class="tno">4</span><div>
-<h3>クリスマスマルシェ（2026年12月）の日程を登録する</h3>
-<p><button type="button" class="linklike" data-goto="event-xmas">準備ページ</button>に登録済み（12月19日 10:00〜17:00）。</p>
-<span class="pill done">日程登録済み</span></div></li>
-<li class="task"><span class="tno">5</span><div>
-<h3>ブースの工夫をイベントごとに記録する</h3>
-<p>出店のたびに写真撮影と気づきの記録</p>
-<span class="pill">継続中</span></div></li>
-</ul>
+<p class="resource-route"><a data-icon="task" href="private.html#kind=task">現在のやりたいことを開く</a><button type="button" class="linklike" data-goto="share" data-goto-anchor="legacy-booth">以前のアイデア・作業を見る</button></p>
 
 <h3 class="subhead">展示用に買ったもの</h3>
 <p class="subnote">ハンドメイドの展示用にAmazonで購入したもの</p>
@@ -1683,56 +1634,103 @@ footer{margin-top:32px}
 
 <!-- ================= LINE用文面 ================= -->
 <main class="view" id="view-share">
-<div class="view-head"><h2>LINE用文面</h2></div>
-<p class="view-lead">文面はそのまま書き換え可能。直してからコピーして送信</p>
+<div class="view-head"><h2>資料</h2></div>
+<p class="view-lead">以前の文面・作業案を保管。現在の進み具合とは分けて確認</p>
+<div class="resource-route"><a data-icon="task" href="private.html#kind=task">やりたいこと</a><a data-icon="request" href="private.html#kind=request">AI更新依頼</a></div>
+<details class="resource-group" id="legacy-templates"><summary>お知らせの文面（4件）</summary><p class="subnote">以前の文面を参考用に保管。日程・在庫・公開範囲は送る前に確認</p>
 
 <div class="msg-grid">
 <div class="msg">
 <h3>更新のお知らせ</h3>
-<textarea class="template template-edit" id="tpl-update" rows="5" aria-label="更新のお知らせの文面（書き換え可能）">・（変わったことを書く）
+<pre class="template archived-template" id="tpl-update">・（変わったことを書く）
 ・（変わったことを書く）
 在庫とポップはこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-update">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 <div class="msg">
 <h3>イベントのお知らせ</h3>
-<textarea class="template template-edit" id="tpl-eventmsg" rows="6" aria-label="イベントのお知らせの文面（書き換え可能）">（イベント名）に出店
+<pre class="template archived-template" id="tpl-eventmsg">（イベント名）に出店
 日程：（　）
 会場：（　）
 持っていく作品と準備の様子はこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-eventmsg">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 <div class="msg">
 <h3>完売のお知らせ</h3>
-<textarea class="template template-edit" id="tpl-soldout" rows="6" aria-label="完売のお知らせの文面（書き換え可能）">（作品名）完売。
+<pre class="template archived-template" id="tpl-soldout">（作品名）完売。
 現品限りのため、同じものは作れない。
 気にかけてくれた方へ感謝。
 今の在庫はこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-soldout">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 <div class="msg">
 <h3>イベントの振り返り</h3>
-<textarea class="template template-edit" id="tpl-after" rows="5" aria-label="イベントの振り返りの文面（書き換え可能）">（イベント名）終了。
+<pre class="template archived-template" id="tpl-after">（イベント名）終了。
 来てくれた方へ感謝。
 当日の様子と気づきはこちら↓
-（このページのリンク）</textarea>
-<div class="pop-actions">
-<button class="btn" type="button" data-copy-target="tpl-after">文面をコピー</button>
-</div>
+（このページのリンク）</pre>
+
 </div>
 </div>
 
+
+</details>
+<details class="resource-group" id="legacy-home"><summary>以前のホームにあった作業（3件）</summary><p class="subnote">公開ボードから移した元の記載。状態は当時の表示のまま。現在の進捗は「やりたいこと」で確認</p><h3 class="subhead">いま進めていること</h3>
+<ul class="task-list">
+<li class="task"><span class="tno">1</span><div>
+<h3>現品限りポップの印刷確認</h3>
+<p>実物サイズで印刷して確認<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p>
+<span class="pill">文案完成 ・ 確認中</span></div></li>
+<li class="task"><span class="tno">2</span><div>
+<h3>クリスマスマルシェ（2026年12月）の準備</h3>
+<p>12月19日（土）10:00〜17:00。<button type="button" class="linklike" data-goto="event-xmas">準備ページを開く</button></p>
+<span class="pill">準備中</span></div></li>
+<li class="task"><span class="tno">3</span><div>
+<h3>作品の価格と在庫数を確認する</h3>
+<p>分かった価格と在庫数は更新シートへ記入<button type="button" class="linklike" data-goto="works">「作品・在庫」を見る</button></p>
+<span class="pill">確認待ち</span></div></li>
+</ul>
+
+</details>
+<details class="resource-group" id="legacy-booth"><summary>以前のブースのアイデア・作業（9件）</summary><p class="subnote">公開ボード由来のアイデア4件・作業5件。更新シートや現在の私的な記録へ自動転記せず、元の記載を保管</p><h3 class="subhead jump" id="booth-ideas">やりたいこと</h3>
+<div class="idea-grid">
+<div class="idea"><h3>値札の横に小さい現品限りポップ</h3><p>現品限りポップは卓上の大きい版と値札横の小さい版の2サイズ展開<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場で見る</button></p><span class="badge warn from">アイデア</span></div>
+<div class="idea"><h3>クリスマスは深緑の布で季節感を</h3><p>布や飾りを緑系に寄せた統一感の出し方<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">クリスマスポップを見る</button></p><span class="badge warn from">アイデア</span></div>
+<div class="idea"><h3>高さの違う台で奥行きを作る</h3><p>小さな台で後ろの作品も見える高さ出し</p><span class="badge warn from">アイデア</span></div>
+<div class="idea"><h3>3Dプリンターで展示用品を作る</h3><p>フックやスタンド制作の試行</p><span class="badge warn from">アイデア</span></div>
+</div>
+
+<h3 class="subhead jump" id="booth-tasks">やることリスト</h3>
+<ul class="task-list">
+<li class="task"><span class="tno">1</span><div>
+<h3>現品限りのポップを作る</h3>
+<p><button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-genpin">ポップ置き場の案</button>を、実物サイズで印刷して確認</p>
+<span class="pill">文案完成 ・ 確認中</span></div></li>
+<li class="task"><span class="tno">2</span><div>
+<h3>クリスマスマーケット用のポップを作る</h3>
+<p>文字だけの版を作成済み<button type="button" class="linklike" data-goto="pops" data-goto-anchor="pop-xmas">ポップ置き場で見る</button></p>
+<span class="pill">文案完成 ・ 確認中</span></div></li>
+<li class="task"><span class="tno">3</span><div>
+<h3>作品の価格と在庫数を登録する</h3>
+<p><button type="button" class="linklike" data-goto="works">「作品・在庫」</button>に27作品を登録済み。残りは価格と在庫数の入力</p>
+<span class="pill">あと価格と在庫数</span></div></li>
+<li class="task"><span class="tno">4</span><div>
+<h3>クリスマスマルシェ（2026年12月）の日程を登録する</h3>
+<p><button type="button" class="linklike" data-goto="event-xmas">準備ページ</button>に登録済み（12月19日 10:00〜17:00）。</p>
+<span class="pill done">日程登録済み</span></div></li>
+<li class="task"><span class="tno">5</span><div>
+<h3>ブースの工夫をイベントごとに記録する</h3>
+<p>出店のたびに写真撮影と気づきの記録</p>
+<span class="pill">継続中</span></div></li>
+</ul>
+
+</details>
+<details class="resource-group" id="legacy-comments"><summary>文面についてのコメント</summary>
 <section class="memo-zone" data-memo-zone aria-label="LINE用文面のメモ">
-<div class="memo-head"><h3>メモ</h3><span class="memo-hint">送りたい文面の下書き用自由記入欄</span></div>
+<div class="memo-head"><h3>メモ</h3><span class="memo-hint">以前の文面へのコメントを同じ場所に保持</span></div>
 <textarea class="free-write" rows="3" placeholder="新しいお知らせ文の下書き"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" data-memo-add>メモとして残す</button>
@@ -1740,6 +1738,7 @@ footer{margin-top:32px}
 </div>
 <div class="memo-list"></div>
 </section>
+</details>
 </main>
 
 <footer>
@@ -1750,7 +1749,7 @@ footer{margin-top:32px}
 <button type="button" data-goto="works">作品・在庫</button>
 <button type="button" data-goto="booth">ブース</button>
 <button type="button" data-goto="pops">ポップ置き場</button>
-<button type="button" data-goto="share">LINE用文面</button>
+<button type="button" data-goto="share">資料</button>
 </nav>
 <p>最終更新：2026年11月16日</p>
 </footer>
@@ -1762,7 +1761,7 @@ footer{margin-top:32px}
 <textarea class="free-write" id="quick-text" rows="4" placeholder="気づいたこと・直してほしいところ"></textarea>
 <div class="memo-tools">
 <button type="button" class="btn small" id="quick-add">このページにコメント追加</button>
-<button type="button" class="btn ghost small" id="quick-copy">指摘事項をまとめてコピー</button>
+<a class="btn ghost small" data-icon="request" href="private.html#kind=request">AI更新依頼</a>
 <button type="button" class="btn ghost small" id="quick-close">閉じる</button>
 </div>
 </div>
@@ -1843,6 +1842,7 @@ menuButtons.forEach(function(b){
 });
 viewIds.forEach(function(id){var panel=document.getElementById('view-'+id);if(panel){panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby','tab-'+(parentTab[id]||id));}});
 function showView(id, anchor) {
+if(anchor){var anchored=document.getElementById(anchor),anchoredView=anchored&&anchored.closest('.view');if(anchoredView)id=anchoredView.id.replace(/^view-/,'');}
 if (viewIds.indexOf(id) === -1) id = 'home';
 viewIds.forEach(function (v) {
 var el = document.getElementById('view-' + v);
@@ -1855,7 +1855,7 @@ b.setAttribute('tabindex',b.getAttribute('data-view-btn')===tab?'0':'-1');
 b.setAttribute('aria-controls','view-'+(b.getAttribute('data-view-btn')===tab?id:b.getAttribute('data-view-btn')));
 });
 var target = anchor? document.getElementById(anchor): null;
-if (target) { target.scrollIntoView({ block: 'start' }); }
+if (target) { var disclosure=target; while(disclosure){if(disclosure.tagName==='DETAILS')disclosure.open=true;disclosure=disclosure.parentElement;} target.scrollIntoView({ block: 'start' }); }
 else { window.scrollTo(0, 0); }
 try {
 settingHash = true;
@@ -2010,11 +2010,6 @@ renderComments(); showToast('コメント保存済み'); return true;
 } catch (error) { showToast(error.message); return false; }
 finally { button.disabled = !commentsReady; }
 }
-function stamp() {
-var d = new Date();
-function p(n) { return (n < 10? '0': '') + n;}
-return d.getFullYear() + '/' + p(d.getMonth() + 1) + '/' + p(d.getDate()) + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
-}
 function commentCard(c) {
 var card = document.createElement('article');
 card.className = 'memo-card';
@@ -2087,16 +2082,6 @@ map[c.target].push(c);
 });
 return order.map(function (t) { return { target: t, items: map[t]};});
 }
-function summaryText() {
-if (!comments.length) return '';
-var lines = ['どんぐりの夢 共有ボード', stamp() + ' 時点・全' + comments.length + '件', ''];
-groupedComments().forEach(function (g) {
-lines.push('■ ' + g.target);
-g.items.forEach(function (c) { lines.push('・' + c.author + '：' + c.text);});
-lines.push('');
-});
-return lines.join('\n').trim();
-}
 function rebuildSummary() {
 var cnt = document.getElementById('summary-count');
 if (cnt) cnt.textContent = comments.length? '（全' + comments.length + '件）': '';
@@ -2132,12 +2117,6 @@ ul.appendChild(li);
 div.appendChild(ul);
 box.appendChild(div);
 });
-}
-function copySummary() {
-if (!comments.length) { showToast('コピーするコメントなし'); return;}
-copyText(summaryText()).then(function () {
-showToast('指摘事項をまとめてコピー済み。LINEに貼れる形');
-}, function () { showToast('コピー失敗');});
 }
 /* ---- comment zones (one per page) ---- */
 function memoZoneHTML(label, hint, placeholder) {
@@ -2248,27 +2227,8 @@ var date = card? card.querySelector('.meta .m-line'): null;
 var t = 'イベント：' + (h? h.textContent: 'イベント') + (date? '（' + date.textContent + '）': '');
 addInlineComment(body, t, 'このイベントについてのコメント');
 });
-/* ---- summary copy + download ---- */
-var sCopy = document.getElementById('summary-copy');
-if (sCopy) sCopy.addEventListener('click', copySummary);
+/* ---- private comment overview ---- */
 rebuildSummary();
-var dl = document.getElementById('memo-download');
-if (dl) {
-dl.textContent = '指摘事項をファイルで保存';
-dl.addEventListener('click', function () {
-if (!comments.length) { showToast('保存するコメントなし。先にコメント記入'); return;}
-var blob = new Blob([summaryText() + '\n'], { type: 'text/plain;charset=utf-8'});
-var url = URL.createObjectURL(blob);
-var a = document.createElement('a');
-a.href = url;
-a.download = 'donguri-shiteki.txt';
-document.body.appendChild(a);
-a.click();
-document.body.removeChild(a);
-setTimeout(function () { URL.revokeObjectURL(url);}, 2000);
-showToast('指摘事項のファイルを保存済み');
-});
-}
 /* ---- quick comment panel: write from any page ---- */
 var qBtn = document.getElementById('quick-memo-btn');
 var qPanel = document.getElementById('quick-panel');
@@ -2293,8 +2253,6 @@ if (qTools &&!qTools.querySelector('.author-sel')) qTools.insertBefore(makeAutho
 }
 var qClose = document.getElementById('quick-close');
 if (qClose) qClose.addEventListener('click', closeQuick);
-var qCopy = document.getElementById('quick-copy');
-if (qCopy) qCopy.addEventListener('click', copySummary);
 var qAdd = document.getElementById('quick-add');
 if (qAdd) {
 qAdd.addEventListener('click', function () {

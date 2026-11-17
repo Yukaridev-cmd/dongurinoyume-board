@@ -3,6 +3,7 @@
 // Original 24px line drawings. No image/font service, tracking or external requests.
 var drawings={
  home:['M3 11 12 3l9 8','M5 10v11h5v-7h4v7h5V10'],
+ archive:['M3 4h18v4H3zM5 8v13h14V8','M9 12h6'],
  review:['M6 3h12v18H6z','M9 7h6M9 11h6M9 16h2M14 14v4'],
  task:['M9 5h11M9 12h11M9 19h11','m3 5 1 1 2-3m-3 9 1 1 2-3m-3 9 1 1 2-3'],
  inventory:['m3 7 9-4 9 4v12l-9 3-9-3z','m3 7 9 4 9-4M12 11v11M7 5l10 4v5'],
