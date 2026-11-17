@@ -80,7 +80,7 @@
     more.appendChild(summary);
     Array.from(body.children)
       .filter(function (n) {
-        return !n.matches('h3,.price,.inline-memo');
+        return !n.matches('h3,.price,.price-line,.inline-memo');
       })
       .forEach(function (n) {
         more.appendChild(n);

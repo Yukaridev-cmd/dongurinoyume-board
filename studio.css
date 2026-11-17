@@ -2681,3 +2681,142 @@ nav.primary-nav > a[aria-current='page']:hover {
   line-height: 1.5;
   margin-top: 4px;
 }
+/* Preparation-first layout: quieter surfaces keep the photographs prominent. */
+:root {
+  --studio-paper: #faf8f2;
+  --studio-border: #d6cdbc;
+  --studio-ink: #493e32;
+}
+html,
+body {
+  background: #faf8f2 !important;
+}
+header,
+.primary-nav {
+  box-shadow: none !important;
+}
+.primary-nav {
+  background: #f3eee4 !important;
+  border: 1px solid #bcb09e !important;
+  padding: 4px !important;
+  gap: 4px !important;
+}
+.primary-nav [role='tab'],
+.primary-nav > a {
+  background: transparent !important;
+  color: #514535 !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+}
+.primary-nav [aria-selected='true'] {
+  background: #e4ebdc !important;
+  border-color: #738368 !important;
+  color: #293d29 !important;
+}
+.work,
+.event-card,
+.pop-entry,
+.next-preparation {
+  background: #fff !important;
+  box-shadow: none !important;
+  border: 1px solid #d6cdbc !important;
+}
+.next-preparation {
+  padding: 14px;
+  border-radius: 12px;
+  margin: 8px 0 16px;
+  border-left: 4px solid #788b67 !important;
+}
+.next-preparation h3 {
+  margin: 0 0 6px;
+  font-size: 13px;
+  color: #57694b;
+}
+.next-preparation strong {
+  font-size: 18px;
+}
+.next-preparation p {
+  margin: 6px 0;
+  font-size: 13px;
+}
+.past-events .event-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+.past-events .event-card {
+  display: grid !important;
+  grid-template-columns: 70px minmax(0, 1fr) !important;
+  align-items: start;
+}
+.past-events .event-card > img {
+  height: 70px !important;
+  width: 70px !important;
+  object-fit: cover !important;
+}
+.past-events .event-card .body {
+  min-width: 0;
+  padding: 8px !important;
+}
+.past-events h3 {
+  font-size: 12px !important;
+}
+.work-preparation-facts {
+  font-size: 12px;
+  line-height: 1.6;
+  margin: 6px 0;
+  color: #514535;
+}
+.work .body > .price-line {
+  font-size: 13px;
+  margin: 4px 0;
+}
+.comment-peek {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  text-align: left;
+  border: 0;
+  border-top: 1px solid #ddd3c2;
+  background: #f4f6ef;
+  color: #435638;
+  padding: 8px;
+  font: inherit;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  border-radius: 6px;
+}
+@media (max-width: 720px) {
+  .past-events .event-list {
+    grid-template-columns: 1fr !important;
+  }
+  .next-preparation strong {
+    font-size: 16px;
+  }
+}
+.draft-save-state {
+  min-height: 1.5em;
+  font-size: 12px;
+  color: #685330;
+  margin: 2px 0;
+}
+[data-has-draft] > .draft-save-state::after {
+  content: '未保存 · 保存ボタンで確定';
+}
+.next-preparation > .event-card {
+  border: 0 !important;
+  margin: 0 !important;
+}
+:root {
+  --paper: #faf8f2;
+  --paper-deep: #f0ece3;
+  --surface: #fff;
+  --studio-white: #fff;
+  --band: #f3f0e9;
+}
+body .primary-nav > a[href] {
+  background: transparent !important;
+  color: #514535 !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
