@@ -1724,6 +1724,7 @@ footer{margin-top:32px}
 <div class="quick-panel" id="quick-panel" hidden>
 <h3>コメント（今見ているページに追加）</h3>
 <p class="comment-help">このページへのコメントを保存。各項目へのコメントは項目の欄から記入。</p><textarea class="free-write" id="quick-text" rows="4" placeholder="気づいたこと・直してほしいところ"></textarea>
+<p id="quick-status" class="comment-help" role="status"></p>
 <div class="memo-tools">
 <button type="button" class="btn small" id="quick-add">このページにコメント追加</button>
 <a class="btn ghost small" data-icon="request" href="private.html#kind=request">AIへの依頼</a>
@@ -1898,6 +1899,8 @@ var comments = [];
 var currentAuthor = '';
 var commentsReady = false;
 var currentViewer = '', boardDrafts = new Map();
+document.addEventListener('compositionstart',function(event){if(event.target.matches('textarea'))event.target.dataset.commentComposing='true';});
+document.addEventListener('compositionend',function(event){if(event.target.matches('textarea'))delete event.target.dataset.commentComposing;});
 function commentInputs() { return Array.from(document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text')); }
 function protectCommentDrafts() {
 var inputs=commentInputs().filter(function(ta){return ta.value!=='';}).map(function(ta){return {element:ta,text:ta.value,id:ta._commentId};});
@@ -1935,8 +1938,8 @@ document.querySelectorAll('.author-sel').forEach(function (sel) {
 sel.options[0].value = currentAuthor;
 sel.options[0].textContent = currentAuthor || 'LINE認証を確認';
 });
-document.querySelectorAll('[data-memo-add], .inline-memo .btn, #quick-add').forEach(function (btn) { btn.disabled = !commentsReady; });
-document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text').forEach(function (ta) { ta.disabled = !commentsReady; ta.maxLength = 4000; ta.setAttribute('autocomplete','off'); });
+document.querySelectorAll('[data-memo-add], .inline-memo .btn, #quick-add').forEach(function (btn) { if(btn.disabled===commentsReady)btn.disabled = !commentsReady; });
+document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text').forEach(function (ta) { if(ta.disabled===commentsReady)ta.disabled = !commentsReady; if(ta.maxLength!==4000)ta.maxLength = 4000; if(ta.getAttribute('autocomplete')!=='off')ta.setAttribute('autocomplete','off'); });
 }
 function renderComments() {
 document.querySelectorAll('[data-memo-zone]').forEach(function (zone) {
@@ -1957,27 +1960,30 @@ window.addEventListener('comments-auth', function (event) {
 if((!event.detail.ready&&commentsReady)||(event.detail.ready&&commentsReady&&currentViewer&&currentViewer!==event.detail.viewer))protectCommentDrafts();
 commentsReady = event.detail.ready; currentAuthor = event.detail.author;
 if(commentsReady)currentViewer=event.detail.viewer;
-setCommentAccess();if(commentsReady)restoreCommentDrafts();rebuildSummary();
+setCommentAccess();if(commentsReady)restoreCommentDrafts();rebuildSummary();var quickStatus=document.getElementById('quick-status');if(quickStatus)quickStatus.textContent=event.detail.message||(commentsReady?currentAuthor+'として共有中':'LINE認証を確認');
 });
 window.addEventListener('comments-clear',protectCommentDrafts);
 window.addEventListener('comments-suspend',protectCommentDrafts);
 window.addEventListener('beforeunload',function(event){if(boardDrafts.size||document.querySelector('[data-comment-editor]')||commentInputs().some(function(ta){return ta.value!=='';})){event.preventDefault();event.returnValue='';}});
 window.addEventListener('comments-loaded', function (event) { comments = event.detail; renderComments(); });
 async function submitComment(target, ta, button) {
+if(ta.dataset.commentComposing){showToast('日本語の変換を確定してから保存');return false;}
 if (!commentsReady || button.disabled) return false;
+var feedback=ta.parentElement.querySelector('.comment-save-status');if(!feedback){feedback=document.createElement('p');feedback.className='comment-help comment-save-status';feedback.setAttribute('role','status');ta.after(feedback);}
 var text = ta.value.trim();
 if (!text || text.length > 4000) { showToast('コメントは1〜4000文字で記入'); return false; }
 button.disabled = true;
-if (!ta._commentId) ta._commentId = crypto.randomUUID();
+feedback.textContent='保存中…';
 try {
+if (!ta._commentId) {if(crypto.randomUUID)ta._commentId=crypto.randomUUID();else{var bytes=crypto.getRandomValues(new Uint8Array(16));bytes[6]=(bytes[6]&15)|64;bytes[8]=(bytes[8]&63)|128;var hex=Array.from(bytes,function(n){return n.toString(16).padStart(2,'0');}).join('');ta._commentId=hex.slice(0,8)+'-'+hex.slice(8,12)+'-'+hex.slice(12,16)+'-'+hex.slice(16,20)+'-'+hex.slice(20);}}
 var result = await window.DonguriComments.save('/comments', 'POST', { id: ta._commentId, target: target, text: text });
 comments = comments.filter(function (c) { return c.id !== result.comment.id; });
 comments.push(result.comment);
 // Only clear the submitted text; preserve any text typed while saving.
 if (ta.value.trim() === text) ta.value = '';
 ta._commentId = null;
-renderComments(); showToast('コメント保存済み'); return true;
-} catch (error) { showToast(error.message); return false; }
+renderComments(); feedback.textContent='コメント保存済み';showToast('コメント保存済み'); return true;
+} catch (error) { feedback.textContent=error.message;showToast(error.message); return false; }
 finally { button.disabled = !commentsReady; }
 }
 function commentCard(c) {
@@ -2218,7 +2224,7 @@ if (open && qText) qText.focus();
 }
 if (qPanel) {
 qPanel.setAttribute('role','region');qPanel.setAttribute('aria-label','コメントの入力');
-qPanel.addEventListener('keydown',function(event){if(event.key==='Escape'){event.preventDefault();closeQuick();}});
+qPanel.addEventListener('keydown',function(event){if(event.key==='Escape'&&!event.isComposing&&event.keyCode!==229&&!qText.dataset.commentComposing){event.preventDefault();closeQuick();}});
 var qTools = qPanel.querySelector('.memo-tools');
 if (qTools &&!qTools.querySelector('.author-sel')) qTools.insertBefore(makeAuthorSelect(), qTools.firstChild);
 }

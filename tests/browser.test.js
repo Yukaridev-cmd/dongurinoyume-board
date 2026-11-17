@@ -341,3 +341,20 @@ test('past event list and all seven original photo previews are visible without 
  assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
 });
+
+test('all POP previews start visible in image-first work-style cards and preserve content, actions and comment targets',()=>{
+ const source=new JSDOM(html).window.document,b=browser({configured:false});try{const d=b.w.document,original=[...source.querySelectorAll('.pop-entry')],cards=[...d.querySelectorAll('.pop-grid>.pop-entry')];assert.equal(cards.length,12);
+ for(const old of original){const card=d.getElementById(old.id);assert.equal(card.parentElement.classList.contains('work-grid'),true);assert.equal(card.firstElementChild.className.startsWith('pop-media'),true);assert.equal(card.querySelector('.body>.head h3').textContent,old.querySelector('h3').textContent);assert.deepEqual([...card.querySelectorAll('img')].map(i=>[i.getAttribute('src'),i.alt]),[...old.querySelectorAll('img')].map(i=>[i.getAttribute('src'),i.alt]));assert.equal(card.querySelector('.body>.work-more').open,false);for(const preview of card.querySelectorAll('.pop-media .fig,.pop-media .pop'))assert.equal(preview.closest('details'),null);assert.equal(card.querySelectorAll('.inline-memo').length,1);assert.equal(card.querySelector('.body>.inline-memo')!==null,true);assert.equal(card.querySelectorAll('[data-copy]').length,old.querySelectorAll('[data-copy]').length);assert.equal(card.querySelector('.facts')?.textContent,old.querySelector('.facts')?.textContent);}
+ assert.equal(d.querySelectorAll('.pop-entry .compact-detail').length,0);assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
+
+test('Japanese composition survives same-user revalidation without textarea writes, and saves only after confirmation',async()=>{
+ const b=browser();try{await tick();const d=b.w.document,ta=d.getElementById('quick-text'),panel=d.getElementById('quick-panel');d.getElementById('quick-memo-btn').click();ta.value='て';ta.dispatchEvent(new b.w.CompositionEvent('compositionstart',{bubbles:true,data:'て'}));let valueWrites=0,disabledWrites=0;const proto=b.w.HTMLTextAreaElement.prototype,value=Object.getOwnPropertyDescriptor(proto,'value'),disabled=Object.getOwnPropertyDescriptor(proto,'disabled');Object.defineProperty(ta,'value',{get(){return value.get.call(this);},set(v){valueWrites++;value.set.call(this,v);}});Object.defineProperty(ta,'disabled',{get(){return disabled.get.call(this);},set(v){disabledWrites++;disabled.set.call(this,v);}});
+ await b.w.DonguriComments.connect({revalidate:true});assert.equal(ta.value,'て');assert.equal(valueWrites,0);assert.equal(disabledWrites,0);ta.dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'Escape',isComposing:true,bubbles:true}));assert.equal(panel.hidden,false);d.getElementById('quick-add').click();await tick();assert.equal(b.requests.filter(r=>r.options.method==='POST').length,0);ta.value='テスト';ta.dispatchEvent(new b.w.CompositionEvent('compositionend',{bubbles:true,data:'テスト'}));b.w.crypto.randomUUID=undefined;d.getElementById('quick-add').click();await tick();assert.equal(b.records.length,1);assert.equal(b.records[0].text,'テスト');assert.match(b.records[0].id,/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);assert.equal(ta.value,'');assert.equal(b.errors.length,0);
+ }finally{b.dom.window.close();}
+});
+test('comment save failures remain visible beside the input and preserve Japanese text',async()=>{
+ const b=browser();try{await tick();const d=b.w.document,ta=d.getElementById('quick-text');d.getElementById('quick-memo-btn').click();ta.value='テスト';b.failure=-1;d.getElementById('quick-add').click();await tick();assert.equal(ta.value,'テスト');assert.match(d.querySelector('#quick-panel .comment-save-status').textContent,/通信/);assert.equal(d.getElementById('quick-panel').hidden,false);assert.equal(d.getElementById('quick-add').disabled,false);
+ }finally{b.dom.window.close();}
+});
