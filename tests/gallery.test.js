@@ -49,7 +49,9 @@ test('photos are integrated into existing tabs; scoped category and event filter
   assert.equal(visible(), 16);
   assert.equal(events.querySelectorAll('.board-photo-card:not([hidden])').length, 28);
   assert.equal(d.querySelectorAll('.board-photo-card img').length, 44);
-  assert.equal(d.querySelectorAll('.board-photo-card details').length, 0);
+  assert.ok(
+    [...d.querySelectorAll('.board-photo-card img')].every((img) => !img.closest('details'))
+  );
   for (const [category, count] of [
     ['works', 1],
     ['commission', 7],

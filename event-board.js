@@ -60,7 +60,11 @@
         var p = notice(
           [event.data.date, event.data.start, event.data.venue].filter(Boolean).join(' · ')
         );
-        card.append(a, p);
+        var comment = document.createElement('a');
+        comment.href = a.href + '&comment=1';
+        comment.className = 'context-comment-trigger';
+        comment.textContent = 'コメントを書く';
+        card.append(a, p, comment);
         fragment.appendChild(card);
       });
       if (!fragment.children.length) fragment.appendChild(notice('追加した出店はまだなし'));

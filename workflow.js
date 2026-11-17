@@ -167,6 +167,9 @@
       tabs.appendChild(b);
       var p = el('section', null, 'phase-panel');
       p.dataset.phasePanel = phase;
+      p.dataset.commentKey = 'phase:' + id + ':' + phase;
+      p.dataset.commentLabel =
+        view.querySelector('.view-head h2').textContent + '・' + names[phase];
       p.setAttribute('aria-label', names[phase]);
       var actions = el('div', null, 'workflow-actions');
       p.appendChild(actions);

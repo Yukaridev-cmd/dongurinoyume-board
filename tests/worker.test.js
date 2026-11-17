@@ -5,12 +5,61 @@ import { readFileSync, mkdtempSync, rmSync, rmdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHandler } from '../backend/worker.js';
+import { randomUUID } from 'node:crypto';
 
 const first = 'U' + '1'.repeat(32),
   second = 'U' + '2'.repeat(32),
   outsider = 'U' + '3'.repeat(32);
 const origin = 'https://yukaridev-cmd.github.io';
 const id = '11111111-1111-4111-8111-111111111111';
+test('all declared new corner targets persist independently, reload for the second member and reject outsiders', async () => {
+  const f = fixture();
+  try {
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+    const keys = [...html.matchAll(/data-comment-key="([^"]+)"/g)].map((m) => m[1]);
+    const events = JSON.parse(readFileSync(new URL('../events.json', import.meta.url), 'utf8'));
+    for (const event of events)
+      for (const phase of ['prepare', 'day', 'review'])
+        keys.push('phase:' + event.id + ':' + phase);
+    assert.equal(keys.length, 202);
+    assert.equal(new Set(keys).size, 202);
+    for (const key of keys) {
+      const r = await f.request('/comments', 'POST', {
+        id: randomUUID(),
+        target: 'コーナー：' + key,
+        text: '架空の網羅テスト',
+      });
+      assert.equal(r.status, 201, key);
+    }
+    f.subject = second;
+    let cursor = '',
+      rows = [];
+    do {
+      const r = await (await f.request('/comments' + (cursor ? '?cursor=' + cursor : ''))).json();
+      rows.push(...r.comments);
+      cursor = r.next;
+    } while (cursor);
+    assert.equal(rows.length, 202);
+    assert.equal(new Set(rows.map((r) => r.target)).size, 202);
+    assert.ok(rows.every((r) => r.text === '架空の網羅テスト'));
+    f.subject = outsider;
+    for (const key of keys)
+      assert.equal(
+        (
+          await f.request('/comments', 'POST', {
+            id: randomUUID(),
+            target: 'コーナー：' + key,
+            text: '架空の拒否テスト',
+          })
+        ).status,
+        403
+      );
+    assert.equal((await f.request('/comments')).status, 403);
+    assert.equal(f.db.sqlite.prepare('SELECT COUNT(*) AS n FROM comments').get().n, 202);
+  } finally {
+    f.db.sqlite.close();
+  }
+});
 function database(path = ':memory:') {
   const sqlite = new DatabaseSync(path);
   sqlite.exec(readFileSync(new URL('../backend/schema.sql', import.meta.url), 'utf8'));

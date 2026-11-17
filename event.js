@@ -21,6 +21,7 @@
     id = hash.get('id') || '',
     isNew = hash.has('new'),
     keys = ['title', 'date', 'start', 'end', 'venue', 'notes'];
+  var openRequestedComment = hash.get('comment') === '1';
   if (isNew) id = window.DonguriUI.newId();
   var node = window.DonguriUI.element;
   function reference() {
@@ -87,7 +88,16 @@
     form.hidden = !ready || !editing;
     title.textContent = ready ? saved?.title || reference()?.title || '出店を作成' : '出店の準備';
     document.getElementById('event-comment-entry').replaceChildren();
-    if (!ready || editing) return;
+    if (!ready) return;
+    if (editing) {
+      if (window.DonguriContextComments)
+        document
+          .getElementById('event-comment-entry')
+          .appendChild(
+            window.DonguriContextComments.button('出店ページ：作成・編集', '出店の作成・編集')
+          );
+      return;
+    }
     if (window.DonguriContextComments && (saved || reference()))
       document
         .getElementById('event-comment-entry')
@@ -98,6 +108,25 @@
             id
           )
         );
+    if (window.DonguriContextComments && (saved || reference())) {
+      var phaseName = { prepare: '準備', day: '当日', review: '振り返り' }[phase];
+      document
+        .getElementById('event-comment-entry')
+        .appendChild(
+          window.DonguriContextComments.button(
+            'コーナー：phase:' + id + ':' + phase,
+            title.textContent + '・' + phaseName,
+            id
+          )
+        );
+      var phaseButton = document.getElementById('event-comment-entry').lastElementChild;
+      phaseButton.textContent = phaseName + 'にコメント';
+      // Opening a requested editor is read-only; never submit a comment from a URL.
+      if (openRequestedComment) {
+        openRequestedComment = false;
+        document.getElementById('event-comment-entry').firstElementChild.click();
+      }
+    }
     document
       .querySelectorAll('[data-plan-phase]')
       .forEach((n) => n.setAttribute('aria-pressed', String(n.dataset.planPhase === phase)));
