@@ -1753,7 +1753,8 @@ footer{margin-top:32px}
 <p class="hint">未保存の入力はページ内で一時保護し、同じLINEアカウントの確認後に復元。再読込・タブ終了・OSによるページ破棄の前に保存する。</p>
 <button type="button" class="btn small" id="comments-login">共有コメントを再読込</button>
 </section>
-<script src="comments-config.js"></script>
+<script src="ime.js?v=20261117-ime2"></script>
+<script src="comments-config.js?v=20261117-ime2"></script>
 <script>
 (function () {
 /* アプリ内ブラウザの自動ダーク化対策：配色方式をライト専用で固定 */
@@ -1899,14 +1900,13 @@ var comments = [];
 var currentAuthor = '';
 var commentsReady = false;
 var currentViewer = '', boardDrafts = new Map();
-document.addEventListener('compositionstart',function(event){if(event.target.matches('textarea'))event.target.dataset.commentComposing='true';});
-document.addEventListener('compositionend',function(event){if(event.target.matches('textarea'))delete event.target.dataset.commentComposing;});
+
 function commentInputs() { return Array.from(document.querySelectorAll('[data-memo-zone] .free-write, [data-inline-memo], #quick-text')); }
 function protectCommentDrafts() {
 var inputs=commentInputs().filter(function(ta){return ta.value!=='';}).map(function(ta){return {element:ta,text:ta.value,id:ta._commentId};});
 var edits=Array.from(document.querySelectorAll('[data-comment-editor]')).map(function(ta){return {id:ta.getAttribute('data-comment-id'),version:Number(ta.getAttribute('data-comment-version')),text:ta.value};});
 if(currentViewer&&(inputs.length||edits.length))boardDrafts.set(currentViewer,{inputs:inputs,edits:edits});
-commentInputs().forEach(function(ta){ta.value='';delete ta._commentId;});
+commentInputs().forEach(function(ta){if(window.DonguriIME)window.DonguriIME.clear(ta);ta.value='';delete ta._commentId;});
 comments=[];
 document.querySelectorAll('[data-comment-editor]').forEach(function(ta){ta.removeAttribute('data-comment-editor');});
 renderComments();
@@ -1967,7 +1967,7 @@ window.addEventListener('comments-suspend',protectCommentDrafts);
 window.addEventListener('beforeunload',function(event){if(boardDrafts.size||document.querySelector('[data-comment-editor]')||commentInputs().some(function(ta){return ta.value!=='';})){event.preventDefault();event.returnValue='';}});
 window.addEventListener('comments-loaded', function (event) { comments = event.detail; renderComments(); });
 async function submitComment(target, ta, button) {
-if(ta.dataset.commentComposing){showToast('日本語の変換を確定してから保存');return false;}
+if(window.DonguriIME&&window.DonguriIME.active(ta)){showToast('日本語の変換を確定してから保存');return false;}
 if (!commentsReady || button.disabled) return false;
 var feedback=ta.parentElement.querySelector('.comment-save-status');if(!feedback){feedback=document.createElement('p');feedback.className='comment-help comment-save-status';feedback.setAttribute('role','status');ta.after(feedback);}
 var text = ta.value.trim();
@@ -1980,7 +1980,7 @@ var result = await window.DonguriComments.save('/comments', 'POST', { id: ta._co
 comments = comments.filter(function (c) { return c.id !== result.comment.id; });
 comments.push(result.comment);
 // Only clear the submitted text; preserve any text typed while saving.
-if (ta.value.trim() === text) ta.value = '';
+if (ta.value.trim() === text && !(window.DonguriIME&&window.DonguriIME.active(ta))) ta.value = '';
 ta._commentId = null;
 renderComments(); feedback.textContent='コメント保存済み';showToast('コメント保存済み'); return true;
 } catch (error) { feedback.textContent=error.message;showToast(error.message); return false; }
@@ -2034,8 +2034,9 @@ ta.setAttribute('data-comment-id',c.id);ta.setAttribute('data-comment-version',S
 var save = document.createElement('button'); save.type = 'button'; save.className = 'btn small'; save.textContent = '変更を保存';
 var cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'btn small'; cancel.textContent = '取消';
 body.replaceChildren(ta, save, cancel); ta.focus();
-cancel.addEventListener('click', function () { body.textContent = c.text; renderComments(); });
+cancel.addEventListener('click', function () { if(window.DonguriIME&&window.DonguriIME.active(ta)){showToast('日本語の変換を確定してから取消');return;}body.textContent = c.text; renderComments(); });
 save.addEventListener('click', async function () {
+if(window.DonguriIME&&window.DonguriIME.active(ta)){showToast('日本語の変換を確定してから保存');return;}
 save.disabled = true; cancel.disabled = true; ta.disabled = true;
 try {
 var result = await window.DonguriComments.save('/comments/' + c.id, 'PATCH', { version: Number(ta.getAttribute('data-comment-version')), text: ta.value });
@@ -2224,7 +2225,7 @@ if (open && qText) qText.focus();
 }
 if (qPanel) {
 qPanel.setAttribute('role','region');qPanel.setAttribute('aria-label','コメントの入力');
-qPanel.addEventListener('keydown',function(event){if(event.key==='Escape'&&!event.isComposing&&event.keyCode!==229&&!qText.dataset.commentComposing){event.preventDefault();closeQuick();}});
+qPanel.addEventListener('keydown',function(event){if(event.key==='Escape'&&!event.isComposing&&event.keyCode!==229&&!(window.DonguriIME&&window.DonguriIME.active(qText))){event.preventDefault();closeQuick();}});
 var qTools = qPanel.querySelector('.memo-tools');
 if (qTools &&!qTools.querySelector('.author-sel')) qTools.insertBefore(makeAuthorSelect(), qTools.firstChild);
 }
@@ -2247,6 +2248,6 @@ setCommentAccess();
 </script>
 <script src="workflow.js"></script><script src="event-board.js"></script>
 <script defer src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
-<script defer src="comments-api.js"></script>
+<script defer src="comments-api.js?v=20261117-ime2"></script>
 </body>
 </html>

@@ -44,6 +44,7 @@ function browser({ configured = true, inLine = true, loggedIn = true, records = 
     if (options.method === 'DELETE') { records.splice(records.findIndex(row => url.endsWith(row.id)), 1); return Response.json({ deleted: true }); }
     return Response.json({ comments: records, next: null });
   };
+  w.eval(readFileSync(new URL('../ime.js',import.meta.url),'utf8'));
   for (const script of w.document.querySelectorAll('script:not([src])')) w.eval(script.textContent);
   w.eval(readFileSync(new URL('../workflow.js',import.meta.url),'utf8'));
   w.eval(readFileSync(new URL('../event-board.js',import.meta.url),'utf8'));
@@ -351,10 +352,15 @@ test('all POP previews start visible in image-first work-style cards and preserv
 
 test('Japanese composition survives same-user revalidation without textarea writes, and saves only after confirmation',async()=>{
  const b=browser();try{await tick();const d=b.w.document,ta=d.getElementById('quick-text'),panel=d.getElementById('quick-panel');d.getElementById('quick-memo-btn').click();ta.value='て';ta.dispatchEvent(new b.w.CompositionEvent('compositionstart',{bubbles:true,data:'て'}));let valueWrites=0,disabledWrites=0;const proto=b.w.HTMLTextAreaElement.prototype,value=Object.getOwnPropertyDescriptor(proto,'value'),disabled=Object.getOwnPropertyDescriptor(proto,'disabled');Object.defineProperty(ta,'value',{get(){return value.get.call(this);},set(v){valueWrites++;value.set.call(this,v);}});Object.defineProperty(ta,'disabled',{get(){return disabled.get.call(this);},set(v){disabledWrites++;disabled.set.call(this,v);}});
- await b.w.DonguriComments.connect({revalidate:true});assert.equal(ta.value,'て');assert.equal(valueWrites,0);assert.equal(disabledWrites,0);ta.dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'Escape',isComposing:true,bubbles:true}));assert.equal(panel.hidden,false);d.getElementById('quick-add').click();await tick();assert.equal(b.requests.filter(r=>r.options.method==='POST').length,0);ta.value='テスト';ta.dispatchEvent(new b.w.CompositionEvent('compositionend',{bubbles:true,data:'テスト'}));b.w.crypto.randomUUID=undefined;d.getElementById('quick-add').click();await tick();assert.equal(b.records.length,1);assert.equal(b.records[0].text,'テスト');assert.match(b.records[0].id,/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);assert.equal(ta.value,'');assert.equal(b.errors.length,0);
+ await b.w.DonguriComments.connect({revalidate:true});assert.equal(ta.value,'て');assert.equal(valueWrites,0);assert.equal(disabledWrites,0);ta.dispatchEvent(new b.w.KeyboardEvent('keydown',{key:'Escape',isComposing:true,bubbles:true}));assert.equal(panel.hidden,false);d.getElementById('quick-add').click();await tick();assert.equal(b.requests.filter(r=>r.options.method==='POST').length,0);ta.value='テスト';ta.dispatchEvent(new b.w.CompositionEvent('compositionend',{bubbles:true,data:'テスト'}));await tick();b.w.crypto.randomUUID=undefined;d.getElementById('quick-add').click();await tick();assert.equal(b.records.length,1);assert.equal(b.records[0].text,'テスト');assert.match(b.records[0].id,/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);assert.equal(ta.value,'');assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
 });
 test('comment save failures remain visible beside the input and preserve Japanese text',async()=>{
  const b=browser();try{await tick();const d=b.w.document,ta=d.getElementById('quick-text');d.getElementById('quick-memo-btn').click();ta.value='テスト';b.failure=-1;d.getElementById('quick-add').click();await tick();assert.equal(ta.value,'テスト');assert.match(d.querySelector('#quick-panel .comment-save-status').textContent,/通信/);assert.equal(d.getElementById('quick-panel').hidden,false);assert.equal(d.getElementById('quick-add').disabled,false);
+ }finally{b.dom.window.close();}
+});
+
+test('editing an existing comment protects native composition before save or cancel',async()=>{
+ const b=browser();try{await tick();const origin=b.zone();origin.ta.value='合成の元コメント';origin.add.click();await tick();const d=b.w.document,edit=origin.zone.querySelector('[data-comment-edit]');edit.click();const ta=d.querySelector('[data-comment-editor]');ta.value='て';ta.dispatchEvent(new b.w.InputEvent('beforeinput',{bubbles:true,inputType:'insertCompositionText',isComposing:true}));const buttons=[...ta.parentElement.querySelectorAll('button')];buttons.find(e=>e.textContent==='変更を保存').click();buttons.find(e=>e.textContent==='取消').click();await tick();assert.equal(ta.isConnected,true);assert.equal(ta.value,'て');assert.equal(b.requests.some(r=>r.options.method==='PATCH'),false);ta.value='テスト';ta.dispatchEvent(new b.w.CompositionEvent('compositionend',{bubbles:true}));await tick();buttons.find(e=>e.textContent==='変更を保存').click();await tick();assert.equal(b.records[0].text,'テスト');assert.equal(b.errors.length,0);
  }finally{b.dom.window.close();}
 });

@@ -83,3 +83,11 @@ Workerの本番オリジンは `https://dongurinoyume-comments.joshapass.workers
 5. 現物で棚卸・写真・仕様を照合し、更新シートに反映する内容を確認する。写真点数と実在庫を混同しない。
 
 認証成功後の実WorkerからD1への読書き、LINEアプリ内の初回同意・復帰、二人の実機操作は未検証。外部AIへ自動送信する機能、更新シートへの自動書込、写真の新規アップロード、完全な履歴復元画面は含めない。履歴はDBに保持し、運用上の保存期間・復元手順は利用開始前に確認する。
+
+## 日本語入力の互換性修正（2026年11月17日）
+
+対象別コメント欄が各inputイベントでtextarea.disabledを再代入していた経路を除去。input中は汚れた状態の管理だけを行い、editorのvalue・属性・選択範囲・フォーカスを変更しない。共通ime.jsはWeakMapで状態を保持し、compositionstartの欠落、beforeinput/inputのisComposing、compositionendと最後のinputの前後差、focusoutを扱う。変換直後の最終inputが終わるまで保存・取消によるeditorの破棄を待つ。認証喪失・背景移行時の非表示は遅らせない。
+
+[W3C Input Events](https://w3c.github.io/input-events/)と[Android InputConnection](https://developer.android.com/reference/android/view/inputmethod/InputConnection)を参照。実機原因がSimeji固有と確認したものではない。自動テストではイベント順序とDOM不変を検証し、PCブラウザーでは合成データの先頭文字・フォーカス・保存を確認。Android LINE WebViewとSimejiの実IME・端末版による入力は未検証。
+
+公開HTMLは入力関連JSに版番号を付け、旧キャッシュによる修正前スクリプトの混在を防ぐ。DB・二名の許可・保存済みデータを変更しない。
