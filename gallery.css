@@ -1,133 +1,118 @@
-* {
-  box-sizing: border-box;
+/* All photo styles are scoped: existing navigation, forms and private editors stay intact. */
+.board-photo-library {
+  margin-block: 24px;
+  padding-top: 12px;
+  border-top: 1px solid #d9d3c8;
+  scroll-margin-top: 14px;
 }
-body {
-  margin: 0;
-  color: #443b34;
-  background: #faf8f2;
-  font-family: var(--app-font);
-  line-height: 1.6;
+.board-photo-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
 }
-header,
-main {
-  max-width: 1120px;
-  margin: auto;
-  padding: 16px;
+.board-photo-heading h3 {
+  margin: 0 0 10px;
+  font-size: 18px;
 }
-header {
-  padding-bottom: 0;
+.board-photo-heading span,
+.board-photo-note {
+  font-size: 12px;
+  color: #645d53;
 }
-h1 {
-  font-size: 23px;
-  margin: 8px 0 12px;
-}
-a {
-  color: #405e43;
-}
-.back {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-}
-nav {
+.board-photo-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
-button,
-input {
+.board-photo-library button,
+.board-photo-library input,
+.board-photo-library select,
+.board-photo-dialog button {
   font: inherit;
-  color: inherit;
+  color: #443b34;
   min-height: 44px;
   border: 1px solid #c5bfb4;
   border-radius: 8px;
   background: white;
-  padding: 6px 12px;
+  padding: 6px 10px;
+  max-width: 100%;
 }
-button {
+.board-photo-library button,
+.board-photo-dialog button {
   cursor: pointer;
   touch-action: manipulation;
 }
-button[aria-pressed='true'] {
+.board-photo-library button[aria-pressed='true'] {
   color: #304b33;
   background: #e8efdf;
   border-color: #687b52;
 }
-input {
+.board-photo-library input,
+.board-photo-library select {
   width: 100%;
-  margin-top: 10px;
-}
-.photo-meta {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  font-size: 12px;
-  color: #645d53;
   margin-top: 8px;
 }
-.photo-grid {
+.board-photo-note {
+  margin: 6px 0 10px;
+}
+.board-photo-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+  gap: 10px;
 }
-.photo-card {
+.board-photo-card {
   background: white;
   border: 1px solid #e1dcd3;
   border-radius: 10px;
   overflow: hidden;
   min-width: 0;
 }
-.photo-card[hidden] {
+.board-photo-card[hidden] {
   display: none;
 }
-.photo-card a {
+.board-photo-card a {
   display: block;
   background: #f2f0eb;
 }
-.photo-card img {
+.board-photo-card img {
   display: block;
   width: 100%;
-  height: 220px;
+  height: 190px;
   object-fit: contain;
 }
-.photo-caption {
-  padding: 8px 10px;
+.board-photo-caption {
+  padding: 8px;
 }
-.photo-caption h2 {
-  font-size: 15px;
+.board-photo-caption h4 {
+  font-size: 14px;
   margin: 0;
   overflow-wrap: anywhere;
 }
-.photo-caption p {
+.board-photo-caption p {
   font-size: 12px;
   color: #645d53;
   margin: 4px 0 0;
   overflow-wrap: anywhere;
 }
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-:focus-visible {
+.board-photo-library :focus-visible,
+.board-photo-dialog :focus-visible {
   outline: 3px solid #607c4c;
   outline-offset: 2px;
 }
-dialog {
+.board-photo-dialog {
   border: 1px solid #c5bfb4;
   border-radius: 12px;
   background: #faf8f2;
+  color: #443b34;
   max-width: min(96vw, 1000px);
   max-height: 94dvh;
   padding: 12px;
 }
-dialog::backdrop {
+.board-photo-dialog::backdrop {
   background: #201b18bb;
 }
-dialog img {
+.board-photo-dialog img {
   display: block;
   max-width: 100%;
   max-height: 70dvh;
@@ -136,36 +121,28 @@ dialog img {
   margin: 10px auto;
   object-fit: contain;
 }
-dialog button {
+.board-photo-dialog button {
   display: block;
   margin-left: auto;
 }
-dialog p {
+.board-photo-dialog p {
   margin: 4px 0;
 }
 @media (max-width: 700px) {
-  header,
-  main {
-    padding: 12px;
-  }
-  header {
-    padding-bottom: 0;
-  }
-  .photo-grid {
+  .board-photo-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
   }
-  .photo-card img {
-    height: 180px;
+  .board-photo-card img {
+    height: 160px;
   }
-  nav button {
+  .board-photo-filters button {
     flex: 1 0 auto;
-    padding-inline: 8px;
     font-size: 14px;
   }
 }
 @media (max-width: 360px) {
-  .photo-card img {
-    height: 145px;
+  .board-photo-card img {
+    height: 140px;
   }
 }

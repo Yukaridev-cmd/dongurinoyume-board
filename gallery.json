@@ -45,6 +45,33 @@
     "height": 1080
   },
   {
+    "id": "photo-006",
+    "category": "events",
+    "title": "出店写真のコラージュ",
+    "group": "ネコ市ネコ座 神戸（2025年9月）",
+    "src": "assets/gallery/photo-006.jpg",
+    "width": 1080,
+    "height": 760
+  },
+  {
+    "id": "photo-007",
+    "category": "events",
+    "title": "出店の作品写真",
+    "group": "ネコ市ネコ座 神戸（2025年9月）",
+    "src": "assets/gallery/photo-007.jpg",
+    "width": 811,
+    "height": 1080
+  },
+  {
+    "id": "photo-008",
+    "category": "events",
+    "title": "出店の作品写真",
+    "group": "ネコ市ネコ座 神戸（2025年9月）",
+    "src": "assets/gallery/photo-008.jpg",
+    "width": 811,
+    "height": 1080
+  },
+  {
     "id": "photo-009",
     "category": "events",
     "title": "作品の展示",
@@ -93,7 +120,7 @@
     "id": "photo-014",
     "category": "events",
     "title": "委託販売の展示",
-    "group": "ネコ市ネコ座 愛知・委託販売（開催年月未確認）",
+    "group": "ネコ市ネコ座 愛知・委託販売（2026年4月）",
     "src": "assets/gallery/photo-014.jpg",
     "width": 811,
     "height": 1080
@@ -142,6 +169,15 @@
     "src": "assets/gallery/photo-019.jpg",
     "width": 1080,
     "height": 811
+  },
+  {
+    "id": "photo-020",
+    "category": "events",
+    "title": "出店の作品写真",
+    "group": "ネコ市ネコ座 東京（開催年月未確認）",
+    "src": "assets/gallery/photo-020.jpg",
+    "width": 813,
+    "height": 1080
   },
   {
     "id": "photo-021",

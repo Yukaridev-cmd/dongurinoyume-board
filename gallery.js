@@ -1,47 +1,55 @@
 (function () {
   'use strict';
-  // This gallery reads public DOM only. It never loads comments or changes inventory.
-  var cards = Array.from(document.querySelectorAll('.photo-card'));
-  var buttons = Array.from(document.querySelectorAll('[data-category-filter]'));
-  var search = document.getElementById('photo-search');
-  var category = new URLSearchParams(location.search).get('category') || 'all';
-  if (
-    !buttons.some(function (button) {
-      return button.dataset.categoryFilter === category;
-    })
-  )
-    category = 'all';
-  var back = document.getElementById('gallery-back');
-  back.href = 'index.html#' + (category === 'events' ? 'events' : 'works');
-  function filter() {
-    var query = search.value.trim().toLocaleLowerCase();
-    var count = 0;
-    cards.forEach(function (card) {
-      card.hidden = !(
-        (category === 'all' || card.dataset.category === category) &&
-        card.dataset.search.toLocaleLowerCase().includes(query)
-      );
-      if (!card.hidden) count++;
-    });
-    buttons.forEach(function (button) {
-      button.setAttribute('aria-pressed', String(button.dataset.categoryFilter === category));
-    });
-    document.getElementById('photo-count').textContent = count + '枚';
-    document.getElementById('photo-empty').hidden = count !== 0;
+  // Preserve already-shared gallery links, while keeping the photos in the four-tab board.
+  var legacy = document.getElementById('legacy-photo-link');
+  if (legacy) {
+    legacy.href =
+      'index.html#' +
+      (new URLSearchParams(location.search).get('category') === 'events'
+        ? 'event-photo-library'
+        : 'work-photo-library');
+    location.replace(legacy.href);
+    return;
   }
-  buttons.forEach(function (button) {
-    button.addEventListener('click', function () {
-      category = button.dataset.categoryFilter;
-      filter();
+  // Scope each filter to its own public section. Never recreate comments or touch editors.
+  document.querySelectorAll('[data-photo-library]').forEach(function (library) {
+    var cards = Array.from(library.querySelectorAll('.board-photo-card'));
+    var buttons = Array.from(library.querySelectorAll('[data-category-filter]'));
+    var search = library.querySelector('[data-photo-search]');
+    var group = library.querySelector('[data-photo-group]');
+    var category = 'all';
+    function filter() {
+      var query = search.value.trim().toLocaleLowerCase();
+      var count = 0;
+      cards.forEach(function (card) {
+        card.hidden = !(
+          (category === 'all' || card.dataset.category === category) &&
+          (!group || group.value === 'all' || card.dataset.group === group.value) &&
+          card.dataset.search.toLocaleLowerCase().includes(query)
+        );
+        if (!card.hidden) count++;
+      });
+      buttons.forEach(function (button) {
+        button.setAttribute('aria-pressed', String(button.dataset.categoryFilter === category));
+      });
+      library.querySelector('[data-photo-count]').textContent = count + '枚';
+      library.querySelector('[data-photo-empty]').hidden = count !== 0;
+    }
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        category = button.dataset.categoryFilter;
+        filter();
+      });
     });
+    search.addEventListener('input', filter);
+    if (group) group.addEventListener('change', filter);
+    filter();
   });
-  search.addEventListener('input', filter);
-  filter();
-
-  // Native dialog provides focus trapping and Esc support; the image link is the fallback.
+  // Native dialog traps focus and supports Esc. Plain image links work without this API.
   var dialog = document.getElementById('photo-dialog');
+  if (!dialog) return;
   var previousLink;
-  document.querySelectorAll('[data-photo]').forEach(function (link) {
+  document.querySelectorAll('[data-photo-library] [data-photo]').forEach(function (link) {
     link.addEventListener('click', function (event) {
       if (
         event.ctrlKey ||
@@ -58,7 +66,7 @@
       document.getElementById('photo-large').alt = image.alt;
       document.getElementById('photo-label').textContent = link
         .closest('article')
-        .querySelector('h2').textContent;
+        .querySelector('h4').textContent;
       dialog.showModal();
     });
   });
