@@ -80,9 +80,10 @@
   function render() {
     list.replaceChildren();
     if (!ready || !context) return;
-    rows
-      .filter((c) => c.target === context.target)
-      .forEach(function (c) {
+    window.DonguriCommentState.append(
+      list,
+      rows.filter((c) => c.target === context.target),
+      function (c) {
         var card = el('article'),
           meta = el('p', c.author),
           text = el('p', c.text),
@@ -126,8 +127,27 @@
           }
         });
         card.append(meta, text, request);
-        list.appendChild(card);
-      });
+        if (c.resolved) meta.appendChild(el('span', ' 対応済み', 'comment-resolved-label'));
+        card.appendChild(
+          window.DonguriCommentState.button(
+            c,
+            function (updated) {
+              rows = rows.map(function (row) {
+                return row.id === updated.id ? updated : row;
+              });
+              render();
+            },
+            function (text) {
+              if (ready) message.textContent = text;
+            },
+            function () {
+              return ready;
+            }
+          )
+        );
+        return card;
+      }
+    );
   }
   window.DonguriContextComments = {
     button: function (targetId, label, eventId) {

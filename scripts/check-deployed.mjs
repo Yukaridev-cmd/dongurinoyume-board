@@ -11,6 +11,16 @@ const cases = [
   ['/records', 'GET', { Origin: origin }],
   ['/session', 'GET', { Origin: origin, Authorization: 'Bearer invalid.token' }],
   ['/comments', 'POST', { Origin: origin, 'Content-Type': 'application/json' }],
+  [
+    '/comments/11111111-1111-4111-8111-111111111111',
+    'PATCH',
+    { Origin: origin, 'Content-Type': 'application/json' },
+  ],
+  [
+    '/comments/11111111-1111-4111-8111-111111111111',
+    'PATCH',
+    { Origin: 'https://untrusted.example' },
+  ],
   ['/records', 'POST', { Origin: origin, 'Content-Type': 'application/json' }],
   [
     '/records/11111111-1111-4111-8111-111111111111',

@@ -318,6 +318,8 @@
       });
       var button = card && card.querySelector('[data-comment-edit]');
       if (button) {
+        var completed = card.closest('.comments-completed');
+        if (completed) completed.open = true;
         button.click();
         var ta = card.querySelector('[data-comment-editor]');
         ta.value = edit.text;
@@ -373,23 +375,16 @@
     document.querySelectorAll('[data-comment-target]').forEach(function (list) {
       if (list.querySelector('[data-comment-editor]')) return;
       list.replaceChildren();
-      comments
-        .filter(function (c) {
-          return c.target === list.getAttribute('data-comment-target');
-        })
-        .slice()
-        .sort(function (a, b) {
-          return b.stamp.localeCompare(a.stamp) || b.id.localeCompare(a.id);
-        })
-        .forEach(function (c) {
-          list.appendChild(commentCard(c));
-        });
+      var matching = comments.filter(function (c) {
+        return c.target === list.getAttribute('data-comment-target');
+      });
+      window.DonguriCommentState.append(list, matching, commentCard);
       var disclosure = list.closest('details.inline-memo');
       if (disclosure) {
         var summary = disclosure.querySelector('summary');
         if (summary)
           summary.textContent =
-            'コメントを書く' + (list.children.length ? '（' + list.children.length + '件）' : '');
+            'コメントを書く' + (matching.length ? '（' + matching.length + '件）' : '');
       }
     });
     rebuildSummary();
@@ -498,6 +493,27 @@
     body.className = 'memo-text';
     body.textContent = c.text;
     card.append(meta, body);
+    if (c.resolved)
+      meta.appendChild(window.DonguriUI.element('span', '対応済み', 'comment-resolved-label'));
+    card.appendChild(
+      window.DonguriCommentState.button(
+        c,
+        function (updated) {
+          comments = comments.map(function (row) {
+            return row.id === updated.id ? updated : row;
+          });
+          renderComments();
+        },
+        showToast,
+        function () {
+          if (document.querySelector('[data-comment-editor]')) {
+            showToast('編集中のコメントを保存・取消してから状態を変更');
+            return false;
+          }
+          return commentsReady;
+        }
+      )
+    );
     var request = document.createElement('button');
     request.type = 'button';
     request.className = 'btn small';
@@ -613,10 +629,10 @@
     }
     return card;
   }
-  function groupedComments() {
+  function groupedComments(rows) {
     var order = [];
     var map = Object.create(null);
-    comments.forEach(function (c) {
+    rows.forEach(function (c) {
       if (!map[c.target]) {
         map[c.target] = [];
         order.push(c.target);
@@ -642,28 +658,45 @@
       box.appendChild(p);
       return;
     }
-    groupedComments().forEach(function (g) {
-      var div = document.createElement('div');
-      div.className = 'sum-group';
-      var h = document.createElement('h4');
-      h.textContent = g.target;
-      div.appendChild(h);
-      var ul = document.createElement('ul');
-      ul.className = 'sum-list';
-      g.items.forEach(function (c) {
-        var li = document.createElement('li');
-        var b = document.createElement('b');
-        b.textContent = c.author;
-        li.appendChild(b);
-        li.appendChild(document.createTextNode('：' + c.text));
-        var t = document.createElement('time');
-        t.textContent = c.stamp;
-        li.appendChild(t);
-        ul.appendChild(li);
+    function addGroups(container, rows) {
+      groupedComments(rows).forEach(function (g) {
+        var div = document.createElement('div');
+        div.className = 'sum-group';
+        var h = document.createElement('h4');
+        h.textContent = g.target;
+        div.appendChild(h);
+        var ul = document.createElement('ul');
+        ul.className = 'sum-list';
+        g.items.forEach(function (c) {
+          var li = document.createElement('li');
+          var b = document.createElement('b');
+          b.textContent = c.author;
+          li.appendChild(b);
+          li.appendChild(document.createTextNode('：' + c.text));
+          var t = document.createElement('time');
+          t.textContent = c.stamp;
+          li.appendChild(t);
+          ul.appendChild(li);
+        });
+        div.appendChild(ul);
+        container.appendChild(div);
       });
-      div.appendChild(ul);
-      box.appendChild(div);
+    }
+    addGroups(
+      box,
+      comments.filter(function (c) {
+        return !c.resolved;
+      })
+    );
+    var done = comments.filter(function (c) {
+      return c.resolved === true;
     });
+    if (done.length) {
+      var archive = window.DonguriUI.element('details', '', 'comments-completed');
+      archive.appendChild(window.DonguriUI.element('summary', '対応済み（' + done.length + '件）'));
+      addGroups(archive, done);
+      box.appendChild(archive);
+    }
   }
   /* ---- comment zones (one per page) ---- */
   function memoZoneHTML(label, hint, placeholder) {
@@ -797,9 +830,11 @@
       caption.textContent =
         card.id === 'work-happy-pack'
           ? 'ポップ画像。セットの実物写真と中身は確認待ち'
-          : card.querySelector('img')
-            ? '既存の作品・展示写真。現在の在庫と仕様は別途確認'
-            : '対応する実物写真は確認待ち';
+          : card.querySelector('[data-photo-alias]')
+            ? '同じ作品の写真は大きいあみぐるみに統合'
+            : card.querySelector('img')
+              ? '既存の作品・展示写真。現在の在庫と仕様は別途確認'
+              : '対応する実物写真は確認待ち';
       body.appendChild(caption);
     }
     addInlineComment(

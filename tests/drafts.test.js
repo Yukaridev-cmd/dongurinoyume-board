@@ -74,6 +74,7 @@ function fixture() {
     return Response.json({ records: rows, next: null });
   };
   w.eval(read('ui-core.js'));
+  w.eval(read('comment-state.js'));
   w.eval(read('ime.js'));
   w.eval(read('private.js'));
   w.eval(read('comments-api.js'));

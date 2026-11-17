@@ -96,6 +96,81 @@ function fixture(db = database()) {
       ),
   };
 }
+test('comment triage is shared, versioned, private and reversible; text edits reopen a completed request', async () => {
+  const f = fixture();
+  const created = await (
+    await f.request('/comments', 'POST', { id, target: '架空の対象', text: '架空の依頼' })
+  ).json();
+  assert.equal(created.comment.resolved, false);
+  f.subject = second;
+  assert.equal(
+    (await f.request('/comments/' + id, 'PATCH', { version: 1, text: '他人の書換' })).status,
+    403
+  );
+  assert.equal(
+    (await f.request('/comments/' + id, 'PATCH', { version: 1, resolved: 'true' })).status,
+    400
+  );
+  assert.equal(
+    (await f.request('/comments/' + id, 'PATCH', { version: 1, resolved: true, text: '混在' }))
+      .status,
+    400
+  );
+  const response = await f.request('/comments/' + id, 'PATCH', { version: 1, resolved: true });
+  assert.equal(response.status, 200);
+  const done = (await response.json()).comment;
+  assert.equal(done.resolved, true);
+  assert.equal(done.resolvedBy, '妻');
+  assert.equal(done.version, 2);
+  assert.equal(done.text, '架空の依頼');
+  assert.ok(done.resolvedAt);
+  assert.ok(!JSON.stringify(done).includes(second));
+  assert.equal(
+    (await f.request('/comments/' + id, 'PATCH', { version: 1, resolved: false })).status,
+    409
+  );
+  f.subject = outsider;
+  assert.equal(
+    (await f.request('/comments/' + id, 'PATCH', { version: 2, resolved: false })).status,
+    403
+  );
+  f.subject = first;
+  assert.equal((await (await f.request()).json()).comments[0].resolved, true);
+  const changed = await (
+    await f.request('/comments/' + id, 'PATCH', { version: 2, text: '追加の架空依頼' })
+  ).json();
+  assert.equal(changed.comment.resolved, false);
+  assert.equal(changed.comment.resolvedAt, null);
+  assert.equal(changed.comment.resolvedBy, null);
+  assert.equal(changed.comment.version, 3);
+  await f.request('/comments/' + id, 'PATCH', { version: 3, resolved: true });
+  const reopened = await (
+    await f.request('/comments/' + id, 'PATCH', { version: 4, resolved: false })
+  ).json();
+  assert.equal(reopened.comment.resolved, false);
+  assert.equal(reopened.comment.text, '追加の架空依頼');
+  assert.equal(f.db.sqlite.prepare('SELECT count(*) n FROM comments WHERE deleted=0').get().n, 1);
+  f.db.sqlite.close();
+});
+test('completion migration preserves existing comments without inferring completion', () => {
+  const sqlite = new DatabaseSync(':memory:');
+  sqlite.exec(
+    'CREATE TABLE comments (id TEXT PRIMARY KEY, owner TEXT, target TEXT, text TEXT, created_at TEXT, version INTEGER, deleted INTEGER)'
+  );
+  sqlite
+    .prepare('INSERT INTO comments VALUES (?,?,?,?,?,?,?)')
+    .run(id, first, '架空の対象', '元の架空本文', '2026-01-01', 7, 0);
+  sqlite.exec(
+    readFileSync(new URL('../backend/comments-status-migration.sql', import.meta.url), 'utf8')
+  );
+  const row = sqlite.prepare('SELECT * FROM comments').get();
+  assert.equal(row.text, '元の架空本文');
+  assert.equal(row.version, 7);
+  assert.equal(row.resolved, 0);
+  assert.equal(row.resolved_at, null);
+  assert.equal(row.resolved_by, null);
+  sqlite.close();
+});
 test('configuration fails closed unless exactly two distinct users are explicitly configured', async () => {
   const f = fixture();
   for (const members of [

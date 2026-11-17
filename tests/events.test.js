@@ -38,6 +38,7 @@ function fixture(hash = '#new') {
     },
   };
   w.eval(read('ui-core.js'));
+  w.eval(read('comment-state.js'));
   w.eval(read('event.js'));
   return {
     w,
@@ -201,7 +202,7 @@ test('excluded works are absent from new carry choices but previously saved sele
   const b = fixture('#id=event-xmas');
   try {
     await tick();
-    assert.equal(b.form.querySelectorAll('[data-product]').length, 18);
+    assert.equal(b.form.querySelectorAll('[data-product]').length, 17);
     assert.equal(b.form.querySelector('[data-product][value="work-magnet"]'), null);
     b.rows.set('event-xmas', {
       id: 'event-xmas',

@@ -22,7 +22,8 @@
     "ui-core.js",
     "board.js",
     "board.css",
-    "typography.css"
+    "typography.css",
+    "comment-state.js"
   ],
   "fonts": [
     "assets/fonts/ZenMaruGothic-Medium.woff2",

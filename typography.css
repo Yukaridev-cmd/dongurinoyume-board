@@ -48,3 +48,37 @@ select {
 .event-total-card {
   font-variant-numeric: tabular-nums;
 }
+/* Keep completed requests available below the active list, without reducing text contrast. */
+.comments-completed {
+  margin-top: 16px;
+  padding-top: 8px;
+  border-top: 1px solid #b7aa92;
+}
+.comments-completed > summary {
+  min-height: 44px;
+  display: list-item;
+  align-content: center;
+  cursor: pointer;
+  color: #574936;
+  font-size: 13px;
+}
+.comment-state-button {
+  min-height: 44px;
+  padding: 7px 10px;
+  margin: 6px 8px 0 0;
+  border: 1px solid #a79578;
+  border-radius: 8px;
+  background: #fffaf0;
+  color: #493d30;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.comment-state-button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.comment-resolved-label {
+  color: #4e693c;
+  font-size: 12px;
+}

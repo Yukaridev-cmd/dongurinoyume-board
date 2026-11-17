@@ -66,6 +66,7 @@ function fixture(hash = '') {
     },
   };
   w.eval(readFileSync(new URL('../ui-core.js', import.meta.url), 'utf8'));
+  w.eval(readFileSync(new URL('../comment-state.js', import.meta.url), 'utf8'));
   w.eval(source);
   return {
     dom,
