@@ -37,7 +37,7 @@ test('gallery publishes the explicit reviewed set without private source metadat
   }
   assert.doesNotMatch(
     read('gallery.html') + read('gallery.json'),
-    /libfile_|Sentinel_|originals\/|sha256|鼻灰色|家にいる/
+    /libfile_|Sentinel_|originals\/|sha256|"(?:inventory|customer|caption)"\s*:/
   );
   assert.doesNotMatch(
     read('gallery.js'),
