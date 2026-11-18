@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, existsSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
+import { createHash } from 'node:crypto';
 const read = (name) => readFileSync(new URL('../' + name, import.meta.url), 'utf8');
 function page() {
   const dom = new JSDOM(read('index.html'), {
@@ -287,6 +288,64 @@ test('retired booth portrait no longer renders, while source and the original di
     );
     assert.ok(d.querySelector('#view-event-kiraria-1107 img[src="assets/kiraria-bunny.jpg"]'));
     assert.ok(d.querySelector('#view-works img[src="assets/kiraria-bunny.jpg"]'));
+    assert.deepEqual(Array.from(dom.window.DonguriCommentCoverage.audit().uncovered), []);
+  } finally {
+    dom.window.close();
+  }
+});
+test('approved derivatives retain original identities and hashes; original preview keeps unsent input and focus', () => {
+  const rows = JSON.parse(read('artwork/photo-backgrounds.json'));
+  assert.equal(rows.length, 2);
+  for (const row of rows) {
+    for (const [path, sha] of [
+      [row.source, row.sourceSha256],
+      [row.output, row.outputSha256],
+      [row.mask, row.maskSha256],
+    ])
+      assert.equal(
+        createHash('sha256')
+          .update(readFileSync(new URL('../' + path, import.meta.url)))
+          .digest('hex'),
+        sha
+      );
+    const png = readFileSync(new URL('../' + row.output, import.meta.url));
+    assert.equal(png.subarray(1, 4).toString(), 'PNG');
+    assert.deepEqual([png.readUInt32BE(16), png.readUInt32BE(20)], row.size);
+    assert.ok(row.protectedPixels > 190000);
+  }
+  const dom = page(),
+    d = dom.window.document,
+    dialog = d.getElementById('photo-dialog');
+  try {
+    dialog.showModal = () => dialog.setAttribute('open', '');
+    dialog.close = () => {
+      dialog.removeAttribute('open');
+      dialog.dispatchEvent(new dom.window.Event('close'));
+    };
+    dom.window.DonguriBoard.showView('works');
+    d.querySelector('[data-work-collection=commission]').click();
+    for (const row of rows) {
+      const card = d.querySelector('[data-comment-key="photo:' + row.id + '"]');
+      assert.equal(card.querySelector('img').getAttribute('src'), row.output);
+      assert.equal(card.querySelector('img').dataset.originalSrc, row.source);
+      const input = card.querySelector('textarea');
+      input.value = '架空の入力中';
+      input.setSelectionRange(2, 2);
+      const original = card.querySelector('[data-photo-original]');
+      original.click();
+      assert.equal(dialog.open, true);
+      assert.ok(d.getElementById('photo-large').src.endsWith(row.source));
+      assert.match(d.getElementById('photo-label').textContent, /元写真/);
+      d.getElementById('photo-close').click();
+      assert.equal(d.activeElement, original);
+      assert.equal(input.value, '架空の入力中');
+      assert.equal(input.selectionStart, 2);
+      card.querySelector('a[data-photo]').click();
+      assert.ok(d.getElementById('photo-large').src.endsWith(row.output));
+      d.getElementById('photo-close').click();
+    }
+    assert.equal(d.querySelectorAll('.board-photo-card').length, 44);
+    assert.equal(d.querySelectorAll('[data-photo-original]').length, 2);
     assert.deepEqual(Array.from(dom.window.DonguriCommentCoverage.audit().uncovered), []);
   } finally {
     dom.window.close();

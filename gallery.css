@@ -267,6 +267,23 @@
   margin: 4px 0 0;
   overflow-wrap: anywhere;
 }
+.board-photo-caption .photo-edit-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.board-photo-card .photo-original-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding-inline: 6px;
+  border-radius: 5px;
+  background: transparent;
+  color: #405c3e;
+}
 .board-photo-library :focus-visible,
 .board-photo-dialog :focus-visible {
   outline: 3px solid #607c4c;

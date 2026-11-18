@@ -62,11 +62,14 @@
       event.preventDefault();
       previousLink = link;
       var image = link.querySelector('img');
-      document.getElementById('photo-large').src = image.src;
-      document.getElementById('photo-large').alt = image.alt;
-      document.getElementById('photo-label').textContent = link
-        .closest('article')
-        .querySelector('h4').textContent;
+      var card = link.closest('article');
+      // The original opens in the same dialog, retaining the current comment
+      // draft and focus rather than navigating away from the LINE page.
+      document.getElementById('photo-large').src = image ? image.src : link.href;
+      document.getElementById('photo-large').alt = (image || card.querySelector('img')).alt;
+      document.getElementById('photo-label').textContent =
+        card.querySelector('h4').textContent +
+        (link.hasAttribute('data-photo-original') ? '（元写真）' : '');
       dialog.showModal();
     });
   });
