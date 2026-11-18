@@ -7,6 +7,35 @@ import { JSDOM, VirtualConsole } from 'jsdom';
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const client = readFileSync(new URL('../comments-api.js', import.meta.url), 'utf8');
 const tick = () => new Promise((resolve) => setTimeout(resolve, 10));
+test('public photo record quick comments and list comments share the preserved target', async () => {
+  const b = browser();
+  try {
+    await tick();
+    const d = b.w.document;
+    b.w.DonguriBoard.showView('event-record-neko-unconfirmed');
+    assert.equal(d.querySelector('.view.active [data-memo-zone]'), null);
+    d.querySelector('#quick-memo-btn').click();
+    d.querySelector('#quick-text').value = '架空の写真記録コメント';
+    d.querySelector('#quick-add').click();
+    await tick();
+    assert.equal(b.records.length, 1);
+    assert.equal(b.records[0].target, 'コーナー：event-record:neko-unconfirmed');
+    assert.equal(
+      d
+        .querySelector('#event-record-neko-unconfirmed .memo-card')
+        ?.textContent.includes('架空の写真記録コメント'),
+      true
+    );
+    assert.equal(
+      d
+        .querySelector('#view-event-record-neko-unconfirmed .memo-card')
+        ?.textContent.includes('架空の写真記録コメント'),
+      true
+    );
+  } finally {
+    b.dom.window.close();
+  }
+});
 test('every content corner has its own editor and new corner omissions fail the coverage audit', async () => {
   const b = browser({ configured: false });
   try {
@@ -15,7 +44,7 @@ test('every content corner has its own editor and new corner omissions fail the 
     assert.deepEqual(Array.from(audit.uncovered), []);
     assert.equal(audit.registered, 213);
     const baseline = JSON.parse(
-      readFileSync(new URL('fixtures/comment-targets-v17.json', import.meta.url), 'utf8')
+      readFileSync(new URL('fixtures/comment-targets-v18.json', import.meta.url), 'utf8')
     );
     const keys = new Set(
       [...d.querySelectorAll('[data-comment-key]')].map((n) => n.dataset.commentKey)
@@ -130,7 +159,8 @@ test('photo entry points stay inside the four-tab board and never write private 
     b.w.DonguriBoard.showView('events', 'event-photo-library');
     assert.equal(d.querySelector('.view.active').id, 'view-events');
     assert.equal(b.w.location.hash, '#event-photo-library');
-    assert.equal(d.querySelectorAll('#view-events .board-photo-card:not([hidden])').length, 22);
+    assert.equal(d.querySelectorAll('#view-events .board-photo-card').length, 0);
+    assert.equal(d.querySelectorAll('[data-public-photo-record] .board-photo-card').length, 20);
     await tick();
     assert.equal(
       b.requests.filter((r) => r.options?.method && r.options.method !== 'GET').length,
@@ -653,7 +683,7 @@ test('existing images, prices, event headings, page navigation, cream background
             !e.closest('.board-welcome') &&
             !e.hasAttribute('data-shared-photo') &&
             !e.closest('[data-reference-only]') &&
-            !e.closest('[data-photo-library],.board-photo-card') &&
+            !e.closest('[data-photo-library],.board-photo-card,.photo-event-record') &&
             e.id !== 'photo-large'
         )
         .map((e) => [
@@ -662,12 +692,15 @@ test('existing images, prices, event headings, page navigation, cream background
             (e.hasAttribute('alt') ? e.getAttribute('alt') : e.dataset.referenceAlt),
         ])
         .sort(),
-      headings: [...d.querySelectorAll('.view-head h2')]
+      headings: [...d.querySelectorAll('.view:not([data-public-photo-record]) .view-head h2')]
         .map((e) => e.textContent)
         .filter((x) => !['資料', '売り場'].includes(x))
         .sort(),
       prices: [...d.querySelectorAll('.price')].map((e) => e.textContent).sort(),
-      meta: [...d.querySelectorAll('.meta')].map((e) => e.textContent).sort(),
+      meta: [...d.querySelectorAll('.meta')]
+        .filter((e) => !e.closest('.photo-event-record'))
+        .map((e) => e.textContent)
+        .sort(),
     };
     assert.equal(
       createHash('sha256').update(JSON.stringify(preserved)).digest('hex'),
@@ -1098,8 +1131,8 @@ test('past event list and all seven original photo previews are visible without 
     assert.equal(past.tagName, 'SECTION');
     assert.equal(past.closest('details'), null);
     assert.equal(past.querySelectorAll('.event-card:not(.photo-event-record)').length, 7);
-    assert.equal(past.querySelectorAll('.event-card>img').length, 7);
-    for (const img of past.querySelectorAll('.event-card>img')) {
+    assert.equal(past.querySelectorAll('.event-card:not(.photo-event-record)>img').length, 7);
+    for (const img of past.querySelectorAll('.event-card:not(.photo-event-record)>img')) {
       assert.equal(img.closest('details:not([open])'), null);
       assert.equal(img.closest('[hidden]'), null);
       const card = img.closest('.event-card'),

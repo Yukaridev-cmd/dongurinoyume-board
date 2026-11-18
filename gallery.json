@@ -15,7 +15,8 @@
     "group": "個人依頼",
     "src": "assets/gallery/photo-002.jpg",
     "width": 811,
-    "height": 1080
+    "height": 1080,
+    "description": "ニャカロンとのセット作品"
   },
   {
     "id": "photo-003",
@@ -24,7 +25,8 @@
     "group": "個人依頼",
     "src": "assets/gallery/photo-003.jpg",
     "width": 811,
-    "height": 1080
+    "height": 1080,
+    "description": "鳥のソフトクリームとのセット作品"
   },
   {
     "id": "photo-004",
@@ -210,7 +212,7 @@
     "id": "photo-024",
     "category": "events",
     "title": "サングラスのバーガーモチーフ",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-024.jpg",
     "width": 811,
     "height": 1080
@@ -219,7 +221,7 @@
     "id": "photo-025",
     "category": "events",
     "title": "サングラスのバーガーモチーフ（棚の上）",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-025.jpg",
     "width": 1080,
     "height": 810
@@ -228,7 +230,7 @@
     "id": "photo-026",
     "category": "events",
     "title": "サングラスのバーガーモチーフ（別角度）",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-026.jpg",
     "width": 811,
     "height": 1080
@@ -237,7 +239,7 @@
     "id": "photo-027",
     "category": "events",
     "title": "バーガーモチーフのキーホルダー",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-027.jpg",
     "width": 1080,
     "height": 811
@@ -246,7 +248,7 @@
     "id": "photo-028",
     "category": "events",
     "title": "にゃんバーガーのキーホルダー",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-028.jpg",
     "width": 1080,
     "height": 811
@@ -255,7 +257,7 @@
     "id": "photo-029",
     "category": "events",
     "title": "袋入りのバーガーモチーフ",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-029.jpg",
     "width": 1080,
     "height": 811
@@ -264,7 +266,7 @@
     "id": "photo-030",
     "category": "events",
     "title": "袋入りのバーガーモチーフ（別写真）",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-030.jpg",
     "width": 1080,
     "height": 811
@@ -273,7 +275,7 @@
     "id": "photo-031",
     "category": "events",
     "title": "サングラスのバーガーモチーフ（袋入り）",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-031.jpg",
     "width": 811,
     "height": 1080
@@ -282,7 +284,7 @@
     "id": "photo-032",
     "category": "events",
     "title": "バーガーモチーフの作品",
-    "group": "ネコ市ネコ座（開催地・開催年月未確認）",
+    "group": "ネコ市ネコ座 東京（2026年7月）",
     "src": "assets/gallery/photo-032.jpg",
     "width": 811,
     "height": 1080
@@ -318,7 +320,7 @@
     "id": "photo-036",
     "category": "events",
     "title": "くまのあみぐるみ",
-    "group": "きらりあマルシェ（年未確認・9月）",
+    "group": "きらりあマルシェ（2026年8月）",
     "src": "assets/gallery/photo-036.jpg",
     "width": 1080,
     "height": 1080
@@ -327,7 +329,7 @@
     "id": "photo-037",
     "category": "events",
     "title": "くまのあみぐるみ",
-    "group": "きらりあマルシェ（年未確認・9月）",
+    "group": "きらりあマルシェ（2026年8月）",
     "src": "assets/gallery/photo-037.jpg",
     "width": 1080,
     "height": 1080
@@ -352,18 +354,18 @@
   },
   {
     "id": "photo-040",
-    "category": "commission",
+    "category": "gift",
     "title": "にゃんバーガーとカップモチーフ",
-    "group": "個人依頼",
+    "group": "贈り物",
     "src": "assets/gallery/photo-040.jpg",
     "width": 811,
     "height": 1080
   },
   {
     "id": "photo-041",
-    "category": "commission",
+    "category": "gift",
     "title": "ねこのブローチ",
-    "group": "個人依頼",
+    "group": "贈り物",
     "src": "assets/gallery/photo-041.jpg",
     "width": 811,
     "height": 1080

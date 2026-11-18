@@ -72,7 +72,11 @@ test('the public event catalog and private association choices match the source 
     const events = JSON.parse(readFileSync(new URL('../events.json', import.meta.url), 'utf8'));
     assert.deepEqual(
       events,
-      [...board.window.document.querySelectorAll('main[id^="view-event-"]')].map((n) => ({
+      [
+        ...board.window.document.querySelectorAll(
+          'main[id^="view-event-"]:not([data-public-photo-record])'
+        ),
+      ].map((n) => ({
         id: n.id.replace('view-', ''),
         title: n.querySelector('h2').textContent,
       }))
