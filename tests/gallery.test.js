@@ -266,3 +266,29 @@ test('retired POP stays recoverable while renamed artwork retains the saved disc
     dom.window.close();
   }
 });
+test('retired booth portrait no longer renders, while source and the original discussion remain accessible', () => {
+  const dom = page(),
+    d = dom.window.document;
+  try {
+    const f = d.querySelector('[data-comment-key="figure:view-booth:kiraria-bunny.jpg"]');
+    assert.equal(f.closest('.archived-booth-photo').open, false);
+    assert.equal(f.querySelector('img'), null);
+    assert.equal(
+      f.querySelector('[data-reference-src]').dataset.referenceSrc,
+      'assets/kiraria-bunny.jpg'
+    );
+    assert.equal(f.querySelector('a').getAttribute('href'), 'assets/kiraria-bunny.jpg');
+    assert.ok(f.querySelector('[data-inline-memo]'));
+    assert.equal(
+      d.querySelectorAll(
+        '#view-market [data-market-panel=booth] img[src="assets/kiraria-bunny.jpg"]'
+      ).length,
+      0
+    );
+    assert.ok(d.querySelector('#view-event-kiraria-1107 img[src="assets/kiraria-bunny.jpg"]'));
+    assert.ok(d.querySelector('#view-works img[src="assets/kiraria-bunny.jpg"]'));
+    assert.deepEqual(Array.from(dom.window.DonguriCommentCoverage.audit().uncovered), []);
+  } finally {
+    dom.window.close();
+  }
+});
