@@ -890,7 +890,8 @@
     var h = entry ? entry.querySelector('.head h3') : null;
     addInlineComment(
       foot,
-      'ポップ：' + (h ? h.textContent : 'ポップ'),
+      // Display names may change; an explicit legacy target keeps shared history.
+      entry.dataset.legacyCommentTarget || 'ポップ：' + (h ? h.textContent : 'ポップ'),
       '直したい文字、印刷サイズ、置く場所'
     );
   });

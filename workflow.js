@@ -43,6 +43,8 @@
   // Move existing nodes, including comments; never duplicate their targets or contents.
   var popPanel = market.querySelector('[data-market-panel=pops]'),
     popGrid = el('div', null, 'work-grid pop-grid');
+  var popArchive = el('details', null, 'pop-archive');
+  popArchive.appendChild(el('summary', '以前のポップ'));
   popPanel.appendChild(popGrid);
   document.querySelectorAll('.pop-entry').forEach(function (card) {
     var head = card.querySelector('.head'),
@@ -70,8 +72,10 @@
     body.appendChild(more);
     if (comment) body.appendChild(comment);
     card.append(media, body);
-    popGrid.appendChild(card);
+    if (card.dataset.archived === 'true') popArchive.appendChild(card);
+    else popGrid.appendChild(card);
   });
+  if (popArchive.querySelector('.pop-entry')) popPanel.appendChild(popArchive);
   document.querySelectorAll('.work').forEach(function (card) {
     var body = card.querySelector('.body');
     if (!body) return;

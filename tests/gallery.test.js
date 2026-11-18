@@ -205,3 +205,64 @@ test('photo enlargement remains available after moving into event records and re
     dom.window.close();
   }
 });
+test('confirmed venues and public record month retain original event and photo identities', () => {
+  const dom = page(),
+    d = dom.window.document;
+  try {
+    const tokyo = d.getElementById('view-event-record-tokyo-unconfirmed');
+    assert.match(tokyo.querySelector('h2').textContent, /2025年3月/);
+    assert.match(tokyo.textContent, /東京都立産業貿易センター浜松町館/);
+    assert.equal(tokyo.dataset.commentKey, 'event-record:tokyo-unconfirmed');
+    assert.equal(tokyo.querySelectorAll('.board-photo-card').length, 4);
+    assert.match(
+      d.getElementById('view-event-record-neko-unconfirmed').textContent,
+      /大田区産業プラザPiO/
+    );
+    assert.match(
+      d.getElementById('view-event-record-kobe-202509').textContent,
+      /デザインクリエイティブセンター神戸/
+    );
+    for (const id of ['view-event-heart', 'view-event-record-heart-202511'])
+      assert.match(d.getElementById(id).textContent, /滝野川東区民センター/);
+    const wombat = d.getElementById('view-event-wombat');
+    assert.match(wombat.textContent, /1日目（屋外）：栄町商店街／2日目（屋内）：五月山体育館/);
+    assert.match(wombat.textContent, /2日目の日付は未確認/);
+    for (const id of ['photo-021', 'photo-022', 'photo-023'])
+      assert.equal(
+        wombat.querySelector('[data-comment-key="photo:' + id + '"]').dataset.group,
+        'ウォンバットマルシェ（2026年10月）'
+      );
+    assert.equal(d.querySelectorAll('.board-photo-card').length, 44);
+    assert.deepEqual(Array.from(dom.window.DonguriCommentCoverage.audit().uncovered), []);
+  } finally {
+    dom.window.close();
+  }
+});
+test('retired POP stays recoverable while renamed artwork retains the saved discussion target', () => {
+  const dom = page(),
+    d = dom.window.document;
+  try {
+    const old = d.getElementById('pop-omikuji'),
+      art = d.getElementById('pop-omikuji-artwork');
+    assert.equal(old.closest('.pop-archive').open, false);
+    assert.ok(old.querySelector('img'));
+    assert.equal(d.querySelectorAll('.pop-grid > .pop-entry').length, 13);
+    assert.equal(d.querySelectorAll('.pop-entry').length, 14);
+    assert.equal(art.querySelector('h3').textContent, 'あみものおみくじのポップ');
+    assert.equal(
+      art.querySelector('[data-comment-target]').dataset.commentTarget,
+      'ポップ：あみものおみくじのポップ（添付原画）'
+    );
+    assert.equal(
+      d.querySelector('#pop-xmas img').getAttribute('src'),
+      'assets/pop-christmas-draft.svg'
+    );
+    assert.equal(d.querySelector('#pop-xmas .badge').textContent, '改訂案・確認待ち');
+    assert.doesNotMatch(
+      read('assets/pop-christmas-draft.svg'),
+      /<script|https?:\/\/[^"\s]+\.(?:js|png|jpg)|libfile_|Sentinel_|U[a-f0-9]{32}/
+    );
+  } finally {
+    dom.window.close();
+  }
+});

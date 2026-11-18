@@ -682,6 +682,7 @@ test('existing images, prices, event headings, page navigation, cream background
           (e) =>
             !e.closest('.board-welcome') &&
             !e.hasAttribute('data-shared-photo') &&
+            !e.hasAttribute('data-design-update') &&
             !e.closest('[data-reference-only]') &&
             !e.closest('[data-photo-library],.board-photo-card,.photo-event-record') &&
             e.id !== 'photo-large'
@@ -1156,10 +1157,15 @@ test('all POP previews start visible in image-first work-style cards and preserv
     const d = b.w.document,
       original = [...source.querySelectorAll('.pop-entry')],
       cards = [...d.querySelectorAll('.pop-grid>.pop-entry')];
-    assert.equal(cards.length, 14);
+    assert.equal(cards.length, 13);
     for (const old of original) {
       const card = d.getElementById(old.id);
-      assert.equal(card.parentElement.classList.contains('work-grid'), true);
+      assert.equal(
+        card.parentElement.classList.contains(
+          old.dataset.archived === 'true' ? 'pop-archive' : 'work-grid'
+        ),
+        true
+      );
       assert.equal(card.firstElementChild.className.startsWith('pop-media'), true);
       assert.equal(
         card.querySelector('.body>.head h3').textContent,
@@ -1171,7 +1177,10 @@ test('all POP previews start visible in image-first work-style cards and preserv
       );
       assert.equal(card.querySelector('.body>.work-more').open, false);
       for (const preview of card.querySelectorAll('.pop-media .fig,.pop-media .pop'))
-        assert.equal(preview.closest('details'), null);
+        assert.equal(
+          preview.closest('details'),
+          old.dataset.archived === 'true' ? d.querySelector('.pop-archive') : null
+        );
       assert.equal(card.querySelectorAll('.inline-memo').length, 1);
       assert.equal(card.querySelector('.body>.inline-memo') !== null, true);
       assert.equal(
