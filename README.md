@@ -22,6 +22,8 @@
 - `catalog.json`：27作品と登録写真の対応。うち10件は販売候補から除外・作品やポップへ統合して参考保管。写真点数や在庫実数を入れない
 - `docs/source-reconciliation.md`：更新シートと既存ページの差分・確認待ち
 
+- `artwork/photo-backgrounds.json` / `scripts/photo-backgrounds.py`：採用済み2枚の背景マスクと元画素保持の検証。原本JPEGは維持し、派生PNGと元写真を同じ拡大画面で確認。[加工と検証の手順](docs/photo-backgrounds.md)
+
 ## 編集の進め方
 
 - 編集は人でもAI（Claude Code、Codex、ChatGPT等）でも同じ手順で行う。画面は `index.html`、動作は `board.js` 等、見た目はCSS、画像は `assets/` を編集し、`main` ブランチへプッシュすると、数分で GitHub Pages へ自動反映される
