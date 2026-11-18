@@ -1420,7 +1420,7 @@ test('booth distinguishes a labeled concept from photograph-backed practice with
       booth.querySelector('#booth-concept-caption').textContent,
       /寸法・接合位置・耐荷重は未確認/
     );
-    assert.equal(booth.querySelectorAll('.practice-photo img').length, 4);
+    assert.equal(booth.querySelectorAll('.practice-photo img').length, 3);
     assert.equal(
       [...booth.querySelectorAll('.practice-photo img')].some((e) =>
         e.closest('details:not([open])')
@@ -1428,7 +1428,7 @@ test('booth distinguishes a labeled concept from photograph-backed practice with
       false
     );
     assert.match(
-      booth.querySelectorAll('.practice-photo figcaption')[3].textContent,
+      booth.querySelector('.archived-booth-photo figure').dataset.commentLabel,
       /テーブル中央の配置写真は確認待ち/
     );
     assert.equal(b.errors.length, 0);
