@@ -33,6 +33,11 @@
       'comment-state-button'
     );
     b.type = 'button';
+    // Completion is an explicit, reversible decision after verification. Never
+    // infer it from comment wording, age, another comment or a generated draft.
+    b.title = comment.resolved
+      ? '本文を残したまま未対応へ戻す'
+      : '対応と確認が完了したコメントだけを、下の対応済みへ退避する';
     b.dataset.commentState = comment.id;
     b.addEventListener('click', async function () {
       if (canChange && !canChange()) return;

@@ -256,7 +256,7 @@ test('retired POP stays recoverable while renamed artwork retains the saved disc
     );
     assert.equal(
       d.querySelector('#pop-xmas img').getAttribute('src'),
-      'assets/pop-christmas-draft.svg'
+      'assets/pop-christmas-v2.png'
     );
     assert.equal(d.querySelector('#pop-xmas .badge').textContent, '改訂案・確認待ち');
     assert.doesNotMatch(
@@ -293,10 +293,15 @@ test('retired booth portrait no longer renders, while source and the original di
     dom.window.close();
   }
 });
-test('approved derivatives retain original identities and hashes; original preview keeps unsent input and focus', () => {
+test('rejected background attempts remain in history; displayed originals preserve keys, inputs and focus', () => {
   const rows = JSON.parse(read('artwork/photo-backgrounds.json'));
   assert.equal(rows.length, 2);
   for (const row of rows) {
+    assert.equal(row.status, 'rejected');
+    assert.equal(
+      JSON.parse(read('gallery.json')).find((p) => p.id === row.id).displaySrc,
+      undefined
+    );
     for (const [path, sha] of [
       [row.source, row.sourceSha256],
       [row.output, row.outputSha256],
@@ -326,26 +331,22 @@ test('approved derivatives retain original identities and hashes; original previ
     d.querySelector('[data-work-collection=commission]').click();
     for (const row of rows) {
       const card = d.querySelector('[data-comment-key="photo:' + row.id + '"]');
-      assert.equal(card.querySelector('img').getAttribute('src'), row.output);
-      assert.equal(card.querySelector('img').dataset.originalSrc, row.source);
+      assert.equal(card.querySelector('img').getAttribute('src'), row.source);
       const input = card.querySelector('textarea');
       input.value = '架空の入力中';
       input.setSelectionRange(2, 2);
-      const original = card.querySelector('[data-photo-original]');
+      const original = card.querySelector('a[data-photo]');
       original.click();
       assert.equal(dialog.open, true);
       assert.ok(d.getElementById('photo-large').src.endsWith(row.source));
-      assert.match(d.getElementById('photo-label').textContent, /元写真/);
       d.getElementById('photo-close').click();
       assert.equal(d.activeElement, original);
       assert.equal(input.value, '架空の入力中');
       assert.equal(input.selectionStart, 2);
-      card.querySelector('a[data-photo]').click();
-      assert.ok(d.getElementById('photo-large').src.endsWith(row.output));
-      d.getElementById('photo-close').click();
+      assert.equal(card.querySelector('a[href="' + row.output + '"]'), null);
     }
     assert.equal(d.querySelectorAll('.board-photo-card').length, 44);
-    assert.equal(d.querySelectorAll('[data-photo-original]').length, 2);
+    assert.equal(d.querySelectorAll('[data-photo-original]').length, 0);
     assert.deepEqual(Array.from(dom.window.DonguriCommentCoverage.audit().uncovered), []);
   } finally {
     dom.window.close();

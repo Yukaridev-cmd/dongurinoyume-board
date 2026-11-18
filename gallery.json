@@ -16,8 +16,7 @@
     "src": "assets/gallery/photo-002.jpg",
     "width": 811,
     "height": 1080,
-    "description": "ニャカロンとのセット作品",
-    "displaySrc": "assets/edited/photo-002-background-v1.png"
+    "description": "ニャカロンとのセット作品"
   },
   {
     "id": "photo-003",
@@ -27,8 +26,7 @@
     "src": "assets/gallery/photo-003.jpg",
     "width": 811,
     "height": 1080,
-    "description": "鳥のソフトクリームとのセット作品",
-    "displaySrc": "assets/edited/photo-003-background-v1.png"
+    "description": "鳥のソフトクリームとのセット作品"
   },
   {
     "id": "photo-004",
