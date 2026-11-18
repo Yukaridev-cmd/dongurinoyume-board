@@ -72,6 +72,12 @@
   parentTab.pops = 'market';
   parentTab.share = 'market';
   parentTab.home = 'events';
+  // Photo-only public records share navigation without inventing private event IDs.
+  document.querySelectorAll('[data-public-photo-record]').forEach(function (view) {
+    var id = view.id.replace(/^view-/, '');
+    viewIds.push(id);
+    parentTab[id] = 'events';
+  });
   var settingHash = false,
     viewScroll = {};
   var menuButtons = Array.from(document.querySelectorAll('[data-view-btn]'));
@@ -738,6 +744,7 @@
     if (id.indexOf('event-') !== 0) return;
     var v = document.getElementById('view-' + id);
     if (!v) return;
+    if (v.hasAttribute('data-public-photo-record')) return;
     var h = v.querySelector('.view-head h2');
     var name = h ? h.textContent : 'このイベント';
     ensureZone(
@@ -890,6 +897,19 @@
   document.querySelectorAll('.event-card .body').forEach(function (body) {
     var card = body.closest('.event-card');
     if (card.hasAttribute('data-comment-key')) return;
+    if (card.matches('.photo-event-record')) {
+      var detail = document.getElementById('view-' + card.id);
+      if (detail && detail.dataset.commentKey) {
+        // List and detail discuss the same existing record, not a new thread.
+        addInlineComment(
+          body,
+          'コーナー：' + detail.dataset.commentKey,
+          'この出店についてのコメント',
+          detail.dataset.commentLabel
+        );
+        return;
+      }
+    }
     var h = card ? card.querySelector('h3') : null;
     var date = card ? card.querySelector('.meta .m-line') : null;
     var t =
@@ -966,7 +986,12 @@
         ? active.querySelector('[data-market-panel]:not([hidden]) [data-memo-zone]') ||
           active.querySelector('[data-memo-zone]')
         : null;
-      submitComment(zone ? zoneTarget(zone) : 'ページ：その他', qText, qAdd).then(function (saved) {
+      var quickTarget = zone
+        ? zoneTarget(zone)
+        : active && active.dataset.commentKey
+          ? 'コーナー：' + active.dataset.commentKey
+          : 'ページ：その他';
+      submitComment(quickTarget, qText, qAdd).then(function (saved) {
         if (saved) {
           closeQuick();
           if (zone) zone.scrollIntoView({ block: 'center' });

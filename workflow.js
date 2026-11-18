@@ -90,6 +90,8 @@
     else body.appendChild(more);
   });
   document.querySelectorAll('main[id^="view-event-"]').forEach(function (view) {
+    // Public archives have photos/comments only; private planning accepts catalog IDs only.
+    if (view.hasAttribute('data-public-photo-record')) return;
     var id = view.id.replace('view-', ''),
       head = view.querySelector('.view-head'),
       facts = view.querySelector(':scope > .facts'),
@@ -245,7 +247,7 @@
   if (past) {
     var archive = el('section', null, 'past-events');
     archive.setAttribute('aria-label', '過去の出店');
-    archive.appendChild(el('h3', '過去の出店（7件）', 'subhead'));
+    archive.appendChild(el('h3', '過去の出店', 'subhead'));
     var next = past.nextElementSibling;
     past.replaceWith(archive);
     if (next) archive.appendChild(next);
@@ -258,9 +260,6 @@
     disclosure.appendChild(eventMemo);
   }
   events.querySelectorAll('.event-card .body').forEach(function (body) {
-    // Public photo records have inline thumbnails; the compact legacy card's
-    // supplemental disclosure must never swallow their photos.
-    if (body.closest('.photo-event-record')) return;
     var heading = body.querySelector('h3'),
       actions = body.querySelector('.pop-actions'),
       date = body.querySelector('.m-line'),
@@ -282,6 +281,18 @@
       }
     }
     body.appendChild(more);
+  });
+  // Uniform summaries stay compact. The detail view owns the full photo list,
+  // editors and supplementary facts, so switching never rebuilds an input.
+  events.querySelectorAll('.event-card').forEach(function (card) {
+    card.classList.add('event-summary-card');
+    var thumb = card.querySelector(':scope > img');
+    if (!thumb) {
+      thumb = el('div', '写真未登録', 'event-summary-placeholder');
+      thumb.setAttribute('aria-label', '出店写真は未登録');
+      card.prepend(thumb);
+    }
+    thumb.classList.add('event-summary-thumb');
   });
   var actions = el('div', null, 'workflow-shortcuts');
   actions.append(

@@ -110,14 +110,79 @@
 .work-collection-panels > section {
   margin-top: 10px;
 }
-#view-events .event-card.photo-event-record {
-  display: block !important;
-  grid-template-columns: none !important;
+#view-events .event-summary-card {
+  display: grid !important;
+  grid-template-columns: 100px minmax(0, 1fr) !important;
+  grid-column: auto;
+  align-items: start;
+  min-width: 0;
+  min-height: 202px;
+}
+#view-events .event-summary-card > .event-summary-thumb {
+  width: 100px !important;
+  height: 200px !important;
+  aspect-ratio: auto;
+  object-fit: contain !important;
+  background: #f3f1ec;
+}
+.event-summary-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b6459;
+  font-size: 11px;
+}
+#view-events .event-summary-card > .body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 8px !important;
+  gap: 3px;
+}
+#view-events .event-summary-card .body > h3 {
+  height: 3em;
+  line-height: 1.5;
+  font-size: 14px !important;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+#view-events .event-summary-card .event-date {
+  height: 1.5em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin: 0 !important;
+}
+#view-events .event-summary-card .pop-actions {
+  margin: 0;
+}
+#view-events .event-summary-card .pop-actions .btn {
+  width: 100%;
+  min-height: 44px;
+}
+#view-events .event-summary-card .event-card-more {
+  display: none;
+}
+#view-events .event-list,
+#view-events .undated-event-records {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+.undated-event-records > h3 {
   grid-column: 1 / -1;
 }
-#view-events .event-card.photo-event-record > .body {
-  display: block;
-  grid-template-columns: none;
+.event-photo-group {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+@media (max-width: 759px) {
+  #view-events .event-list,
+  #view-events .undated-event-records {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
 }
 #view-events .event-card.photo-event-record .body > h3 {
   font-size: 14px !important;

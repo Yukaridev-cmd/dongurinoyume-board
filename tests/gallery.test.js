@@ -53,9 +53,9 @@ test('work collections are shallow, search all public names and preserve unsent 
     assert.equal(panels.length, 4);
     for (const [id, n] of [
       ['works', 1],
-      ['commission', 7],
+      ['commission', 5],
       ['personal', 6],
-      ['gift', 2],
+      ['gift', 4],
     ]) {
       d.querySelector('[data-work-collection=' + id + ']').click();
       assert.equal(panels.filter((p) => !p.hidden).length, 1);
@@ -91,11 +91,12 @@ test('event photos belong to matching existing information or chronological new 
     d = dom.window.document;
   try {
     assert.equal(d.querySelector('#view-events > [data-photo-library]'), null);
-    assert.equal(d.querySelectorAll('.photo-event-record').length, 7);
+    assert.equal(d.querySelectorAll('[data-public-photo-record]').length, 6);
     for (const [id, count] of [
       ['event-kiraria-0516', 1],
       ['event-toyoshima', 2],
       ['event-wombat', 3],
+      ['event-kiraria-0829', 2],
     ]) {
       const view = d.getElementById('view-' + id);
       assert.equal(view.querySelectorAll('.board-photo-card').length, count);
@@ -106,16 +107,80 @@ test('event photos belong to matching existing information or chronological new 
       (n) => n.dataset.eventMonth
     );
     assert.deepEqual(months, [...months].sort().reverse());
-    assert.equal(d.querySelectorAll('#event-record-heart-202511 .board-photo-card').length, 2);
-    assert.equal(d.querySelectorAll('#event-record-kobe-202509 .board-photo-card').length, 3);
-    assert.equal(d.querySelectorAll('#event-record-aichi-202604 .board-photo-card').length, 1);
+    assert.equal(d.querySelectorAll('#view-event-record-heart-202511 .board-photo-card').length, 2);
+    assert.equal(d.querySelectorAll('#view-event-record-kobe-202509 .board-photo-card').length, 3);
+    assert.equal(d.querySelectorAll('#view-event-record-aichi-202604 .board-photo-card').length, 1);
     assert.equal(d.querySelectorAll('.board-photo-card').length, 44);
+    const may = d.getElementById('view-event-kiraria-0516');
+    assert.match(may.querySelector('h2').textContent, /2026年5月/);
+    assert.equal(may.querySelectorAll('.board-photo-card').length, 1);
+    assert.ok(may.querySelector('[data-comment-key="photo:photo-005"]'));
+    for (const id of ['photo-036', 'photo-037']) {
+      assert.ok(d.querySelector('#view-event-kiraria-0829 [data-comment-key="photo:' + id + '"]'));
+      assert.equal(may.querySelector('[data-comment-key="photo:' + id + '"]'), null);
+    }
+    for (const view of d.querySelectorAll('[data-public-photo-record]'))
+      assert.equal(
+        view.parentElement,
+        may.parentElement,
+        'all detail views use the same layout shell'
+      );
     for (const img of d.querySelectorAll('.board-photo-card img'))
       assert.equal(img.closest('details'), null, 'photo must start outside a disclosure');
     assert.equal(d.querySelectorAll('.board-photo-card [data-inline-memo]').length, 44);
     assert.ok(d.getElementById('view-event-heart').textContent.includes('2026年11月'));
   } finally {
     dom.window.close();
+  }
+});
+test('collection order, corrected photo groups and event detail navigation preserve comment inputs', () => {
+  const dom = page(),
+    d = dom.window.document,
+    w = dom.window;
+  try {
+    assert.deepEqual(
+      [...d.querySelectorAll('[data-work-collection]')].map((n) => n.dataset.workCollection),
+      ['works', 'commission', 'gift', 'personal']
+    );
+    for (const id of ['photo-040', 'photo-041'])
+      assert.equal(
+        d.querySelector('[data-comment-key="photo:' + id + '"]').closest('[data-work-panel]')
+          .dataset.workPanel,
+        'gift'
+      );
+    assert.match(
+      d.querySelector('[data-comment-key="photo:photo-002"] .photo-set-note').textContent,
+      /ニャカロン/
+    );
+    assert.match(
+      d.querySelector('[data-comment-key="photo:photo-003"] .photo-set-note').textContent,
+      /鳥のソフトクリーム/
+    );
+    const input = d.querySelector('[data-comment-key="photo:photo-024"] textarea');
+    input.value = '架空の変換中';
+    input.setSelectionRange(2, 2);
+    d.querySelector('[data-goto="event-record-neko-unconfirmed"]').click();
+    assert.equal(d.querySelector('.view.active').id, 'view-event-record-neko-unconfirmed');
+    assert.match(d.querySelector('.view.active h2').textContent, /2026年7月/);
+    assert.equal(d.querySelectorAll('.view.active .board-photo-card').length, 9);
+    assert.equal(
+      d.querySelector('#event-record-neko-unconfirmed [data-comment-target]').dataset.commentTarget,
+      d.querySelector(
+        '#view-event-record-neko-unconfirmed > .comment-corner-slot [data-comment-target]'
+      ).dataset.commentTarget
+    );
+    d.querySelector('.view.active .backlink').click();
+    assert.equal(d.querySelector('.view.active').id, 'view-events');
+    assert.equal(input.value, '架空の変換中');
+    assert.equal(input.selectionStart, 2);
+    assert.ok(
+      d.querySelector(
+        '#view-event-kiraria-0829 [data-comment-key="event-record:kiraria-september-unconfirmed"]'
+      )
+    );
+    assert.equal(d.querySelectorAll('[data-public-photo-record] a[href^="event.html"]').length, 0);
+  } finally {
+    w.close();
   }
 });
 test('photo enlargement remains available after moving into event records and restores focus', () => {
