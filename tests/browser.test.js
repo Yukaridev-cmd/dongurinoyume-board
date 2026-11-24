@@ -1157,7 +1157,30 @@ test('all POP previews start visible in image-first work-style cards and preserv
     const d = b.w.document,
       original = [...source.querySelectorAll('.pop-entry')],
       cards = [...d.querySelectorAll('.pop-grid>.pop-entry')];
+    b.w.DonguriBoard.showView('market');
+    d.querySelector('[data-market=pops]').click();
+    assert.equal(d.querySelector('.view.active').id, 'view-market');
+    assert.equal(d.querySelector('[data-market-panel=pops]').hidden, false);
     assert.equal(cards.length, 13);
+    // A second version must coexist with the original, outside the closed
+    // details, without renaming or duplicating the saved discussion target.
+    const genpin = d.getElementById('pop-genpin');
+    assert.equal(genpin.querySelectorAll('.pop-media > .fig').length, 2);
+    assert.equal(genpin.querySelector('.pop-media').classList.contains('pop-media-multiple'), true);
+    assert.deepEqual(
+      [...genpin.querySelectorAll('img')].map((img) => img.getAttribute('src')),
+      ['assets/pop-genpin.jpg', 'assets/pop-genpin-megaphone.png']
+    );
+    const approved = readFileSync(new URL('../assets/pop-genpin-megaphone.png', import.meta.url));
+    assert.equal(approved.length, 1931221);
+    assert.equal(
+      createHash('sha256').update(approved).digest('hex'),
+      '978d689cb1fd0ba0490144867c3701d86d1e8511ece6d022e6e190eaf46ee8b5'
+    );
+    assert.equal(
+      genpin.querySelector('[data-comment-target]').dataset.commentTarget,
+      'ポップ：現品限りポップ'
+    );
     for (const old of original) {
       const card = d.getElementById(old.id);
       assert.equal(
